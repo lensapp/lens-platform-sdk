@@ -1,9 +1,9 @@
-import { OpenIdConnect } from './OpenIdConnect';
-import { User } from './User';
-import decode from 'jwt-decode';
-import got from 'got';
-import _console from './helpers/_console';
-import type { Options, Got, Response, CancelableRequest } from 'got';
+import { OpenIdConnect } from "./OpenIdConnect";
+import { User } from "./User";
+import decode from "jwt-decode";
+import got from "got";
+import _console from "./helpers/_console";
+import type { Options, Got, Response, CancelableRequest } from "got";
 
 interface LensPlatformClientOptions {
   accessToken: string;
@@ -15,10 +15,10 @@ interface LensPlatformClientOptions {
 
 interface DecodedAccessToken {
   acr: string;
-  'allowed- origins': string[];
+  "allowed- origins": string[];
   aud: string;
   auth_time: number;
-  azp: 'string';
+  azp: "string";
   email?: string;
   email_verified?: boolean;
   exp: number;
@@ -38,11 +38,11 @@ interface DecodedAccessToken {
 }
 
 class LensPlatformClient {
-  accessToken: LensPlatformClientOptions['accessToken'];
-  keyCloakAddress: LensPlatformClientOptions['keyCloakAddress'];
-  keycloakRealm: LensPlatformClientOptions['keycloakRealm'];
-  apiEndpointAddress: LensPlatformClientOptions['apiEndpointAddress'];
-  exceptionHandler: LensPlatformClientOptions['exceptionHandler'];
+  accessToken: LensPlatformClientOptions["accessToken"];
+  keyCloakAddress: LensPlatformClientOptions["keyCloakAddress"];
+  keycloakRealm: LensPlatformClientOptions["keycloakRealm"];
+  apiEndpointAddress: LensPlatformClientOptions["apiEndpointAddress"];
+  exceptionHandler: LensPlatformClientOptions["exceptionHandler"];
 
   user: User;
   openIDConnect: OpenIdConnect;
@@ -82,7 +82,7 @@ class LensPlatformClient {
       get(target: Got, key: string) {
         const prop = target[key]; // Method = get/post/put etc
 
-        if (typeof prop === 'function') {
+        if (typeof prop === "function") {
           return async (...arg: [string, Options, ...any]) => {
             const [url, options, ...rest] = arg;
 
@@ -104,18 +104,12 @@ class LensPlatformClient {
                 ...rest
               ];
 
-              const responsePromise: CancelableRequest<Response<string>> = prop(
-                ..._arg
-              );
-              const [response, json] = await Promise.all([
-                responsePromise,
-                responsePromise.json()
-              ]);
+              const responsePromise: CancelableRequest<Response<string>> = prop(..._arg);
+              const [response, json] = await Promise.all([responsePromise, responsePromise.json()]);
 
               // Print HTTP response info in developer console
               _console.log(
-                `[PLATFORM-SDK] ${key?.toUpperCase()} ${response.statusCode} ${response.statusMessage
-                } ${url}`
+                `[PLATFORM-SDK] ${key?.toUpperCase()} ${response.statusCode} ${response.statusMessage} ${url}`
               );
               _console.log(`[PLATFORM-SDK] response.body: ${response.body}`);
 

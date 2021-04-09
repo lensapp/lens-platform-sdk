@@ -1,15 +1,15 @@
-import { name } from '../../package.json';
+import { name } from "../../package.json";
 
 const getKeyColor = (key: string) => {
   switch (key) {
-    case 'log':
-      return 'blue';
-    case 'info':
-      return 'green';
-    case 'error':
-      return 'red';
+    case "log":
+      return "blue";
+    case "info":
+      return "green";
+    case "error":
+      return "red";
     default:
-      return 'black';
+      return "black";
   }
 };
 
@@ -18,17 +18,16 @@ const getConsole = () => {
     get(target, key) {
       const prop = target[key];
 
-      if (typeof prop === 'function') {
+      if (typeof prop === "function") {
         return (...args: unknown[]) => {
           for (const arg of args) {
             try {
               prop(
-                `%c${String(key)}: %c[EXTENSION %c${name}] %c${typeof arg === 'string' ? arg : JSON.stringify(arg)
-                }`,
+                `%c${String(key)}: %c[EXTENSION %c${name}] %c${typeof arg === "string" ? arg : JSON.stringify(arg)}`,
                 `color: ${getKeyColor(String(key))}`,
-                'color: black',
-                'color: gray',
-                'color: black'
+                "color: black",
+                "color: gray",
+                "color: black"
               );
             } catch {
               prop(...args);

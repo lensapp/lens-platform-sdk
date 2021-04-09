@@ -1,4 +1,4 @@
-import { Base } from './Base';
+import { Base } from "./Base";
 
 interface OpenIdConnectUserInfo {
   name: string;
@@ -27,9 +27,7 @@ class OpenIdConnect extends Base {
    */
   async getUserInfo(): Promise<OpenIdConnectUserInfo> {
     const { keyCloakAddress, keycloakRealm, got } = this.lensPlatformClient;
-    const json = await got.get(
-      `${keyCloakAddress}/auth/realms/${keycloakRealm}/protocol/openid-connect/userinfo`
-    );
+    const json = await got.get(`${keyCloakAddress}/auth/realms/${keycloakRealm}/protocol/openid-connect/userinfo`);
 
     return (json as unknown) as OpenIdConnectUserInfo;
   }

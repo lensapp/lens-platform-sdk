@@ -1,4 +1,4 @@
-import { Base } from './Base';
+import { Base } from "./Base";
 
 interface IUser {
   id: string;

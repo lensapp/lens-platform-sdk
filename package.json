@@ -33,6 +33,7 @@
   },
   "homepage": "https://github.com/lensapp/lens-platform-sdk#readme",
   "xo": {
+    "prettier": true,
     "space": 2,
     "rules": {
       "unicorn/filename-case": [
