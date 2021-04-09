@@ -16,6 +16,7 @@ const getKeyColor = (key: string) => {
 const getConsole = () => {
   const proxy = new Proxy(console, {
     get(target, key) {
+      // @ts-ignore
       const prop = target[key];
 
       if (typeof prop === "function") {

@@ -46,6 +46,7 @@
         }
       ],
       "@typescript-eslint/restrict-template-expressions": "off",
+      "@typescript-eslint/prefer-ts-expect-error": "off",
       "@typescript-eslint/object-curly-spacing": [
         "error",
         "always"

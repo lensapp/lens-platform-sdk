@@ -1,5 +1,4 @@
 import { OpenIdConnect } from "./OpenIdConnect";
-import type { User } from "./User";
 import { UserService } from "./User";
 import decode from "jwt-decode";
 import got from "got";
@@ -81,6 +80,7 @@ class LensPlatformClient {
     const { exceptionHandler } = this;
     const proxy = new Proxy(got, {
       get(target: Got, key: string) {
+        // @ts-ignore
         const prop = target[key]; // Method = get/post/put etc
 
         if (typeof prop === "function") {
