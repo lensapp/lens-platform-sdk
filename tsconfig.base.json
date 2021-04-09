@@ -1,0 +1,19 @@
+{
+    "files": [
+        "./src/index.ts",
+    ],
+    "compilerOptions": {
+        "strict": true,                           /* Enable all strict type-checking options. */
+        "forceConsistentCasingInFileNames": true, /* Disallow inconsistently-cased references to the same file. */
+        "noUnusedLocals": true,                   /* Report errors on unused locals. */
+        "noUnusedParameters": true,               /* Report errors on unused parameters. */
+        "resolveJsonModule": true,                /* Can import json, such as package.json */
+        "moduleResolution": "node",
+    },
+    "include": [
+        "src/*"
+    ],
+    "exclude": [
+        "node_modules",
+    ]
+}

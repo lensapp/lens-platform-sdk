@@ -1,0 +1,43 @@
+
+#
+#   This CI triggered when a PR is merged in main branch.
+#
+#   1. Increase version number (e.g. 0.0.1 => 0.0.2) in package.json and add a git tag
+#   2. Publish to npm registry
+#
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  versioning:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+    - run: |
+        git config --local user.email "github-action@mirantis.com"
+        git config --local user.name "Github Action Bot"
+        npm version patch
+    - name: Push versioning commit and tag
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: main
+        tags: true
+
+  publish:
+    needs: versioning
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    # need this if commit/push in other jobs (versioning)
+    - run: git pull
+    - uses: bahmutov/npm-install@v1
+    - run: npm run dist
+    - run: npm publish --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
