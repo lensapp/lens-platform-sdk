@@ -1,5 +1,6 @@
 import { OpenIdConnect } from "./OpenIdConnect";
-import { User } from "./User";
+import type { User } from "./User";
+import { UserService } from "./User";
 import decode from "jwt-decode";
 import got from "got";
 import _console from "./helpers/_console";
@@ -15,7 +16,7 @@ interface LensPlatformClientOptions {
 
 interface DecodedAccessToken {
   acr: string;
-  "allowed- origins": string[];
+  "allowed-origins": string[];
   aud: string;
   auth_time: number;
   azp: "string";
@@ -44,7 +45,7 @@ class LensPlatformClient {
   apiEndpointAddress: LensPlatformClientOptions["apiEndpointAddress"];
   exceptionHandler: LensPlatformClientOptions["exceptionHandler"];
 
-  user: User;
+  user: UserService;
   openIDConnect: OpenIdConnect;
 
   constructor(options: LensPlatformClientOptions) {
@@ -54,11 +55,11 @@ class LensPlatformClient {
     this.apiEndpointAddress = options.apiEndpointAddress;
     this.exceptionHandler = options.exceptionHandler;
 
-    this.user = new User(this);
+    this.user = new UserService(this);
     this.openIDConnect = new OpenIdConnect(this);
   }
 
-  get decodedAcceeToken(): DecodedAccessToken {
+  get decodedAccessToken(): DecodedAccessToken {
     return decode(this.accessToken);
   }
 

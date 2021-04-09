@@ -1,6 +1,6 @@
 import { Base } from "./Base";
 
-interface IUser {
+interface User {
   id: string;
   email: string;
   username: string;
@@ -18,19 +18,19 @@ interface IUser {
  *
  * @alpha
  */
-class User extends Base {
-  async getOne(): Promise<IUser> {
+class UserService extends Base {
+  async getOne(): Promise<User> {
     const {
-      decodedAcceeToken: { preferred_username },
+      decodedAccessToken: { preferred_username },
       apiEndpointAddress,
       got
     } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${preferred_username}`;
     const json = await got.get(url);
 
-    return (json as unknown) as IUser;
+    return (json as unknown) as User;
   }
 }
 
-export { User };
-export type { IUser };
+export { UserService };
+export type { User };

@@ -37,7 +37,7 @@ jobs:
     # need this if commit/push in other jobs (versioning)
     - run: git pull
     - uses: bahmutov/npm-install@v1
-    - run: npm run dist
+    - run: npm run build:dist
     - run: npm publish --access public
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
