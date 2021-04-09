@@ -36,7 +36,7 @@ jobs:
     - uses: actions/checkout@v2
     # need this if commit/push in other jobs (versioning)
     - run: git pull
-    - uses: bahmutov/npm-install@v1
+    - run: npm install
     - run: npm run build:dist
     - run: npm publish --access public
       env:
