@@ -2,30 +2,20 @@
   "name": "lens-platform-sdk",
   "version": "0.0.6",
   "description": "Lens Platform Client SDK",
-  "engines": {
-    "node": ">=12 <13"
-  },
   "files": [
-    "dist/**/package.json",
-    "dist/**/*.js",
-    "dist/types/**/*.d.ts"
+    "dist/"
   ],
   "exports": {
     "require": "./dist/cjs/index.js",
     "import": "./dist/esm/index.js"
   },
-  "typesVersions": {
-    "*": {
-      "*": [
-        "./dist/types/src/*"
-      ]
-    }
-  },
+  "main": "./dist/cjs/index.js",
+  "types": "./dist/types/index.d.ts",
   "scripts": {
     "test": "xo",
     "build:dist": "rm -rf dist && npm run build:cjs && npm run build:esm && npm run build:types",
-    "build:cjs": "npx tsc -p tsconfig.cjs.json && echo '{\"type\": \"commonjs\", \"main\": \"dist/cjs/index.js\"}'> dist/cjs/package.json",
-    "build:esm": "npx tsc -p tsconfig.esm.json && echo '{\"type\": \"module\", \"module\": \"dist/esm/index.js\"}'> dist/esm/package.json",
+    "build:cjs": "npx tsc -p tsconfig.cjs.json",
+    "build:esm": "npx tsc -p tsconfig.esm.json && echo '{\"type\": \"module\"}'> dist/esm/package.json",
     "build:types": "npx tsc -p tsconfig.types.json"
   },
   "repository": {
