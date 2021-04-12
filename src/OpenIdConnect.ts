@@ -1,14 +1,5 @@
 import { Base } from "./Base";
-
-interface OpenIdConnectUserInfo {
-  name: string;
-  sub: string;
-  email_verified: boolean;
-  preferred_username?: string;
-  given_name?: string;
-  email: string;
-}
-
+import type { OpenIdConnectUserInfo } from "./types";
 /**
  *
  * The class for all OpenID Connect Core resources.
@@ -33,5 +24,4 @@ class OpenIdConnect extends Base {
   }
 }
 
-export type { OpenIdConnectUserInfo };
 export { OpenIdConnect };
