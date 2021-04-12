@@ -5,6 +5,7 @@ import got from "got";
 import _console from "./helpers/_console";
 import type { Options, Got, Response, CancelableRequest } from "got";
 import type { LensPlatformClientOptions, DecodedAccessToken, OpenIdConnectUserInfo, User } from "./types";
+
 class LensPlatformClient {
   accessToken: LensPlatformClientOptions["accessToken"];
   keyCloakAddress: LensPlatformClientOptions["keyCloakAddress"];
@@ -97,6 +98,10 @@ class LensPlatformClient {
   }
 }
 
+const module = {
+  LensPlatformClient
+};
+
 // Types of this package is exported here
-export type { LensPlatformClient, LensPlatformClientOptions, OpenIdConnectUserInfo, User };
-export default LensPlatformClient;
+export type { LensPlatformClient as LensPlatformClientType, LensPlatformClientOptions, OpenIdConnectUserInfo, User };
+export default module;
