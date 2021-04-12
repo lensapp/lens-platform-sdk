@@ -129,4 +129,5 @@ class LensPlatformClient {
   }
 }
 
+export type { LensPlatformClient };
 export default LensPlatformClient;
