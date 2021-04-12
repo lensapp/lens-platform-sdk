@@ -6,17 +6,17 @@
     "dist/"
   ],
   "exports": {
-    "require": "./dist/cjs/index.js",
-    "import": "./dist/esm/index.js"
+    ".": {
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.js"
+    }
   },
   "main": "./dist/cjs/index.js",
-  "types": "./dist/types/index.d.ts",
   "scripts": {
     "test": "xo",
-    "build:dist": "rm -rf dist && npm run build:cjs && npm run build:esm && npm run build:types",
+    "build:dist": "rm -rf dist && npm run build:cjs && npm run build:esm",
     "build:cjs": "npx tsc -p tsconfig.cjs.json",
-    "build:esm": "npx tsc -p tsconfig.esm.json && echo '{\"type\": \"module\"}'> dist/esm/package.json",
-    "build:types": "npx tsc -p tsconfig.types.json"
+    "build:esm": "npx tsc -p tsconfig.esm.json && echo '{\"type\": \"module\"}'> dist/esm/package.json"
   },
   "repository": {
     "type": "git",
