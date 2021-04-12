@@ -1,8 +1,8 @@
-import type { LensPlatformClient } from "./index";
+import type { LensPlatformClientType } from "./index";
 
 export class Base {
-  lensPlatformClient: LensPlatformClient;
-  constructor(lensPlatformClient: LensPlatformClient) {
+  lensPlatformClient: LensPlatformClientType;
+  constructor(lensPlatformClient: LensPlatformClientType) {
     this.lensPlatformClient = lensPlatformClient;
   }
 }

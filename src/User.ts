@@ -1,5 +1,5 @@
 import { Base } from "./Base";
-import { User } from "./types";
+
 /**
  *
  * The class for consuming all `user` resources.
@@ -24,6 +24,12 @@ class UserService extends Base {
 
     return (json as unknown) as User;
   }
+}
+
+export interface User {
+  id: string;
+  email: string;
+  username: string;
 }
 
 export { UserService };

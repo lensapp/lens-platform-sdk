@@ -3,6 +3,7 @@
     "compilerOptions": {
         "target": "ES2019",
         "module": "CommonJS",
-        "outDir": "./dist/cjs"
+        "outDir": "./dist/cjs",
+        "declaration": true,
     }
 }

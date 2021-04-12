@@ -1,5 +1,3 @@
-import { name } from "../../package.json";
-
 const getKeyColor = (key: string) => {
   switch (key) {
     case "log":
@@ -24,7 +22,7 @@ const getConsole = () => {
           for (const arg of args) {
             try {
               prop(
-                `%c${String(key)}: %c[EXTENSION %c${name}] %c${typeof arg === "string" ? arg : JSON.stringify(arg)}`,
+                `%c${String(key)}: %c[EXTENSION] %c${typeof arg === "string" ? arg : JSON.stringify(arg)}`,
                 `color: ${getKeyColor(String(key))}`,
                 "color: black",
                 "color: gray",
