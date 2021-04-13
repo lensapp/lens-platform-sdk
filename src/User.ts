@@ -14,12 +14,8 @@ import { Base } from "./Base";
  */
 class UserService extends Base {
   async getOne(): Promise<User> {
-    const {
-      decodedAccessToken: { preferred_username },
-      apiEndpointAddress,
-      got
-    } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/users/${preferred_username}`;
+    const { decodedAccessToken, apiEndpointAddress, got } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/users/${decodedAccessToken?.preferred_username}`;
     const json = await got.get(url);
 
     return (json as unknown) as User;

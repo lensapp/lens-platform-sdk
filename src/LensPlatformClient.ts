@@ -6,11 +6,12 @@ import _console from "./helpers/_console";
 import type { Options, Got, Response, CancelableRequest } from "got";
 
 export interface LensPlatformClientOptions {
-  accessToken: string;
+  accessToken?: string;
+  getAccessToken?: () => string;
   keyCloakAddress: string;
   keycloakRealm: string;
   apiEndpointAddress: string;
-  exceptionHandler: (exception: any) => void;
+  exceptionHandler: (exception: unknown) => void;
 }
 
 interface DecodedAccessToken {
@@ -39,6 +40,7 @@ interface DecodedAccessToken {
 
 class LensPlatformClient {
   accessToken: LensPlatformClientOptions["accessToken"];
+  getAccessToken: LensPlatformClientOptions["getAccessToken"];
   keyCloakAddress: LensPlatformClientOptions["keyCloakAddress"];
   keycloakRealm: LensPlatformClientOptions["keycloakRealm"];
   apiEndpointAddress: LensPlatformClientOptions["apiEndpointAddress"];
@@ -48,7 +50,13 @@ class LensPlatformClient {
   openIDConnect: OpenIdConnect;
 
   constructor(options: LensPlatformClientOptions) {
-    this.accessToken = options.accessToken;
+    const { accessToken, getAccessToken } = options;
+    if (!accessToken && !getAccessToken) {
+      throw new Error(`No accessToken ${accessToken} or getAccessToken ${getAccessToken}`);
+    }
+
+    this.accessToken = accessToken;
+    this.getAccessToken = getAccessToken;
     this.keyCloakAddress = options.keyCloakAddress;
     this.keycloakRealm = options.keycloakRealm;
     this.apiEndpointAddress = options.apiEndpointAddress;
@@ -58,8 +66,14 @@ class LensPlatformClient {
     this.openIDConnect = new OpenIdConnect(this);
   }
 
-  get decodedAccessToken(): DecodedAccessToken {
-    return decode(this.accessToken);
+  get decodedAccessToken(): DecodedAccessToken | undefined {
+    const { accessToken, getAccessToken } = this;
+    const token = getAccessToken && typeof getAccessToken === "function" ? getAccessToken() : accessToken;
+    if (token) {
+      return decode(token);
+    }
+
+    return undefined;
   }
 
   get authHeader(): Record<string, string> {
@@ -76,8 +90,8 @@ class LensPlatformClient {
    *
    */
   get got() {
-    const { accessToken } = this;
-    const { exceptionHandler } = this;
+    const { accessToken, getAccessToken, exceptionHandler } = this;
+    const token = getAccessToken && typeof getAccessToken === "function" ? getAccessToken() : accessToken;
     const proxy = new Proxy(got, {
       get(target: Got, key: string) {
         // @ts-ignore
@@ -89,13 +103,13 @@ class LensPlatformClient {
 
             try {
               // Print HTTP request info in developer console
-              _console.log(`[PLATFORM-SDK] ${key?.toUpperCase()} ${url}`);
+              _console.log(`${key?.toUpperCase()} ${url}`);
 
               const _arg = [
                 url,
                 {
                   headers: {
-                    Authorization: `Bearer ${accessToken}`,
+                    Authorization: `Bearer ${token}`,
                     // Merge headers
                     ...options?.headers
                   },
@@ -104,18 +118,21 @@ class LensPlatformClient {
                 },
                 ...rest
               ];
+              _console.log(`request arguments ${JSON.stringify(_arg)}`);
 
               const responsePromise: CancelableRequest<Response<string>> = prop(..._arg);
               const [response, json] = await Promise.all([responsePromise, responsePromise.json()]);
 
               // Print HTTP response info in developer console
-              _console.log(
-                `[PLATFORM-SDK] ${key?.toUpperCase()} ${response.statusCode} ${response.statusMessage} ${url}`
-              );
-              _console.log(`[PLATFORM-SDK] response.body: ${response.body}`);
+              _console.log(`${key?.toUpperCase()} ${response.statusCode} ${response.statusMessage} ${url}`);
+              _console.log(`response body: ${response.body}`);
 
               return json;
             } catch (error: unknown) {
+              // @ts-expect-error
+              _console.error(`error message: ${error?.message}`);
+              // @ts-expect-error
+              _console.error(`error response body: ${error?.response?.body}`);
               exceptionHandler(error);
             }
           };
