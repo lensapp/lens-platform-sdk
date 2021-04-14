@@ -4,6 +4,13 @@ import type { Team } from "./Team";
 import type { K8scluster } from "./K8scluster";
 import type { Invitation } from "./Invitation";
 
+/**
+ *
+ * @remarks
+ * This interface should be generated using OpenAPI generator in the future.
+ *
+ * @alpha
+ */
 export interface Space {
   id?: string;
   name: string;
@@ -20,7 +27,7 @@ export interface Space {
  * The class for consuming all `space` resources.
  *
  * @remarks
- * This class should be generated using OpenAPI in the future.
+ * This class should be generated using OpenAPI generator in the future.
  *
  * @alpha
  */

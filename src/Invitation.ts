@@ -1,5 +1,12 @@
 import type { User } from "./User";
 
+/**
+ *
+ * @remarks
+ * This interface should be generated using OpenAPI generator in the future.
+ *
+ * @alpha
+ */
 export interface Invitation {
   spaceId?: string;
   invitedUsername?: string;

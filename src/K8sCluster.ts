@@ -1,5 +1,12 @@
 import type { Space } from "./Space";
 
+/**
+ *
+ * @remarks
+ * This interface should be generated using OpenAPI generator in the future.
+ *
+ * @alpha
+ */
 export interface K8scluster {
   id?: string;
   name: string;
