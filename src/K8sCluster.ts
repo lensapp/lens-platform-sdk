@@ -7,7 +7,7 @@ import type { Space } from "./Space";
  *
  * @alpha
  */
-export interface K8scluster {
+export interface K8sCluster {
   id?: string;
   name: string;
   kind: string;

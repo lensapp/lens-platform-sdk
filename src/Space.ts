@@ -1,7 +1,7 @@
 import { Base } from "./Base";
 import type { User } from "./User";
 import type { Team } from "./Team";
-import type { K8scluster } from "./K8scluster";
+import type { K8sCluster } from "./K8sCluster";
 import type { Invitation } from "./Invitation";
 
 /**
@@ -101,7 +101,7 @@ class SpaceService extends Base {
     clusterId
   }: {
     name: Space["name"];
-    clusterId: K8scluster["id"];
+    clusterId: K8sCluster["id"];
   }): Promise<{ token: string }> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters/${clusterId}/bored-secret`;
@@ -119,7 +119,7 @@ class SpaceService extends Base {
     clusterId
   }: {
     name: Space["name"];
-    clusterId: K8scluster["id"];
+    clusterId: K8sCluster["id"];
   }): Promise<{ token: string }> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters/${clusterId}/token`;
@@ -132,43 +132,43 @@ class SpaceService extends Base {
   /**
    * Get all clusters in one space by space name
    */
-  async getClusters({ name }: { name: Space["name"] }): Promise<K8scluster[]> {
+  async getClusters({ name }: { name: Space["name"] }): Promise<K8sCluster[]> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters`;
 
     const json = await got.get(url);
 
-    return (json as unknown) as K8scluster[];
+    return (json as unknown) as K8sCluster[];
   }
 
   /**
    * Get one cluster by cluster id in one space by space name
    */
-  async getOneCluster({ clusterId, name }: { clusterId: K8scluster["id"]; name: Space["name"] }): Promise<K8scluster> {
+  async getOneCluster({ clusterId, name }: { clusterId: K8sCluster["id"]; name: Space["name"] }): Promise<K8sCluster> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters/${clusterId}`;
 
     const json = await got.get(url);
 
-    return (json as unknown) as K8scluster;
+    return (json as unknown) as K8sCluster;
   }
 
   /**
    * Create a cluster in one space by space name
    */
-  async createOneCluster({ cluster, name }: { cluster: K8scluster; name: Space["name"] }): Promise<K8scluster> {
+  async createOneCluster({ cluster, name }: { cluster: K8sCluster; name: Space["name"] }): Promise<K8sCluster> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters`;
 
     const json = await got.post(url, { json: cluster });
 
-    return (json as unknown) as K8scluster;
+    return (json as unknown) as K8sCluster;
   }
 
   /**
    * Delete a cluster by cluster id in one space by space name
    */
-  async deleteOneCluster({ clusterId, name }: { clusterId: K8scluster["id"]; name: Space["name"] }): Promise<void> {
+  async deleteOneCluster({ clusterId, name }: { clusterId: K8sCluster["id"]; name: Space["name"] }): Promise<void> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters/${clusterId}`;
 
