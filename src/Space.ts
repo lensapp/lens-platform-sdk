@@ -40,12 +40,12 @@ class SpaceService extends Base {
   /**
    * Get spaces
    */
-  async getMany(queryString?: string): Promise<[Space]> {
+  async getMany(queryString?: string): Promise<Space[]> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces${queryString ? `/?${queryString}` : ""}`;
     const json = await got.get(url);
 
-    return (json as unknown) as [Space];
+    return (json as unknown) as Space[];
   }
 
   /**
@@ -125,13 +125,13 @@ class SpaceService extends Base {
   /**
    * Get all clusters in one space by space name
    */
-  async getClusters({ name }: { name: Space["name"] }): Promise<[K8scluster]> {
+  async getClusters({ name }: { name: Space["name"] }): Promise<K8scluster[]> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters`;
 
     const json = await got.get(url);
 
-    return (json as unknown) as [K8scluster];
+    return (json as unknown) as K8scluster[];
   }
 
   /**
