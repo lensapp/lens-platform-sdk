@@ -185,18 +185,6 @@ class SpaceService extends Base {
   }
 
   /**
-   * Add one user by username to a space by space name
-   */
-  async addOneUser({ username, name }: { username: User["username"]; name: Space["name"] }) {
-    const { apiEndpointAddress, got } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/spaces/${name}/users`;
-
-    const json = await got.post(url, { json: { username } });
-
-    return json;
-  }
-
-  /**
    * Remove one user by username from a space by space name
    */
   async removeOneUser({ username, name }: { username: User["username"]; name: Space["name"] }): Promise<void> {
