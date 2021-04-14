@@ -3,10 +3,10 @@ import type { LensPlatformClientType, LensPlatformClientOptions } from "./LensPl
 import type { User } from "./User";
 import type { Space } from "./Space";
 import type { Team } from "./Team";
-import type { K8scluster } from "./K8scluster";
+import type { K8sCluster } from "./K8sCluster";
 import type { Invitation } from "./Invitation";
 import type { OpenIdConnectUserInfo } from "./OpenIdConnect";
 
-export type { User, Space, Team, K8scluster, Invitation, OpenIdConnectUserInfo };
+export type { User, Space, Team, K8sCluster, Invitation, OpenIdConnectUserInfo };
 export type { LensPlatformClientType, LensPlatformClientOptions };
 export { LensPlatformClient };
