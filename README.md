@@ -4,11 +4,12 @@ Lens Platform Client SDK
 
 Use SDK in Lens extension:
 ```ts
-import LensPlatformSDK from "lens-platform-sdk"
+import { LensPlatformClient } from "lens-platform-sdk"
 import { Component } from "@k8slens/extensions";
 
-const lensPlatformSDK = new LensPlatformSDK({
-    accessToken: "",
+const lensPlatformClient = new LensPlatformClient({
+    accessToken: "", // the access token for apis
+    getAccessToken: () => {}, // the callback to be called before every request, useful if the access token needs to be renew often.
     keyCloakAddress: "", // keycloak address, e.g. "https://keycloak.k8slens.dev"
     keycloakRealm: "", // the realm name, e.g. "lensCloud" 
     apiEndpointAddress: "", // api endpoint address, e.g. "https://api.k8slens.dev"
