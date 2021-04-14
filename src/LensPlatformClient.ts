@@ -1,5 +1,6 @@
 import { OpenIdConnect } from "./OpenIdConnect";
 import { UserService } from "./User";
+import { SpaceService } from "./Space";
 import decode from "jwt-decode";
 import got from "got";
 import _console from "./helpers/_console";
@@ -47,6 +48,7 @@ class LensPlatformClient {
   exceptionHandler: LensPlatformClientOptions["exceptionHandler"];
 
   user: UserService;
+  space: SpaceService;
   openIDConnect: OpenIdConnect;
 
   constructor(options: LensPlatformClientOptions) {
@@ -63,6 +65,7 @@ class LensPlatformClient {
     this.exceptionHandler = options.exceptionHandler;
 
     this.user = new UserService(this);
+    this.space = new SpaceService(this);
     this.openIDConnect = new OpenIdConnect(this);
   }
 
