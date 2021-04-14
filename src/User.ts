@@ -22,10 +22,19 @@ class UserService extends Base {
   }
 }
 
+/**
+ *
+ * @remarks
+ * This interface should be generated using OpenAPI generator in the future.
+ *
+ * @alpha
+ */
 export interface User {
-  id: string;
-  email: string;
-  username: string;
+  id?: string;
+  email?: string;
+  username?: string;
+  firstName?: string;
+  lastName?: string;
 }
 
 export { UserService };
