@@ -28,7 +28,7 @@ export interface User {
  * @alpha
  */
 class UserService extends Base {
-  async getOne({ username }: { username: string }): Promise<User> {
+  async getOne({ username }: { username: User["id"] }): Promise<User> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}`;
     const json = await got.get(url);
@@ -46,9 +46,12 @@ class UserService extends Base {
 
   async getSelf(): Promise<User> {
     const { decodedAccessToken } = this.lensPlatformClient;
-    const json = await this.getOne({ username: decodedAccessToken?.preferred_username });
+    if (decodedAccessToken?.preferred_username) {
+      const json = await this.getOne({ username: decodedAccessToken?.preferred_username });
+      return (json as unknown) as User;
+    }
 
-    return (json as unknown) as User;
+    throw new Error(`jwt.preferred_username is ${decodedAccessToken?.preferred_username}`);
   }
 }
 

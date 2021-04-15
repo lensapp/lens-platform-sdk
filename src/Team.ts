@@ -10,7 +10,7 @@ import type { User } from "./User";
  * @alpha
  */
 export interface Team {
-  id?: string;
+  id: string;
   name: string;
   description: string;
   kind?: string;
@@ -33,7 +33,7 @@ class TeamService extends Base {
   /**
    * Get one team by team id
    */
-  async getOne({ id }: { id: string }): Promise<Team> {
+  async getOne({ id }: { id: Team["id"] }): Promise<Team> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/teams/${id}`;
 
@@ -69,7 +69,7 @@ class TeamService extends Base {
   /**
    * Delete one team by team id
    */
-  async deleteOne({ id }: { id: string }): Promise<void> {
+  async deleteOne({ id }: { id: Team["id"] }): Promise<void> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/teams/${id}`;
 
@@ -79,7 +79,7 @@ class TeamService extends Base {
   /**
    * Add a user by username to a team by team id
    */
-  async addUser({ username, id }: { username: string; id: string }): Promise<Team> {
+  async addUser({ username, id }: { username: User["username"]; id: Team["id"] }): Promise<Team> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/teams/${id}/users`;
 
@@ -91,7 +91,7 @@ class TeamService extends Base {
   /**
    * Remove a user by username from a team by team id
    */
-  async removeUser({ username, id }: { username: string; id: string }): Promise<Team> {
+  async removeUser({ username, id }: { username: User["username"]; id: Team["id"] }): Promise<Team> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/teams/${id}/users/${username}`;
 
