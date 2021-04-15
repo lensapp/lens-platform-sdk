@@ -21,11 +21,13 @@ const getConsole = () => {
         return (...args: unknown[]) => {
           for (const arg of args) {
             try {
-              prop(
-                `%c${String(key)}: [LENS-PLATFORM-SDK] %c${typeof arg === "string" ? arg : JSON.stringify(arg)}`,
-                `color: ${getKeyColor(String(key))}`,
-                "color: black"
-              );
+              if (process.env.NODE_ENV !== "test") {
+                prop(
+                  `%c${String(key)}: [LENS-PLATFORM-SDK] %c${typeof arg === "string" ? arg : JSON.stringify(arg)}`,
+                  `color: ${getKeyColor(String(key))}`,
+                  "color: black"
+                );
+              }
             } catch {
               prop(...args);
             }
