@@ -183,7 +183,11 @@ class SpaceService extends Base {
 
     let teams: Team[] = [];
     if (space.teams) {
-      teams = await Promise.all(space.teams?.map(async (team) => this.lensPlatformClient.team.getOne({ id: team.id })));
+      teams = await Promise.all(
+        space.teams?.map(
+          async team => this.lensPlatformClient.team.getOne({ id: team.id })
+        )
+      );
     }
 
     return teams;
