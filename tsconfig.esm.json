@@ -1,7 +1,6 @@
 {
-    "extends": "./tsconfig.base.json",
+    "extends": "./tsconfig.json",
     "compilerOptions": {
-        "target": "ES2019",
         "module": "ES2020",
         "outDir": "./dist/esm",
         "declaration": true,

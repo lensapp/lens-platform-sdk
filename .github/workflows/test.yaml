@@ -1,0 +1,22 @@
+#
+#   This CI triggered on PRs.
+#
+#   1. Runs `npm test`, which includes lint, type-checking, and unit tests on node.js LTS 10,12,14
+#      and the current version (v15)
+#
+on:
+  - pull_request
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10, 12, 14, 15]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm install
+    - run: npm test

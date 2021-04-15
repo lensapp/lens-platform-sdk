@@ -1,6 +1,7 @@
 import { OpenIdConnect } from "./OpenIdConnect";
 import { UserService } from "./User";
 import { SpaceService } from "./Space";
+import { TeamService } from "./Team";
 import decode from "jwt-decode";
 import got from "got";
 import _console from "./helpers/_console";
@@ -12,7 +13,7 @@ export interface LensPlatformClientOptions {
   keyCloakAddress: string;
   keycloakRealm: string;
   apiEndpointAddress: string;
-  exceptionHandler: (exception: unknown) => void;
+  exceptionHandler?: (exception: unknown) => void;
 }
 
 interface DecodedAccessToken {
@@ -49,12 +50,17 @@ class LensPlatformClient {
 
   user: UserService;
   space: SpaceService;
+  team: TeamService;
   openIDConnect: OpenIdConnect;
 
   constructor(options: LensPlatformClientOptions) {
+    if (!options) {
+      throw new Error(`Options can not be ${options}`);
+    }
+
     const { accessToken, getAccessToken } = options;
     if (!accessToken && !getAccessToken) {
-      throw new Error(`No accessToken ${accessToken} or getAccessToken ${getAccessToken}`);
+      throw new Error(`Both accessToken ${accessToken} or getAccessToken are ${getAccessToken}`);
     }
 
     this.accessToken = accessToken;
@@ -66,6 +72,7 @@ class LensPlatformClient {
 
     this.user = new UserService(this);
     this.space = new SpaceService(this);
+    this.team = new TeamService(this);
     this.openIDConnect = new OpenIdConnect(this);
   }
 
@@ -89,7 +96,7 @@ class LensPlatformClient {
    * A proxied version of `got` that
    *
    * 1) Prints request/response in console (for developer to debug issues)
-   * 2) Notifies end-user via Component.Notifications if there is HTTP error (=> non-200 codes)
+   * 2) Auto add `Authorization: `Bearer ${token}``
    *
    */
   get got() {
@@ -102,9 +109,19 @@ class LensPlatformClient {
 
         if (typeof prop === "function") {
           return async (...arg: [string, Options, ...any]) => {
-            const [url, options, ...rest] = arg;
-
             try {
+              const url = arg[0];
+              let options = arg[1];
+              const headers = arg[1]?.headers;
+              let restOptions;
+              if (headers) {
+                const clone = Object.assign({}, options);
+                delete clone.headers;
+                restOptions = clone;
+              } else {
+                restOptions = options;
+              }
+
               // Print HTTP request info in developer console
               _console.log(`${key?.toUpperCase()} ${url}`);
 
@@ -113,22 +130,21 @@ class LensPlatformClient {
                 {
                   headers: {
                     Authorization: `Bearer ${token}`,
-                    // Merge headers
-                    ...options?.headers
+                    ...headers
                   },
                   // Merge options
-                  ...options
-                },
-                ...rest
+                  ...restOptions
+                }
               ];
+
               _console.log(`request arguments ${JSON.stringify(_arg)}`);
 
               const responsePromise: CancelableRequest<Response<string>> = prop(..._arg);
-              const [response, json] = await Promise.all([responsePromise, responsePromise.json()]);
+              const [response, json] = await Promise.all([responsePromise, responsePromise?.json()]);
 
               // Print HTTP response info in developer console
-              _console.log(`${key?.toUpperCase()} ${response.statusCode} ${response.statusMessage} ${url}`);
-              _console.log(`response body: ${response.body}`);
+              _console.log(`${key?.toUpperCase()} ${response?.statusCode} ${response?.statusMessage} ${url}`);
+              _console.log(`response body: ${response?.body}`);
 
               return json;
             } catch (error: unknown) {
@@ -136,7 +152,11 @@ class LensPlatformClient {
               _console.error(`error message: ${error?.message}`);
               // @ts-expect-error
               _console.error(`error response body: ${error?.response?.body}`);
-              exceptionHandler(error);
+              if (exceptionHandler) {
+                exceptionHandler(error);
+              } else {
+                throw error;
+              }
             }
           };
         }
