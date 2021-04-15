@@ -1,6 +1,7 @@
 import { OpenIdConnect } from "./OpenIdConnect";
 import { UserService } from "./User";
 import { SpaceService } from "./Space";
+import { TeamService } from "./Team";
 import decode from "jwt-decode";
 import got from "got";
 import _console from "./helpers/_console";
@@ -49,6 +50,7 @@ class LensPlatformClient {
 
   user: UserService;
   space: SpaceService;
+  team: TeamService;
   openIDConnect: OpenIdConnect;
 
   constructor(options: LensPlatformClientOptions) {
@@ -66,6 +68,7 @@ class LensPlatformClient {
 
     this.user = new UserService(this);
     this.space = new SpaceService(this);
+    this.team = new TeamService(this);
     this.openIDConnect = new OpenIdConnect(this);
   }
 
@@ -89,7 +92,7 @@ class LensPlatformClient {
    * A proxied version of `got` that
    *
    * 1) Prints request/response in console (for developer to debug issues)
-   * 2) Notifies end-user via Component.Notifications if there is HTTP error (=> non-200 codes)
+   * 2) Auto add `Authorization: `Bearer ${token}``
    *
    */
   get got() {

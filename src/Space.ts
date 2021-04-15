@@ -183,8 +183,6 @@ class SpaceService extends Base {
 
     let teams: Team[] = [];
     if (space.teams) {
-      // TODD: implement Team methods
-      // @ts-expect-errors
       teams = await Promise.all(space.teams?.map((team) => this.lensPlatformClient.team.getOne({ id: team.id })));
     }
 
