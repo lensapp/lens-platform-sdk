@@ -205,7 +205,7 @@ class SpaceService extends Base {
   }
 
   /**
-   * Get one billing plan of space by space name
+   * Get illing plan of space by space name
    */
   async getBillingPlan({ name }: { name: Space["name"] }) {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
