@@ -3,6 +3,7 @@ import type { User } from "./User";
 import type { Team } from "./Team";
 import type { K8sCluster } from "./K8sCluster";
 import type { Invitation } from "./Invitation";
+import type { BillingPlan } from "./BillingPlan";
 
 /**
  *
@@ -201,6 +202,18 @@ class SpaceService extends Base {
     const url = `${apiEndpointAddress}/spaces/${name}/users/${username}`;
 
     await got.delete(url);
+  }
+
+  /**
+   * Get one billing plan of space by space name
+   */
+  async getBillingPlan({ name }: { name: Space["name"] }) {
+    const { apiEndpointAddress, got } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/spaces/${name}/plan`;
+
+    const json = await got.get(url);
+
+    return (json as unknown) as BillingPlan;
   }
 }
 
