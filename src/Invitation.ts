@@ -9,6 +9,7 @@ import type { User } from "./User";
  */
 export interface Invitation {
   spaceId?: string;
+  spaceName?: string;
   invitedUsername?: string;
   kind?: string;
   id?: string;
