@@ -38,7 +38,7 @@ class SpaceService extends Base {
    */
   async getOne({ name, queryString }: { name: Space["name"]; queryString?: string }): Promise<Space> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/spaces/${name}${queryString ? `/?${queryString}` : ""}}`;
+    const url = `${apiEndpointAddress}/spaces/${name}${queryString ? `/?${queryString}` : ""}`;
 
     const json = await got.get(url);
 
