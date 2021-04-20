@@ -99,12 +99,12 @@ describe("PermissionsService", () => {
     });
 
     it("recognizes member priviliges", () => {
+      expect(client.permissions.canI(Actions.CreateInvitation, mockSpace1, mockUser3.id)).toBeTruthy();
       expect(client.permissions.canI(Actions.DeleteSpace, mockSpace1, mockUser3.id)).toBeFalsy();
       expect(client.permissions.canI(Actions.CreateTeam, mockSpace1, mockUser3.id)).toBeFalsy();
       expect(client.permissions.canI(Actions.DeleteTeam, mockSpace1, mockUser3.id)).toBeFalsy();
       expect(client.permissions.canI(Actions.PatchTeam, mockSpace1, mockUser3.id)).toBeFalsy();
       expect(client.permissions.canI(Actions.PatchInvitation, mockSpace1, mockUser3.id)).toBeFalsy();
-      expect(client.permissions.canI(Actions.CreateInvitation, mockSpace1, mockUser3.id)).toBeFalsy();
       expect(client.permissions.canI(Actions.PatchSpace, mockSpace1, mockUser3.id)).toBeFalsy();
     });
 

@@ -28,12 +28,14 @@ export class PermissionsService extends Base {
       case Actions.DeleteSpace:
         canI = this.getRole(forSpace, forUserId) === Roles.Owner;
         break;
+      case Actions.CreateInvitation:
+        canI = this.getRole(forSpace, forUserId) !== Roles.None;
+        break;
+      case Actions.PatchInvitation:
+      case Actions.PatchTeam:
+      case Actions.PatchSpace:
       case Actions.CreateTeam:
       case Actions.DeleteTeam:
-      case Actions.PatchTeam:
-      case Actions.PatchInvitation:
-      case Actions.CreateInvitation:
-      case Actions.PatchSpace:
       default:
         canI = [Roles.Owner, Roles.Admin].includes(this.getRole(forSpace, forUserId));
         break;
