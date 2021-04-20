@@ -2,6 +2,7 @@ import { OpenIdConnect } from "./OpenIdConnect";
 import { UserService } from "./User";
 import { SpaceService } from "./Space";
 import { TeamService } from "./Team";
+import { PermissionsService } from "./Permissions";
 import decode from "jwt-decode";
 import got from "got";
 import _console from "./helpers/_console";
@@ -51,6 +52,7 @@ class LensPlatformClient {
   user: UserService;
   space: SpaceService;
   team: TeamService;
+  permissions: PermissionsService;
   openIDConnect: OpenIdConnect;
 
   constructor(options: LensPlatformClientOptions) {
@@ -73,6 +75,7 @@ class LensPlatformClient {
     this.user = new UserService(this);
     this.space = new SpaceService(this);
     this.team = new TeamService(this);
+    this.permissions = new PermissionsService(this);
     this.openIDConnect = new OpenIdConnect(this);
   }
 
@@ -84,6 +87,20 @@ class LensPlatformClient {
     }
 
     return undefined;
+  }
+
+  /**
+   * Retrieves an ID of a current user for whom
+   * the authentication token was issued
+   * @returns string
+   * @throws Error("Could not process access token to retrieve `userId`")
+   */
+  get currentUserId(): string {
+    if (!this.decodedAccessToken) {
+      throw new Error("Could not process access token to retrieve `userId`");
+    }
+
+    return this.decodedAccessToken.sub;
   }
 
   get authHeader(): Record<string, string> {
