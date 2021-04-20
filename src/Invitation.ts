@@ -1,5 +1,6 @@
 import { Base } from "./Base";
 import type { User } from "./User";
+import { Except } from "type-fest";
 
 /**
  *
@@ -22,10 +23,6 @@ export interface Invitation {
   invitedUser?: User;
   state?: "pending" | "accepted" | "rejected" | "revoked";
   expiryTime?: string;
-}
-
-interface InvitationRequest extends Invitation {
-  id: string;
 }
 
 /**
@@ -66,7 +63,7 @@ class InvitationService extends Base {
   /**
    * Update one invitation
    */
-  async updateOne(invitation: InvitationRequest): Promise<Invitation> {
+  async updateOne(invitation: Except<Invitation, "id"> & { id: string }): Promise<Invitation> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/invitations/${invitation.id}`;
 
