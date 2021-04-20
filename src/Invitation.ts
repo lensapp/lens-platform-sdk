@@ -1,3 +1,4 @@
+import { Base } from "./Base";
 import type { User } from "./User";
 
 /**
@@ -22,3 +23,59 @@ export interface Invitation {
   state?: "pending" | "accepted" | "rejected" | "revoked";
   expiryTime?: string;
 }
+
+interface InvitationRequest extends Invitation {
+  id: string;
+}
+
+/**
+ *
+ * The class for consuming all `invitation` resources.
+ *
+ * @remarks
+ * This class should be generated using OpenAPI generator in the future.
+ *
+ * @alpha
+ */
+class InvitationService extends Base {
+  /**
+   * Get invitations
+   */
+  async getMany(): Promise<Invitation[]> {
+    const { apiEndpointAddress, got } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/invitations}`;
+    const json = await got.get(url);
+
+    return (json as unknown) as Invitation[];
+  }
+
+  /**
+   * Create one invitation
+   */
+  async createOne(invitation: Invitation): Promise<Invitation> {
+    const { apiEndpointAddress, got } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/invitations`;
+
+    const json = await got.post(url, {
+      json: invitation
+    });
+
+    return (json as unknown) as Invitation;
+  }
+
+  /**
+   * Update one invitation
+   */
+  async updateOne(invitation: InvitationRequest): Promise<Invitation> {
+    const { apiEndpointAddress, got } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/invitations/${invitation.id}`;
+
+    const json = await got.patch(url, {
+      json: invitation
+    });
+
+    return (json as unknown) as Invitation;
+  }
+}
+
+export { InvitationService };
