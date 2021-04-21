@@ -188,7 +188,7 @@ class SpaceService extends Base {
               return this.lensPlatformClient.team.getOne({ id: team.id });
             }
 
-            return Promise.resolve(undefined);
+            return undefined;
           }
         )
       );
