@@ -51,3 +51,7 @@ npm run test:unit [-- --watch]
 ```
 
 which is just a shortcut for `npx jest [--watch]`
+
+## Documentation
+
+We use `tsdoc` <https://github.com/microsoft/tsdoc> for inline doc comments.
