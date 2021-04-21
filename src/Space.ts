@@ -75,9 +75,9 @@ class SpaceService extends Base {
   /**
    * Update one space
    */
-  async updateOne(space: Space): Promise<Space> {
+  async updateOne(spaceName: string, space: Space): Promise<Space> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/spaces/${space.name}`;
+    const url = `${apiEndpointAddress}/spaces/${spaceName}`;
 
     const json = await got.patch(url, {
       json: space
