@@ -174,31 +174,6 @@ class SpaceService extends Base {
   }
 
   /**
-   * Get all teams in one space by space name
-   */
-  async getTeams({ name }: { name: string }): Promise<Team[]> {
-    const space = await this.getOne({ name });
-
-    let teams: Team[] = [];
-    if (space.teams) {
-      const getTeams = await Promise.all(
-        space.teams?.map(
-          async team => {
-            if (team.id) {
-              return this.lensPlatformClient.team.getOne({ id: team.id });
-            }
-
-            return undefined;
-          }
-        )
-      );
-      teams = getTeams.filter(notUndefined);
-    }
-
-    return teams;
-  }
-
-  /**
    * Remove one user by username from a space by space name
    */
   async removeOneUser({ username, name }: { username: string; name: string }): Promise<void> {
