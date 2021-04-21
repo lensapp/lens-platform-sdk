@@ -22,9 +22,9 @@ export enum Actions {
 export class PermissionsService extends Base {
   /**
    * Clarifies whether a given user can perform an action in a given space.
-   * @param action `Actions` enum value
-   * @param forSpace Space object that must contain `{ teams: Team[] }`
-   * @param forUserId string userId, defaults to the id of current access token bearer 
+   * @param action - `Actions` enum value
+   * @param forSpace - Space object that must contain `{ teams: Team[] }`
+   * @param forUserId - string userId, defaults to the id of current access token bearer
    * @returns boolean
    * @throws "Could not get role for space with no teams" exception
    */
@@ -53,8 +53,8 @@ export class PermissionsService extends Base {
 
   /**
    * Gets a role the user with specified user Id has in specified `space`.
-   * @param space Space object that must contain `{ teams: Team[] }`
-   * @param forUserId string userId, defaults to the id of current access token bearer
+   * @param space - Space object that must contain `{ teams: Team[] }`
+   * @param forUserId - string userId, defaults to the id of current access token bearer
    * @returns Role enum value
    * @throws "Could not get role for space with no teams" exception
    */
