@@ -21,6 +21,12 @@ jobs:
         git config --local user.email "github-action@mirantis.com"
         git config --local user.name "Github Action Bot"
         npm version patch
+
+    - name: '`npm version minor` if PR has label "minor"'
+      if: contains(github.event.pull_request.labels.*.name, 'minor')
+      run: |
+        npm version patch
+
     - name: Push versioning commit and tag
       uses: ad-m/github-push-action@master
       with:
