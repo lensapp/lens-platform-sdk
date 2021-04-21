@@ -18,7 +18,7 @@
   "scripts": {
     "test": "run-p lint check:type test:unit",
     "test:unit": "jest",
-    "lint": "eslint",
+    "lint": "eslint .",
     "check:type": "tsc -p tsconfig.json --noEmit",
     "build:dist": "rm -rf dist && run-p build:cjs build:esm",
     "build:cjs": "tsc -p tsconfig.cjs.json",
@@ -41,6 +41,9 @@
     "extends": [
       "xo",
       "xo-typescript/space"
+    ],
+    "ignorePatterns": [
+      "dist/**/*.js"
     ],
     "rules": {
       "@typescript-eslint/quotes": [
