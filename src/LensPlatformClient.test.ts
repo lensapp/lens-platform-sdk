@@ -48,6 +48,12 @@ describe("LensPlatformClient", () => {
     });
   });
 
+  it(".currentUserId", () => {
+    const lensPlatformClient = new LensPlatformClient(minimumOptions);
+
+    expect(lensPlatformClient.currentUserId).toEqual("1234567890");
+  });
+
   describe("proxied version of got.*", () => {
     it(("adds Authorization header"), async () => {
       const expectedHeaders = { Authorization: `Bearer ${accessToken}` };
