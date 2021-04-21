@@ -16,7 +16,7 @@ import notUndefined from "./helpers/noUndefined";
 export interface Space {
   id?: string;
   name: string;
-  description: string;
+  description?: string;
   displayName?: string;
   website?: string;
   createdById?: string;

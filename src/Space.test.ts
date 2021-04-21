@@ -25,7 +25,6 @@ describe(".space.*", () => {
       if (method === "deleteOne") {
         expect(async () => lensPlatformClient.space[method]({ name: spaceName })).not.toThrow();
       } else if (method === "updateOne") {
-        // @ts-expect-error
         expect(await lensPlatformClient.space[method](spaceName, { name: spaceName })).toEqual(response);
       } else {
         // @ts-expect-error
