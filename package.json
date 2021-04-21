@@ -18,7 +18,7 @@
   "scripts": {
     "test": "run-p lint check:type test:unit",
     "test:unit": "jest",
-    "lint": "eslint",
+    "lint": "eslint \"{src,test}/**/*.ts\"",
     "check:type": "tsc -p tsconfig.json --noEmit",
     "build:dist": "rm -rf dist && run-p build:cjs build:esm",
     "build:cjs": "tsc -p tsconfig.cjs.json",
@@ -35,9 +35,15 @@
   },
   "homepage": "https://github.com/lensapp/lens-platform-sdk#readme",
   "eslintConfig": {
+    "plugins": [
+      "eslint-plugin-tsdoc"
+    ],
     "extends": [
       "xo",
       "xo-typescript/space"
+    ],
+    "ignorePatterns": [
+      "dist"
     ],
     "rules": {
       "@typescript-eslint/quotes": [
@@ -49,7 +55,8 @@
       "@typescript-eslint/object-curly-spacing": [
         "error",
         "always"
-      ]
+      ],
+      "tsdoc/syntax": "error"
     }
   },
   "jest": {
@@ -83,6 +90,7 @@
     "eslint": "^7.24.0",
     "eslint-config-xo": "^0.35.0",
     "eslint-config-xo-typescript": "^0.38.0",
+    "eslint-plugin-tsdoc": "^0.2.14",
     "jest": "^26.6.3",
     "nock": "^13.0.11",
     "npm-run-all": "^4.1.5",

@@ -96,7 +96,7 @@ class LensPlatformClient {
    * A proxied version of `got` that
    *
    * 1) Prints request/response in console (for developer to debug issues)
-   * 2) Auto add `Authorization: `Bearer ${token}``
+   * 2) Auto add `Authorization: Bearer [token]`
    *
    */
   get got() {
