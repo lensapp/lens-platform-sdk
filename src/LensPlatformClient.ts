@@ -52,7 +52,7 @@ class LensPlatformClient {
   user: UserService;
   space: SpaceService;
   team: TeamService;
-  permissions: PermissionsService;
+  permission: PermissionsService;
   openIDConnect: OpenIdConnect;
 
   constructor(options: LensPlatformClientOptions) {
@@ -75,7 +75,7 @@ class LensPlatformClient {
     this.user = new UserService(this);
     this.space = new SpaceService(this);
     this.team = new TeamService(this);
-    this.permissions = new PermissionsService(this);
+    this.permission = new PermissionsService(this);
     this.openIDConnect = new OpenIdConnect(this);
   }
 

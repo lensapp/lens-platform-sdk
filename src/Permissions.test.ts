@@ -62,60 +62,60 @@ describe("PermissionsService", () => {
   });
 
   it("should contain a reference to `PermissionsService`", () => {
-    expect(client.permissions).toBeDefined();
+    expect(client.permission).toBeDefined();
   });
 
   describe(".getRole", () => {
     it("recognizes Owner, Admin and Member roles", () => {
-      expect(client.permissions.getRole(mockSpace1)).toEqual(Roles.Owner);
-      expect(client.permissions.getRole(mockSpace1, mockUser2.id)).toEqual(Roles.Admin);
-      expect(client.permissions.getRole(mockSpace1, mockUser3.id)).toEqual(Roles.Member);
+      expect(client.permission.getRole(mockSpace1)).toEqual(Roles.Owner);
+      expect(client.permission.getRole(mockSpace1, mockUser2.id)).toEqual(Roles.Admin);
+      expect(client.permission.getRole(mockSpace1, mockUser3.id)).toEqual(Roles.Member);
     });
 
     it("recognizes lack of role", () => {
-      expect(client.permissions.getRole(mockSpace1, mockUser4.id)).toEqual(Roles.None);
+      expect(client.permission.getRole(mockSpace1, mockUser4.id)).toEqual(Roles.None);
     });
   });
 
   describe(".canI", () => {
     it("recognizes owner priviliges", () => {
-      expect(client.permissions.canI(Actions.DeleteSpace, mockSpace1)).toBeTruthy();
-      expect(client.permissions.canI(Actions.CreateTeam, mockSpace1)).toBeTruthy();
-      expect(client.permissions.canI(Actions.DeleteTeam, mockSpace1)).toBeTruthy();
-      expect(client.permissions.canI(Actions.PatchTeam, mockSpace1)).toBeTruthy();
-      expect(client.permissions.canI(Actions.PatchInvitation, mockSpace1)).toBeTruthy();
-      expect(client.permissions.canI(Actions.CreateInvitation, mockSpace1)).toBeTruthy();
-      expect(client.permissions.canI(Actions.PatchSpace, mockSpace1)).toBeTruthy();
+      expect(client.permission.canI(Actions.DeleteSpace, mockSpace1)).toBeTruthy();
+      expect(client.permission.canI(Actions.CreateTeam, mockSpace1)).toBeTruthy();
+      expect(client.permission.canI(Actions.DeleteTeam, mockSpace1)).toBeTruthy();
+      expect(client.permission.canI(Actions.PatchTeam, mockSpace1)).toBeTruthy();
+      expect(client.permission.canI(Actions.PatchInvitation, mockSpace1)).toBeTruthy();
+      expect(client.permission.canI(Actions.CreateInvitation, mockSpace1)).toBeTruthy();
+      expect(client.permission.canI(Actions.PatchSpace, mockSpace1)).toBeTruthy();
     });
 
     it("recognizes admin priviliges", () => {
-      expect(client.permissions.canI(Actions.DeleteSpace, mockSpace1, mockUser2.id)).toBeFalsy();
-      expect(client.permissions.canI(Actions.CreateTeam, mockSpace1, mockUser2.id)).toBeTruthy();
-      expect(client.permissions.canI(Actions.DeleteTeam, mockSpace1, mockUser2.id)).toBeTruthy();
-      expect(client.permissions.canI(Actions.PatchTeam, mockSpace1, mockUser2.id)).toBeTruthy();
-      expect(client.permissions.canI(Actions.PatchInvitation, mockSpace1, mockUser2.id)).toBeTruthy();
-      expect(client.permissions.canI(Actions.CreateInvitation, mockSpace1, mockUser2.id)).toBeTruthy();
-      expect(client.permissions.canI(Actions.PatchSpace, mockSpace1, mockUser2.id)).toBeTruthy();
+      expect(client.permission.canI(Actions.DeleteSpace, mockSpace1, mockUser2.id)).toBeFalsy();
+      expect(client.permission.canI(Actions.CreateTeam, mockSpace1, mockUser2.id)).toBeTruthy();
+      expect(client.permission.canI(Actions.DeleteTeam, mockSpace1, mockUser2.id)).toBeTruthy();
+      expect(client.permission.canI(Actions.PatchTeam, mockSpace1, mockUser2.id)).toBeTruthy();
+      expect(client.permission.canI(Actions.PatchInvitation, mockSpace1, mockUser2.id)).toBeTruthy();
+      expect(client.permission.canI(Actions.CreateInvitation, mockSpace1, mockUser2.id)).toBeTruthy();
+      expect(client.permission.canI(Actions.PatchSpace, mockSpace1, mockUser2.id)).toBeTruthy();
     });
 
     it("recognizes member priviliges", () => {
-      expect(client.permissions.canI(Actions.CreateInvitation, mockSpace1, mockUser3.id)).toBeTruthy();
-      expect(client.permissions.canI(Actions.DeleteSpace, mockSpace1, mockUser3.id)).toBeFalsy();
-      expect(client.permissions.canI(Actions.CreateTeam, mockSpace1, mockUser3.id)).toBeFalsy();
-      expect(client.permissions.canI(Actions.DeleteTeam, mockSpace1, mockUser3.id)).toBeFalsy();
-      expect(client.permissions.canI(Actions.PatchTeam, mockSpace1, mockUser3.id)).toBeFalsy();
-      expect(client.permissions.canI(Actions.PatchInvitation, mockSpace1, mockUser3.id)).toBeFalsy();
-      expect(client.permissions.canI(Actions.PatchSpace, mockSpace1, mockUser3.id)).toBeFalsy();
+      expect(client.permission.canI(Actions.CreateInvitation, mockSpace1, mockUser3.id)).toBeTruthy();
+      expect(client.permission.canI(Actions.DeleteSpace, mockSpace1, mockUser3.id)).toBeFalsy();
+      expect(client.permission.canI(Actions.CreateTeam, mockSpace1, mockUser3.id)).toBeFalsy();
+      expect(client.permission.canI(Actions.DeleteTeam, mockSpace1, mockUser3.id)).toBeFalsy();
+      expect(client.permission.canI(Actions.PatchTeam, mockSpace1, mockUser3.id)).toBeFalsy();
+      expect(client.permission.canI(Actions.PatchInvitation, mockSpace1, mockUser3.id)).toBeFalsy();
+      expect(client.permission.canI(Actions.PatchSpace, mockSpace1, mockUser3.id)).toBeFalsy();
     });
 
     it("recognizes lack of priviliges (random unrelated user test)", () => {
-      expect(client.permissions.canI(Actions.DeleteSpace, mockSpace1, mockUser4.id)).toBeFalsy();
-      expect(client.permissions.canI(Actions.CreateTeam, mockSpace1, mockUser4.id)).toBeFalsy();
-      expect(client.permissions.canI(Actions.DeleteTeam, mockSpace1, mockUser4.id)).toBeFalsy();
-      expect(client.permissions.canI(Actions.PatchTeam, mockSpace1, mockUser4.id)).toBeFalsy();
-      expect(client.permissions.canI(Actions.PatchInvitation, mockSpace1, mockUser4.id)).toBeFalsy();
-      expect(client.permissions.canI(Actions.CreateInvitation, mockSpace1, mockUser4.id)).toBeFalsy();
-      expect(client.permissions.canI(Actions.PatchSpace, mockSpace1, mockUser4.id)).toBeFalsy();
+      expect(client.permission.canI(Actions.DeleteSpace, mockSpace1, mockUser4.id)).toBeFalsy();
+      expect(client.permission.canI(Actions.CreateTeam, mockSpace1, mockUser4.id)).toBeFalsy();
+      expect(client.permission.canI(Actions.DeleteTeam, mockSpace1, mockUser4.id)).toBeFalsy();
+      expect(client.permission.canI(Actions.PatchTeam, mockSpace1, mockUser4.id)).toBeFalsy();
+      expect(client.permission.canI(Actions.PatchInvitation, mockSpace1, mockUser4.id)).toBeFalsy();
+      expect(client.permission.canI(Actions.CreateInvitation, mockSpace1, mockUser4.id)).toBeFalsy();
+      expect(client.permission.canI(Actions.PatchSpace, mockSpace1, mockUser4.id)).toBeFalsy();
     });
   });
 });

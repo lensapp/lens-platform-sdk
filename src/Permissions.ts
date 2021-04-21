@@ -1,7 +1,6 @@
 import { Base } from "./Base";
-import { Space } from "./Space";
-import { Team, TeamService } from "./Team";
-import { User } from "./User";
+import type { Space } from "./Space";
+import type { Team } from "./Team";
 
 export enum Roles {
   Admin = "Admin",
@@ -21,6 +20,14 @@ export enum Actions {
 }
 
 export class PermissionsService extends Base {
+  /**
+   * Clarifies whether a given user can perform an action in a given space.
+   * @param action `Actions` enum value
+   * @param forSpace Space object that must contain `{ teams: Team[] }`
+   * @param forUserId string userId, defaults to the id of current access token bearer 
+   * @returns boolean
+   * @throws "Could not get role for space with no teams" exception
+   */
   canI(action: Actions, forSpace: Space, forUserId: string = this.lensPlatformClient.currentUserId) {
     let canI = false;
 
@@ -44,9 +51,16 @@ export class PermissionsService extends Base {
     return canI;
   }
 
+  /**
+   * Gets a role the user with specified user Id has in specified `space`.
+   * @param space Space object that must contain `{ teams: Team[] }`
+   * @param forUserId string userId, defaults to the id of current access token bearer
+   * @returns Role enum value
+   * @throws "Could not get role for space with no teams" exception
+   */
   getRole(space: Space, forUserId: string = this.lensPlatformClient.currentUserId) {
-    if (space.ownerId === forUserId) {
-      return Roles.Owner;
+    if (!space.teams) {
+      throw new Error("Could not get role for space with no teams");
     }
 
     if (this.getOwnerTeams(space).filter((team: Team) => this.isUserInTeam(team, forUserId)).length) {
@@ -67,19 +81,19 @@ export class PermissionsService extends Base {
   protected getOwnerTeams = (space: Space) => {
     const teams = space.teams ?? [];
 
-    return teams.filter((t: Team) => t.kind === "Owner");
+    return teams.filter(({ kind }) => kind === "Owner");
   };
 
   protected getAdminTeams = (space: Space) => {
     const teams = space.teams ?? [];
 
-    return teams.filter((t: Team) => t.kind === "Admin");
+    return teams.filter(({ kind }) => kind === "Admin");
   };
 
   protected getNormalTeams = (space: Space) => {
     const teams = space.teams ?? [];
 
-    return teams.filter((t: Team) => t.kind === "Normal");
+    return teams.filter(({ kind }) => kind === "Normal");
   };
 
   protected isUserInTeam = (team: Team, userId: string): boolean => {
