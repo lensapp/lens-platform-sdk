@@ -4,6 +4,7 @@ import type { Team } from "./Team";
 import type { K8sCluster } from "./K8sCluster";
 import type { Invitation } from "./Invitation";
 import type { BillingPlan } from "./BillingPlan";
+import notUndefined from "./helpers/noUndefined";
 
 /**
  *
@@ -38,7 +39,7 @@ class SpaceService extends Base {
   /**
    * Get one space by space name
    */
-  async getOne({ name, queryString }: { name: Space["name"]; queryString?: string }): Promise<Space> {
+  async getOne({ name, queryString }: { name: string; queryString?: string }): Promise<Space> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}${queryString ? `/?${queryString}` : ""}`;
 
@@ -89,7 +90,7 @@ class SpaceService extends Base {
   /**
    * Delete one space by space name
    */
-  async deleteOne({ name }: { name: Space["name"] }): Promise<void> {
+  async deleteOne({ name }: { name: string }): Promise<void> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}`;
 
@@ -102,10 +103,7 @@ class SpaceService extends Base {
   async getBoredSecret({
     name,
     clusterId
-  }: {
-    name: Space["name"];
-    clusterId: K8sCluster["id"];
-  }): Promise<{ token: string }> {
+  }: { name: string; clusterId: string }): Promise<{ token: string }> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters/${clusterId}/bored-secret`;
 
@@ -120,10 +118,7 @@ class SpaceService extends Base {
   async getClusterToken({
     name,
     clusterId
-  }: {
-    name: Space["name"];
-    clusterId: K8sCluster["id"];
-  }): Promise<{ token: string }> {
+  }: { name: string; clusterId: string }): Promise<{ token: string }> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters/${clusterId}/token`;
 
@@ -135,7 +130,7 @@ class SpaceService extends Base {
   /**
    * Get all clusters in one space by space name
    */
-  async getClusters({ name }: { name: Space["name"] }): Promise<K8sCluster[]> {
+  async getClusters({ name }: { name: string }): Promise<K8sCluster[]> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters`;
 
@@ -147,7 +142,7 @@ class SpaceService extends Base {
   /**
    * Get one cluster by cluster id in one space by space name
    */
-  async getOneCluster({ clusterId, name }: { clusterId: K8sCluster["id"]; name: Space["name"] }): Promise<K8sCluster> {
+  async getOneCluster({ clusterId, name }: { clusterId: string; name: string }): Promise<K8sCluster> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters/${clusterId}`;
 
@@ -159,7 +154,7 @@ class SpaceService extends Base {
   /**
    * Create a cluster in one space by space name
    */
-  async createOneCluster({ cluster, name }: { cluster: K8sCluster; name: Space["name"] }): Promise<K8sCluster> {
+  async createOneCluster({ cluster, name }: { cluster: K8sCluster; name: string }): Promise<K8sCluster> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters`;
 
@@ -171,7 +166,7 @@ class SpaceService extends Base {
   /**
    * Delete a cluster by cluster id in one space by space name
    */
-  async deleteOneCluster({ clusterId, name }: { clusterId: K8sCluster["id"]; name: Space["name"] }): Promise<void> {
+  async deleteOneCluster({ clusterId, name }: { clusterId: string; name: string }): Promise<void> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters/${clusterId}`;
 
@@ -179,27 +174,9 @@ class SpaceService extends Base {
   }
 
   /**
-   * Get all teams in one space by space name
-   */
-  async getTeams({ name }: { name: Space["name"] }): Promise<Team[]> {
-    const space = await this.getOne({ name });
-
-    let teams: Team[] = [];
-    if (space.teams) {
-      teams = await Promise.all(
-        space.teams?.map(
-          async team => this.lensPlatformClient.team.getOne({ id: team.id })
-        )
-      );
-    }
-
-    return teams;
-  }
-
-  /**
    * Remove one user by username from a space by space name
    */
-  async removeOneUser({ username, name }: { username: User["username"]; name: Space["name"] }): Promise<void> {
+  async removeOneUser({ username, name }: { username: string; name: string }): Promise<void> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/users/${username}`;
 
@@ -209,7 +186,7 @@ class SpaceService extends Base {
   /**
    * Get billing plan of space by space name
    */
-  async getBillingPlan({ name }: { name: Space["name"] }) {
+  async getBillingPlan({ name }: { name: string }) {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/plan`;
 

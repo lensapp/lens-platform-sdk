@@ -3,6 +3,8 @@ import { UserService } from "./User";
 import { SpaceService } from "./Space";
 import { TeamService } from "./Team";
 import { PermissionsService } from "./Permissions";
+import { InvitationService } from "./Invitation";
+
 import decode from "jwt-decode";
 import got from "got";
 import _console from "./helpers/_console";
@@ -53,6 +55,7 @@ class LensPlatformClient {
   space: SpaceService;
   team: TeamService;
   permission: PermissionsService;
+  invitation: InvitationService;
   openIDConnect: OpenIdConnect;
 
   constructor(options: LensPlatformClientOptions) {
@@ -76,6 +79,7 @@ class LensPlatformClient {
     this.space = new SpaceService(this);
     this.team = new TeamService(this);
     this.permission = new PermissionsService(this);
+    this.invitation = new InvitationService(this);
     this.openIDConnect = new OpenIdConnect(this);
   }
 

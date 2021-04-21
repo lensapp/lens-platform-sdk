@@ -1,4 +1,5 @@
 import { Base } from "./Base";
+import { Except } from "type-fest";
 
 /**
  *
@@ -28,7 +29,7 @@ export interface User {
  * @alpha
  */
 class UserService extends Base {
-  async getOne({ username }: { username: User["id"] }): Promise<User> {
+  async getOne({ username }: { username: string }): Promise<User> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}`;
     const json = await got.get(url);
@@ -36,7 +37,7 @@ class UserService extends Base {
     return (json as unknown) as User;
   }
 
-  async patchOne(user: User): Promise<User> {
+  async updateOne(user: Except<User, "username"> & { username: string }): Promise<User> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${user.username}`;
     const json = await got.patch(url, { json: user });
