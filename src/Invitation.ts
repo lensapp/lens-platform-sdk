@@ -40,7 +40,7 @@ class InvitationService extends Base {
    */
   async getMany(): Promise<Invitation[]> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/invitations}`;
+    const url = `${apiEndpointAddress}/invitations`;
     const json = await got.get(url);
 
     return (json as unknown) as Invitation[];
