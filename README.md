@@ -55,3 +55,10 @@ which is just a shortcut for `npx jest [--watch]`
 ## Documentation
 
 We use `tsdoc` <https://github.com/microsoft/tsdoc> for inline doc comments.
+
+## License
+
+Copyright (c) 2021 Mirantis, Inc.
+
+Licensed under the MIT license.
+<https://opensource.org/licenses/MIT>
