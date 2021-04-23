@@ -164,6 +164,18 @@ class SpaceService extends Base {
   }
 
   /**
+   * Update a cluster
+   */
+  async updateOneCluster({ cluster }: { cluster: K8sCluster }): Promise<K8sCluster> {
+    const { apiEndpointAddress, got } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/spaces/${cluster.space?.name}/k8sclusters/${cluster.id}`;
+
+    const json = await got.put(url, { json: cluster });
+
+    return (json as unknown) as K8sCluster;
+  }
+
+  /**
    * Delete a cluster by cluster id in one space by space name
    */
   async deleteOneCluster({ clusterId, name }: { clusterId: string; name: string }): Promise<void> {
