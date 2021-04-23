@@ -19,6 +19,11 @@ export interface LensPlatformClientOptions {
   exceptionHandler?: (exception: unknown) => void;
 }
 
+// we need to export this so
+const SDK_HTTPError extends Error {
+
+}
+
 interface DecodedAccessToken {
   acr: string;
   "allowed-origins": string[];
@@ -174,7 +179,11 @@ class LensPlatformClient {
               // @ts-expect-error
               _console.error(`error response body: ${error?.response?.body}`);
               if (exceptionHandler) {
-                exceptionHandler(error);
+                const customError: SDK_HTTPError = new Error(error.message);
+                customError.message = error.message;
+                customError.url = url;
+                customError.statusCode = error.statusCode // not sure got HTTPError has this props
+                exceptionHandler(customError);
               } else {
                 throw error;
               }
