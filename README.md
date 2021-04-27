@@ -62,4 +62,3 @@ Copyright (c) 2021 Mirantis, Inc.
 
 Licensed under the MIT license.
 <https://opensource.org/licenses/MIT>
-
