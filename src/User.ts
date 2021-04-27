@@ -37,12 +37,12 @@ class UserService extends Base {
     return (json as unknown) as User;
   }
 
-  async getOneByEmail({ email }: { email: string }): Promise<User> {
+  async getMany(queryString?: string): Promise<User[]> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/users?email=${email}`;
+    const url = `${apiEndpointAddress}/users${queryString ? `/?${queryString}` : ""}`;
     const json = await got.get(url);
 
-    return (json as unknown) as User;
+    return (json as unknown) as User[];
   }
 
   async updateOne(user: Except<User, "username"> & { username: string }): Promise<User> {
