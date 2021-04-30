@@ -1,6 +1,6 @@
 import { Base } from "./Base";
 import { Except } from "type-fest";
-import { expectExceptions, LensPlatformException } from "./exceptions";
+import { expectExceptions, NotFoundException } from "./exceptions";
 
 /**
  *
@@ -46,7 +46,7 @@ class UserService extends Base {
     const url = `${apiEndpointAddress}/users/${username}${queryString ? `?${queryString}` : ""}`;
     const json = expectExceptions(
       () => got.get(url),
-      { 404: () => new LensPlatformException(404, `User ${username} not found`) }
+      { 404: () => new NotFoundException(`User ${username} not found`) }
     );
 
     return (json as unknown) as User;
