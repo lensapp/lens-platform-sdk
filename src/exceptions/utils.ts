@@ -37,12 +37,12 @@ export type HTTPErrCodeExceptionMap<T = LensPlatformException> = Partial<Record<
  * @param fn - a function
  * @param exceptionsMap - map of HTTP error codes onto expected exceptions
  * @returns the ressult of `fn`
- * @throws extected exceptions or `LensPlatformException`
+ * @throws extected exceptions or `LensPlatformException` with code 400 if it caught something unexpected
  * @example
  * ```
  * const json = expectExceptions(
- *  async () => await got.get(url),
- *  { 404: () => new UserNotFoundException(username) }
+ *  () => got.get(url),
+ *  { 404: () => new NotFoundException(`User ${username} not found`) }
  * );
  * ```
  */
