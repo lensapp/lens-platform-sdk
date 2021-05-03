@@ -1,8 +1,8 @@
 import { Base } from "./Base";
-import type { User } from "./User";
-import type { Team } from "./Team";
+import type { User } from "./UserService";
+import type { Team } from "./TeamService";
 import type { K8sCluster } from "./K8sCluster";
-import type { Invitation } from "./Invitation";
+import type { Invitation } from "./InvitationService";
 import type { BillingPlan } from "./BillingPlan";
 import notUndefined from "./helpers/noUndefined";
 

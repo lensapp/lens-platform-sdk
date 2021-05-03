@@ -1,5 +1,5 @@
 import { Base } from "./Base";
-import type { User } from "./User";
+import type { User } from "./UserService";
 import { Except } from "type-fest";
 
 /**

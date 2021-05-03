@@ -1,6 +1,6 @@
 import { Base } from "./Base";
-import type { Space } from "./Space";
-import type { User } from "./User";
+import type { Space } from "./SpaceService";
+import type { User } from "./UserService";
 
 /**
  *

@@ -5,7 +5,7 @@ Lens Platform Client SDK
 Use SDK in Lens extension:
 
 ```ts
-import { LensPlatformClient } from "lens-platform-sdk"
+import { LensPlatformClient } from "lens-platform-sdk";
 import { Component } from "@k8slens/extensions";
 
 const lensPlatformClient = new LensPlatformClient({

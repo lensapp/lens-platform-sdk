@@ -1,9 +1,9 @@
 import { OpenIdConnect } from "./OpenIdConnect";
-import { UserService } from "./User";
-import { SpaceService } from "./Space";
-import { TeamService } from "./Team";
-import { PermissionsService } from "./Permissions";
-import { InvitationService } from "./Invitation";
+import { UserService } from "./UserService";
+import { SpaceService } from "./SpaceService";
+import { TeamService } from "./TeamService";
+import { PermissionsService } from "./PermissionsService";
+import { InvitationService } from "./InvitationService";
 
 import decode from "jwt-decode";
 import got from "got";
