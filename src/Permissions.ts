@@ -1,6 +1,6 @@
 import { Base } from "./Base";
-import type { Space } from "./Space";
-import type { Team } from "./Team";
+import type { Space } from "./SpaceService";
+import type { Team } from "./TeamService";
 
 export enum Roles {
   Admin = "Admin",
@@ -20,16 +20,16 @@ export enum Actions {
   PatchTeam
 }
 
-export class PermissionsService extends Base {
+export class Permissions {
   /**
    * Clarifies whether a given user can perform an action in a given space.
    * @param action - `Actions` enum value
    * @param forSpace - Space object that must contain `{ teams: Team[] }`
-   * @param forUserId - string userId, defaults to the id of current access token bearer
+   * @param forUserId - string userId
    * @returns boolean
    * @throws "Could not get role for space with no teams" exception
    */
-  canI(action: Actions, forSpace: Space, forUserId: string = this.lensPlatformClient.currentUserId) {
+  canI(action: Actions, forSpace: Space, forUserId: string) {
     let canI = false;
 
     switch (action) {
@@ -56,11 +56,11 @@ export class PermissionsService extends Base {
   /**
    * Gets a role the user with specified user Id has in specified `space`.
    * @param space - Space object that must contain `{ teams: Team[] }`
-   * @param forUserId - string userId, defaults to the id of current access token bearer
+   * @param forUserId - string userId
    * @returns Role enum value
    * @throws "Could not get role for space with no teams" exception
    */
-  getRole(space: Space, forUserId: string = this.lensPlatformClient.currentUserId) {
+  getRole(space: Space, forUserId: string) {
     if (!space.teams) {
       throw new Error("Could not get role for space with no teams");
     }
