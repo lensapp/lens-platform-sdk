@@ -46,9 +46,11 @@ export type HTTPErrCodeExceptionMap<T = LensSDKException> = Partial<Record<HTTPE
  * );
  * ```
  */
-export const throwExpected = <T = any>(fn: () => T, exceptionsMap: HTTPErrCodeExceptionMap): T => {
+export const throwExpected = async <T = any>(fn: () => Promise<T>, exceptionsMap: HTTPErrCodeExceptionMap): Promise<T> => {
   try {
-    return fn();
+    const result = await fn();
+
+    return result;
   } catch (e: unknown) {
     const errCode = parseHTTPErrorCode(e) ?? FALLBACK_HTTP_ERROR_CODE;
     const mappedExceptionFn = exceptionsMap[errCode];
