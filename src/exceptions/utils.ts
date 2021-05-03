@@ -40,13 +40,13 @@ export type HTTPErrCodeExceptionMap<T = LensSDKException> = Partial<Record<HTTPE
  * @throws extected exceptions or `LensPlatformException` with code 400 if it caught something unexpected
  * @example
  * ```
- * const json = expectExceptions(
+ * const json = throwExpected(
  *  () => got.get(url),
  *  { 404: () => new NotFoundException(`User ${username} not found`) }
  * );
  * ```
  */
-export const expectExceptions = <T = any>(fn: () => T, exceptionsMap: HTTPErrCodeExceptionMap): T => {
+export const throwExpected = <T = any>(fn: () => T, exceptionsMap: HTTPErrCodeExceptionMap): T => {
   try {
     return fn();
   } catch (e: unknown) {
