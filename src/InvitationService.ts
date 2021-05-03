@@ -22,7 +22,7 @@ export interface Invitation {
   invitedUserId?: string;
   invitedUser?: User;
   state?: "pending" | "accepted" | "rejected" | "revoked";
-  expiryTime?: string;
+  expiryTime?: Date | string;
 }
 
 /**
