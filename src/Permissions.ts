@@ -14,6 +14,7 @@ export enum Actions {
   PatchSpace,
   CreateInvitation,
   PatchInvitation,
+  RevokeInvitation,
   CreateTeam,
   DeleteTeam,
   PatchTeam
@@ -39,6 +40,7 @@ export class PermissionsService extends Base {
         canI = this.getRole(forSpace, forUserId) !== Roles.None;
         break;
       case Actions.PatchInvitation:
+      case Actions.RevokeInvitation:
       case Actions.PatchTeam:
       case Actions.PatchSpace:
       case Actions.CreateTeam:
