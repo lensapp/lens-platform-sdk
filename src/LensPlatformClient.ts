@@ -185,11 +185,13 @@ class LensPlatformClient {
               _console.error(`error message: ${error?.message}`);
               // @ts-expect-error
               _console.error(`error response body: ${error?.response?.body}`);
-              if (exceptionHandler) {
-                exceptionHandler(error);
-              } else {
-                throw error;
-              }
+              throw error;
+              // Disable exception handler for testing purposes
+              // if (exceptionHandler) {
+              //   exceptionHandler(error);
+              // } else {
+              //   throw error;
+              // }
             }
           };
         }

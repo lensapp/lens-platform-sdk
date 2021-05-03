@@ -58,11 +58,7 @@ describe("LensPlatformClient", () => {
     it(("adds Authorization header"), async () => {
       const expectedHeaders = { Authorization: `Bearer ${accessToken}` };
       const lensPlatformClient = new LensPlatformClient({
-        ...minimumOptions,
-        ...{
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-          exceptionHandler: () => { }
-        }
+        ...minimumOptions
       });
 
       const spies = [
@@ -75,14 +71,17 @@ describe("LensPlatformClient", () => {
       ];
 
       const _got = lensPlatformClient.got;
-      await Promise.all([
-        _got.get(apiEndpointAddress),
-        _got.post(apiEndpointAddress),
-        _got.put(apiEndpointAddress),
-        _got.patch(apiEndpointAddress),
-        _got.head(apiEndpointAddress),
-        _got.delete(apiEndpointAddress)
-      ]);
+
+      try {
+        await Promise.all([
+          _got.get(apiEndpointAddress),
+          _got.post(apiEndpointAddress),
+          _got.put(apiEndpointAddress),
+          _got.patch(apiEndpointAddress),
+          _got.head(apiEndpointAddress),
+          _got.delete(apiEndpointAddress)
+        ]);
+      } catch (e: unknown) {}
 
       spies.forEach(spy => {
         expect(spy).toBeCalledWith(apiEndpointAddress, { headers: expectedHeaders });
@@ -94,11 +93,7 @@ describe("LensPlatformClient", () => {
       const extraOptions = { json: { an: "example_extra_option" } };
       const expectedHeaders = { Authorization: `Bearer ${accessToken}` };
       const lensPlatformClient = new LensPlatformClient({
-        ...minimumOptions,
-        ...{
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-          exceptionHandler: () => { }
-        }
+        ...minimumOptions
       });
 
       const spies = [
@@ -111,14 +106,16 @@ describe("LensPlatformClient", () => {
       ];
 
       const _got = lensPlatformClient.got;
-      await Promise.all([
-        _got.get(apiEndpointAddress, extraOptions),
-        _got.post(apiEndpointAddress, extraOptions),
-        _got.put(apiEndpointAddress, extraOptions),
-        _got.patch(apiEndpointAddress, extraOptions),
-        _got.head(apiEndpointAddress, extraOptions),
-        _got.delete(apiEndpointAddress, extraOptions)
-      ]);
+      try {
+        await Promise.all([
+          _got.get(apiEndpointAddress, extraOptions),
+          _got.post(apiEndpointAddress, extraOptions),
+          _got.put(apiEndpointAddress, extraOptions),
+          _got.patch(apiEndpointAddress, extraOptions),
+          _got.head(apiEndpointAddress, extraOptions),
+          _got.delete(apiEndpointAddress, extraOptions)
+        ]);
+      } catch (e: unknown) {}
 
       spies.forEach(spy => {
         expect(spy).toBeCalledWith(apiEndpointAddress, { headers: expectedHeaders, ...extraOptions });
@@ -133,9 +130,7 @@ describe("LensPlatformClient", () => {
       const lensPlatformClient = new LensPlatformClient({
         ...minimumOptions,
         ...{
-          defaultHeaders: { "X-Consumer-Id": "xx-yy-zz" },
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-          exceptionHandler: () => { }
+          defaultHeaders: { "X-Consumer-Id": "xx-yy-zz" }
         }
       });
 
@@ -149,14 +144,17 @@ describe("LensPlatformClient", () => {
       ];
 
       const _got = lensPlatformClient.got;
-      await Promise.all([
-        _got.get(apiEndpointAddress, { headers: extraHeader }),
-        _got.post(apiEndpointAddress, { headers: extraHeader }),
-        _got.put(apiEndpointAddress, { headers: extraHeader }),
-        _got.patch(apiEndpointAddress, { headers: extraHeader }),
-        _got.head(apiEndpointAddress, { headers: extraHeader }),
-        _got.delete(apiEndpointAddress, { headers: extraHeader })
-      ]);
+
+      try {
+        await Promise.all([
+          _got.get(apiEndpointAddress, { headers: extraHeader }),
+          _got.post(apiEndpointAddress, { headers: extraHeader }),
+          _got.put(apiEndpointAddress, { headers: extraHeader }),
+          _got.patch(apiEndpointAddress, { headers: extraHeader }),
+          _got.head(apiEndpointAddress, { headers: extraHeader }),
+          _got.delete(apiEndpointAddress, { headers: extraHeader })
+        ]);
+      } catch (e: unknown) {}
 
       spies.forEach(spy => {
         expect(spy).toBeCalledWith(apiEndpointAddress, { headers: expectedHeaders });
@@ -168,11 +166,7 @@ describe("LensPlatformClient", () => {
       const extraHeader = { "X-An-Example": "Header" };
       const extraOption = { json: { an: "example_extra_option" } };
       const lensPlatformClient = new LensPlatformClient({
-        ...minimumOptions,
-        ...{
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-          exceptionHandler: () => { }
-        }
+        ...minimumOptions
       });
 
       const spies = [
@@ -185,14 +179,17 @@ describe("LensPlatformClient", () => {
       ];
 
       const _got = lensPlatformClient.got;
-      await Promise.all([
-        _got.get(apiEndpointAddress, { ...extraOption, headers: extraHeader }),
-        _got.post(apiEndpointAddress, { ...extraOption, headers: extraHeader }),
-        _got.put(apiEndpointAddress, { ...extraOption, headers: extraHeader }),
-        _got.patch(apiEndpointAddress, { ...extraOption, headers: extraHeader }),
-        _got.head(apiEndpointAddress, { ...extraOption, headers: extraHeader }),
-        _got.delete(apiEndpointAddress, { ...extraOption, headers: extraHeader })
-      ]);
+
+      try {
+        await Promise.all([
+          _got.get(apiEndpointAddress, { ...extraOption, headers: extraHeader }),
+          _got.post(apiEndpointAddress, { ...extraOption, headers: extraHeader }),
+          _got.put(apiEndpointAddress, { ...extraOption, headers: extraHeader }),
+          _got.patch(apiEndpointAddress, { ...extraOption, headers: extraHeader }),
+          _got.head(apiEndpointAddress, { ...extraOption, headers: extraHeader }),
+          _got.delete(apiEndpointAddress, { ...extraOption, headers: extraHeader })
+        ]);
+      } catch (e: unknown) {}
 
       spies.forEach(spy => {
         expect(spy).toBeCalledWith(apiEndpointAddress, {
