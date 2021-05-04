@@ -70,8 +70,7 @@ class SpaceService extends Base {
     const url = `${apiEndpointAddress}/spaces${queryString ? `/?${queryString}` : ""}`;
 
     const json = await throwExpected(
-      () => got.get(url),
-      {}
+      () => got.get(url)
     );
 
     return (json as unknown) as Space[];
@@ -294,8 +293,7 @@ class SpaceService extends Base {
     const url = `${apiEndpointAddress}/spaces/${name}/plan`;
 
     const json = await throwExpected(
-      () => got.get(url),
-      {}
+      () => got.get(url)
     );
 
     return (json as unknown) as BillingPlan;
