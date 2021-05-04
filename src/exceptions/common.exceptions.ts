@@ -24,3 +24,20 @@ export class NotFoundException extends LensSDKException {
   }
 }
 
+export class ForbiddenException extends LensSDKException {
+  constructor(message = "Fobidden") {
+    super(403, message);
+  }
+}
+
+export class TokenNotFoundException extends LensSDKException {
+  constructor(message = "Token not found") {
+    super(500, message);
+  }
+}
+
+export class BadRequestException extends LensSDKException {
+  constructor(message = "Bad request") {
+    super(400, message);
+  }
+}
