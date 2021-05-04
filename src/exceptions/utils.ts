@@ -29,20 +29,25 @@ const parseHTTPErrorCode = (exception: unknown): HTTPErrorCode | null => {
  * };
  * ```
  */
-export type HTTPErrCodeExceptionMap<T = LensSDKException> = Partial<Record<HTTPErrorCode, () => T>>;
+export type HTTPErrCodeExceptionMap<T = LensSDKException> = Partial<Record<HTTPErrorCode, (e?: unknown) => T>>;
 
 /**
  * Executes a given function, catching all exceptions. When an exception is caught
  * it is converted to strongly-typed `LensPlatformExtension` and thrown again.
  * @param fn - a function
- * @param exceptionsMap - map of HTTP error codes onto expected exceptions
+ * @param exceptionsMap - map of HTTP error codes onto expected exception creators
  * @returns the ressult of `fn`
  * @throws extected exceptions or `LensPlatformException` with code 400 if it caught something unexpected
  * @example
  * ```
  * const json = throwExpected(
  *  () => got.get(url),
- *  { 404: () => new NotFoundException(`User ${username} not found`) }
+ *    {
+ *      404: e => e.option.url.path === "/user" ?
+ *        new NotFoundException(`User ${username} not found`) :
+ *        new NotFoundException(`Something else not found`),
+ *      500: () => new TokenNotFoundException()
+ *    }
  * );
  * ```
  */
@@ -57,7 +62,7 @@ export const throwExpected = async <T = any>(fn: () => Promise<T>, exceptionsMap
 
     if (mappedExceptionFn) {
       // Throw expected exception
-      throw mappedExceptionFn();
+      throw mappedExceptionFn(e);
     } else {
       // Throw strongly-typed unexpected exception
       throw new LensSDKException(errCode, "Unexpected exception [Lens Platform SDK]: " + HTTPErrorCodes[errCode], e);
