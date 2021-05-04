@@ -12,8 +12,7 @@ import {
   TokenNotFoundException,
   SpaceHasTooManyClustersException,
   BadRequestException,
-  CantRemoveOwnerFromSpaceException,
-  UserNameNotFoundException
+  CantRemoveOwnerFromSpace
 } from "./exceptions";
 
 /**
@@ -72,7 +71,8 @@ class SpaceService extends Base {
     const url = `${apiEndpointAddress}/spaces${queryString ? `/?${queryString}` : ""}`;
 
     const json = await throwExpected(
-      () => got.get(url)
+      () => got.get(url),
+      {}
     );
 
     return (json as unknown) as Space[];
@@ -279,11 +279,12 @@ class SpaceService extends Base {
     await throwExpected(
       () => got.delete(url),
       {
-        404: e => e?.body.message.includes(name) ?
-          new SpaceNotFoundException(name) :
-          new UserNameNotFoundException(username),
+        // eslint-disable-next-line
+        // TODO: differentiate between space and cluster not being found,
+        // improve error handling here overall
+        404: () => new SpaceNotFoundException(name),
         403: () => new ForbiddenException(),
-        422: () => new CantRemoveOwnerFromSpaceException(username)
+        422: () => new CantRemoveOwnerFromSpace(username)
       }
     );
   }
@@ -296,20 +297,9 @@ class SpaceService extends Base {
     const url = `${apiEndpointAddress}/spaces/${name}/plan`;
 
     const json = await throwExpected(
-      () => got.get(url)
+      () => got.get(url),
+      {}
     );
-
-    return (json as unknown) as BillingPlan;
-  }
-
-  /**
-   * Downgrades the billing plan of space by space name
-   */
-  async downgradeBillingPlan({ name }: { name: string }) {
-    const { apiEndpointAddress, got } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/spaces/${name}/plan`;
-
-    const json = await got.delete(url);
 
     return (json as unknown) as BillingPlan;
   }
