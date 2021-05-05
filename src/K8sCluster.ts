@@ -13,7 +13,6 @@ export interface K8sCluster {
   kind: string;
   region?: string;
   description?: string;
-  ownerId?: string;
   createdById?: string;
   spaceId?: string;
   space?: Space;
