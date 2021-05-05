@@ -92,6 +92,7 @@ export class Permissions {
    * @param forUserId - string userId
    * @returns boolean
    * @throws "Could not get role for space with no teams" exception
+   * @deprecated Use .canSpace instead.
    */
   canI(action: Actions, forSpace: Space, forUserId: string) {
     return this.canSpace(action, forSpace, forUserId);

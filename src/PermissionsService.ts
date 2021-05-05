@@ -45,6 +45,7 @@ export class PermissionsService extends Base {
    * @param forUserId - string userId, defaults to the id of current access token bearer
    * @returns boolean
    * @throws "Could not get role for space with no teams" exception
+   * @deprecated Use .canSpace instead.
    */
   canI(action: Actions, forSpace: Space, forUserId: string = this.lensPlatformClient.currentUserId) {
     return this.canSpace(action, forSpace, forUserId);
