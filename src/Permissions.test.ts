@@ -1,5 +1,5 @@
-import type { Space, Team, User } from ".";
-import { LensPlatformClient, Roles, Actions } from ".";
+import type { Space, Team, User, K8sCluster } from ".";
+import { LensPlatformClient, Roles, Actions, K8sClusterActions } from ".";
 import { minimumOptions } from "./LensPlatformClient.test";
 
 // Current user (Owner)
@@ -53,6 +53,12 @@ const mockSpace1: Space = {
   users: [mockUser1, mockUser2, mockUser3],
   teams: [mockTeam1, mockTeam2, mockTeam3]
 };
+const mockK8sCluster1: K8sCluster = {
+  id: "mk1",
+  createdById: mockUser3.id,
+  name: "",
+  kind: "K8sCluster"
+};
 
 describe("PermissionsService", () => {
   let client: LensPlatformClient;
@@ -77,48 +83,74 @@ describe("PermissionsService", () => {
     });
   });
 
-  describe(".canI", () => {
+  describe(".canSpace", () => {
     it("recognizes owner privileges", () => {
-      expect(client.permission.canI(Actions.DeleteSpace, mockSpace1)).toBeTruthy();
-      expect(client.permission.canI(Actions.CreateTeam, mockSpace1)).toBeTruthy();
-      expect(client.permission.canI(Actions.DeleteTeam, mockSpace1)).toBeTruthy();
-      expect(client.permission.canI(Actions.PatchTeam, mockSpace1)).toBeTruthy();
-      expect(client.permission.canI(Actions.PatchInvitation, mockSpace1)).toBeTruthy();
-      expect(client.permission.canI(Actions.RevokeInvitation, mockSpace1)).toBeTruthy();
-      expect(client.permission.canI(Actions.CreateInvitation, mockSpace1)).toBeTruthy();
-      expect(client.permission.canI(Actions.PatchSpace, mockSpace1)).toBeTruthy();
+      expect(client.permission.canSpace(Actions.DeleteSpace, mockSpace1)).toBeTruthy();
+      expect(client.permission.canSpace(Actions.CreateTeam, mockSpace1)).toBeTruthy();
+      expect(client.permission.canSpace(Actions.DeleteTeam, mockSpace1)).toBeTruthy();
+      expect(client.permission.canSpace(Actions.PatchTeam, mockSpace1)).toBeTruthy();
+      expect(client.permission.canSpace(Actions.PatchInvitation, mockSpace1)).toBeTruthy();
+      expect(client.permission.canSpace(Actions.RevokeInvitation, mockSpace1)).toBeTruthy();
+      expect(client.permission.canSpace(Actions.CreateInvitation, mockSpace1)).toBeTruthy();
+      expect(client.permission.canSpace(Actions.PatchSpace, mockSpace1)).toBeTruthy();
     });
 
     it("recognizes admin privileges", () => {
-      expect(client.permission.canI(Actions.DeleteSpace, mockSpace1, mockUser2.id)).toBeFalsy();
-      expect(client.permission.canI(Actions.CreateTeam, mockSpace1, mockUser2.id)).toBeTruthy();
-      expect(client.permission.canI(Actions.DeleteTeam, mockSpace1, mockUser2.id)).toBeTruthy();
-      expect(client.permission.canI(Actions.PatchTeam, mockSpace1, mockUser2.id)).toBeTruthy();
-      expect(client.permission.canI(Actions.PatchInvitation, mockSpace1, mockUser2.id)).toBeTruthy();
-      expect(client.permission.canI(Actions.RevokeInvitation, mockSpace1, mockUser2.id)).toBeTruthy();
-      expect(client.permission.canI(Actions.CreateInvitation, mockSpace1, mockUser2.id)).toBeTruthy();
-      expect(client.permission.canI(Actions.PatchSpace, mockSpace1, mockUser2.id)).toBeTruthy();
+      expect(client.permission.canSpace(Actions.DeleteSpace, mockSpace1, mockUser2.id)).toBeFalsy();
+      expect(client.permission.canSpace(Actions.CreateTeam, mockSpace1, mockUser2.id)).toBeTruthy();
+      expect(client.permission.canSpace(Actions.DeleteTeam, mockSpace1, mockUser2.id)).toBeTruthy();
+      expect(client.permission.canSpace(Actions.PatchTeam, mockSpace1, mockUser2.id)).toBeTruthy();
+      expect(client.permission.canSpace(Actions.PatchInvitation, mockSpace1, mockUser2.id)).toBeTruthy();
+      expect(client.permission.canSpace(Actions.RevokeInvitation, mockSpace1, mockUser2.id)).toBeTruthy();
+      expect(client.permission.canSpace(Actions.CreateInvitation, mockSpace1, mockUser2.id)).toBeTruthy();
+      expect(client.permission.canSpace(Actions.PatchSpace, mockSpace1, mockUser2.id)).toBeTruthy();
     });
 
     it("recognizes member privileges", () => {
-      expect(client.permission.canI(Actions.CreateInvitation, mockSpace1, mockUser3.id)).toBeTruthy();
-      expect(client.permission.canI(Actions.DeleteSpace, mockSpace1, mockUser3.id)).toBeFalsy();
-      expect(client.permission.canI(Actions.CreateTeam, mockSpace1, mockUser3.id)).toBeFalsy();
-      expect(client.permission.canI(Actions.DeleteTeam, mockSpace1, mockUser3.id)).toBeFalsy();
-      expect(client.permission.canI(Actions.PatchTeam, mockSpace1, mockUser3.id)).toBeFalsy();
-      expect(client.permission.canI(Actions.PatchInvitation, mockSpace1, mockUser3.id)).toBeFalsy();
-      expect(client.permission.canI(Actions.RevokeInvitation, mockSpace1, mockUser3.id)).toBeFalsy();
-      expect(client.permission.canI(Actions.PatchSpace, mockSpace1, mockUser3.id)).toBeFalsy();
+      expect(client.permission.canSpace(Actions.CreateInvitation, mockSpace1, mockUser3.id)).toBeTruthy();
+      expect(client.permission.canSpace(Actions.DeleteSpace, mockSpace1, mockUser3.id)).toBeFalsy();
+      expect(client.permission.canSpace(Actions.CreateTeam, mockSpace1, mockUser3.id)).toBeFalsy();
+      expect(client.permission.canSpace(Actions.DeleteTeam, mockSpace1, mockUser3.id)).toBeFalsy();
+      expect(client.permission.canSpace(Actions.PatchTeam, mockSpace1, mockUser3.id)).toBeFalsy();
+      expect(client.permission.canSpace(Actions.PatchInvitation, mockSpace1, mockUser3.id)).toBeFalsy();
+      expect(client.permission.canSpace(Actions.RevokeInvitation, mockSpace1, mockUser3.id)).toBeFalsy();
+      expect(client.permission.canSpace(Actions.PatchSpace, mockSpace1, mockUser3.id)).toBeFalsy();
     });
 
     it("recognizes lack of privileges (random unrelated user test)", () => {
-      expect(client.permission.canI(Actions.DeleteSpace, mockSpace1, mockUser4.id)).toBeFalsy();
-      expect(client.permission.canI(Actions.CreateTeam, mockSpace1, mockUser4.id)).toBeFalsy();
-      expect(client.permission.canI(Actions.DeleteTeam, mockSpace1, mockUser4.id)).toBeFalsy();
-      expect(client.permission.canI(Actions.PatchTeam, mockSpace1, mockUser4.id)).toBeFalsy();
-      expect(client.permission.canI(Actions.PatchInvitation, mockSpace1, mockUser4.id)).toBeFalsy();
-      expect(client.permission.canI(Actions.CreateInvitation, mockSpace1, mockUser4.id)).toBeFalsy();
-      expect(client.permission.canI(Actions.PatchSpace, mockSpace1, mockUser4.id)).toBeFalsy();
+      expect(client.permission.canSpace(Actions.DeleteSpace, mockSpace1, mockUser4.id)).toBeFalsy();
+      expect(client.permission.canSpace(Actions.CreateTeam, mockSpace1, mockUser4.id)).toBeFalsy();
+      expect(client.permission.canSpace(Actions.DeleteTeam, mockSpace1, mockUser4.id)).toBeFalsy();
+      expect(client.permission.canSpace(Actions.PatchTeam, mockSpace1, mockUser4.id)).toBeFalsy();
+      expect(client.permission.canSpace(Actions.PatchInvitation, mockSpace1, mockUser4.id)).toBeFalsy();
+      expect(client.permission.canSpace(Actions.CreateInvitation, mockSpace1, mockUser4.id)).toBeFalsy();
+      expect(client.permission.canSpace(Actions.PatchSpace, mockSpace1, mockUser4.id)).toBeFalsy();
+    });
+  });
+
+  describe(".canK8sCluster", () => {
+    it("user can delete cluster created by the user", () => {
+      expect(client.permission.canK8sCluster(
+        K8sClusterActions.DeleteK8sCluster, mockSpace1, mockK8sCluster1, mockUser3.id)
+      ).toBeTruthy();
+    });
+
+    it("Admin can delete", () => {
+      expect(client.permission.canK8sCluster(
+        K8sClusterActions.DeleteK8sCluster, mockSpace1, mockK8sCluster1, mockUser2.id)
+      ).toBeTruthy();
+    });
+
+    it("Owner can delete", () => {
+      expect(client.permission.canK8sCluster(
+        K8sClusterActions.DeleteK8sCluster, mockSpace1, mockK8sCluster1, mockUser1.id)
+      ).toBeTruthy();
+    });
+
+    it("non-owner user can't delete", () => {
+      expect(client.permission.canK8sCluster(
+        K8sClusterActions.DeleteK8sCluster, mockSpace1, mockK8sCluster1, mockUser4.id)
+      ).toBeFalsy();
     });
   });
 });
