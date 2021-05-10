@@ -127,11 +127,13 @@ describe("LensPlatformClient", () => {
     });
 
     it(("merged headers"), async () => {
+      const defaultHeaders = { "X-Consumer-Id": "xx-yy-zz" };
       const extraHeader = { "X-An-Example": "Header" };
-      const expectedHeaders = { Authorization: `Bearer ${accessToken}`, ...extraHeader };
+      const expectedHeaders = { Authorization: `Bearer ${accessToken}`, ...extraHeader, ...defaultHeaders };
       const lensPlatformClient = new LensPlatformClient({
         ...minimumOptions,
         ...{
+          defaultHeaders: { "X-Consumer-Id": "xx-yy-zz" },
           // eslint-disable-next-line @typescript-eslint/no-empty-function
           exceptionHandler: () => { }
         }

@@ -16,8 +16,11 @@ export interface LensPlatformClientOptions {
   keyCloakAddress: string;
   keycloakRealm: string;
   apiEndpointAddress: string;
+  defaultHeaders?: RequestHeaders;
   exceptionHandler?: (exception: unknown) => void;
 }
+
+type RequestHeaders = Record<string, string>;
 
 interface DecodedAccessToken {
   acr: string;
@@ -57,6 +60,7 @@ class LensPlatformClient {
   permission: PermissionsService;
   invitation: InvitationService;
   openIDConnect: OpenIdConnect;
+  defaultHeaders: RequestHeaders|undefined;
 
   constructor(options: LensPlatformClientOptions) {
     if (!options) {
@@ -73,6 +77,7 @@ class LensPlatformClient {
     this.keyCloakAddress = options.keyCloakAddress;
     this.keycloakRealm = options.keycloakRealm;
     this.apiEndpointAddress = options.apiEndpointAddress;
+    this.defaultHeaders = options.defaultHeaders ?? {};
     this.exceptionHandler = options.exceptionHandler;
 
     this.user = new UserService(this);
@@ -123,6 +128,7 @@ class LensPlatformClient {
   get got() {
     const { accessToken, getAccessToken, exceptionHandler } = this;
     const token = getAccessToken && typeof getAccessToken === "function" ? getAccessToken() : accessToken;
+    const defaultHeaders = this.defaultHeaders;
     const proxy = new Proxy(got, {
       get(target: Got, key: string) {
         // @ts-ignore
@@ -146,13 +152,16 @@ class LensPlatformClient {
               // Print HTTP request info in developer console
               _console.log(`${key?.toUpperCase()} ${url}`);
 
+              const requestHeaders: RequestHeaders = {
+                Authorization: `Bearer ${token}`,
+                ...headers,
+                ...defaultHeaders
+              };
+
               const _arg = [
                 url,
                 {
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                    ...headers
-                  },
+                  headers: requestHeaders,
                   // Merge options
                   ...restOptions
                 }
