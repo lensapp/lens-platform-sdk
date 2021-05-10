@@ -8,6 +8,7 @@ import type { Space } from "./SpaceService";
  * @alpha
  */
 export interface K8sCluster {
+  apiVersion?: string;
   id?: string;
   name: string;
   kind: string;
@@ -16,4 +17,10 @@ export interface K8sCluster {
   createdById?: string;
   spaceId?: string;
   space?: Space;
+  metadata?: Record<string, any>;
+  status?: {
+    phase?: string;
+    reason?: string;
+    message?: string;
+  };
 }
