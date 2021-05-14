@@ -31,7 +31,7 @@ jobs:
     - name: '`npm version major` if PR has label "major"'
       if: contains(github.event.pull_request.labels.*.name, 'major')
       run: |
-        npm version minor
+        npm version major
     - name: Push versioning commit and tag
       uses: ad-m/github-push-action@master
       with:
