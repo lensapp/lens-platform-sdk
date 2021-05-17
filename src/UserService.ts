@@ -50,7 +50,10 @@ class UserService extends Base {
     return (json as unknown) as User[];
   }
 
-  async updateOne(user: Except<User, "username"> & { username: string } & { attributes?: UserAttributes }): Promise<User> {
+  /**
+   * Updating requires both username and email
+   */
+  async updateOne(user: Except<User, "username" | "email"> & { username: string; email: string } & { attributes?: UserAttributes }): Promise<User> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${user.username}`;
     const json = await got.patch(url, { json: user });
