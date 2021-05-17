@@ -13,6 +13,12 @@ export interface User {
   email?: string;
   username?: string;
   fullname?: string;
+  userAttributes?: Array<{
+    id: string;
+    userId: string;
+    value: string;
+    name: "company" | "tshirt" | "fullname";
+  }>;
 }
 
 export interface UserAttributes {
