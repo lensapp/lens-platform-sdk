@@ -15,6 +15,12 @@ export interface User {
   fullname?: string;
 }
 
+export interface UserAttributes {
+  fullname?: string;
+  company?: string;
+  tshirt?: string;
+}
+
 /**
  *
  * The class for consuming all `user` resources.
@@ -44,7 +50,7 @@ class UserService extends Base {
     return (json as unknown) as User[];
   }
 
-  async updateOne(user: Except<User, "username"> & { username: string }): Promise<User> {
+  async updateOne(user: Except<User, "username"> & { username: string } & { attributes?: UserAttributes }): Promise<User> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${user.username}`;
     const json = await got.patch(url, { json: user });
