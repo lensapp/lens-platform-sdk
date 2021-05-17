@@ -20,6 +20,7 @@
     "test:unit": "jest",
     "lint": "eslint \"{src,test}/**/*.ts\"",
     "check:type": "tsc -p tsconfig.json --noEmit",
+    "build": "npm run build:dist",
     "build:dist": "rm -rf dist && run-p build:cjs build:esm",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:esm": "tsc -p tsconfig.esm.json && echo '{\"type\": \"module\"}'> dist/esm/package.json"
