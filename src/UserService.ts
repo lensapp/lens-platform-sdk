@@ -40,9 +40,9 @@ export interface UserAttributes {
  * @alpha
  */
 class UserService extends Base {
-  async getOne({ username }: { username: string }): Promise<User> {
+  async getOne({ username }: { username: string }, queryString?: string): Promise<User> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/users/${username}`;
+    const url = `${apiEndpointAddress}/users/${username}${queryString ? `?${queryString}` : ""}`;
     const json = await got.get(url);
 
     return (json as unknown) as User;
@@ -50,7 +50,7 @@ class UserService extends Base {
 
   async getMany(queryString?: string): Promise<User[]> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/users${queryString ? `/?${queryString}` : ""}`;
+    const url = `${apiEndpointAddress}/users${queryString ? `?${queryString}` : ""}`;
     const json = await got.get(url);
 
     return (json as unknown) as User[];
