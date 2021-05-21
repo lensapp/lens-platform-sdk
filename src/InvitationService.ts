@@ -12,6 +12,7 @@ import { Except } from "type-fest";
 export interface Invitation {
   spaceId?: string;
   spaceName?: string;
+  spaceDescription?: string;
   invitedUsername?: string;
   kind?: string;
   id?: string;
