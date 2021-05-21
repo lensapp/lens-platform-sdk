@@ -6,6 +6,11 @@
  * @alpha
  */
 export interface BillingPlan {
+  code: string;
+  name: string;
+  description: string;
+  price: number;
+  support: string;
   maxUsers: number;
   maxCatalogItems: number;
   maxClusters: number;
