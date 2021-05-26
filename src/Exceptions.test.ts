@@ -39,6 +39,7 @@ describe(".users.*", () => {
       // Check exact exception
       expect(e).toStrictEqual(expectedException);
       // Check reflected type
+      expect(e).toBeInstanceOf(NotFoundException);
       expect(e).toBeInstanceOf(LensSDKException);
     }
   });

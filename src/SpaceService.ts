@@ -11,7 +11,8 @@ import {
   ForbiddenException,
   TokenNotFoundException,
   SpaceHasTooManyClustersException,
-  BadRequestException
+  BadRequestException,
+  CantRemoveOwnerFromSpaceException
 } from "./exceptions";
 
 /**
@@ -280,7 +281,8 @@ class SpaceService extends Base {
         // TODO: differentiate between space and cluster not being found,
         // improve error handling here overall
         404: () => new SpaceNotFoundException(name),
-        403: () => new ForbiddenException()
+        403: () => new ForbiddenException(),
+        422: () => new CantRemoveOwnerFromSpaceException(username)
       }
     );
   }
