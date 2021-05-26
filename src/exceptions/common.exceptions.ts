@@ -26,13 +26,6 @@ export class NotFoundException extends LensSDKException {
   }
 }
 
-export class UnauthorizedException extends LensSDKException {
-  constructor(message = "Failed to verify authorization token") {
-    super(401, message);
-    Object.setPrototypeOf(this, UnauthorizedException.prototype);
-  }
-}
-
 export class ForbiddenException extends LensSDKException {
   constructor(message = "Fobidden") {
     super(403, message);
@@ -51,12 +44,5 @@ export class BadRequestException extends LensSDKException {
   constructor(message = "Bad request") {
     super(400, message);
     Object.setPrototypeOf(this, BadRequestException.prototype);
-  }
-}
-
-export class UnprocessableEntityException extends LensSDKException {
-  constructor(message = "Unprocessable entity") {
-    super(422, message);
-    Object.setPrototypeOf(this, UnprocessableEntityException);
   }
 }

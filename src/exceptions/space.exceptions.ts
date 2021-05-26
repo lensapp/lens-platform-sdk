@@ -27,21 +27,3 @@ export class CantRemoveOwnerFromSpaceException extends LensSDKException {
     Object.setPrototypeOf(this, CantRemoveOwnerFromSpaceException.prototype);
   }
 }
-
-export class SpaceNameReservedException extends LensSDKException {
-  constructor(spaceName: string) {
-    super(422, `Space name '${spaceName}' is already reserved, please use a different name`);
-  }
-}
-
-export class SpaceHasTooManyClustersException extends LensSDKException {
-  constructor(spaceName: string) {
-    super(422, `Space '${spaceName}' has too many k8s clusters`);
-  }
-}
-
-export class CantRemoveOwnerFromSpace extends LensSDKException {
-  constructor(userName: string) {
-    super(422, `Cannot remove Owner '${userName}' from space`);
-  }
-}
