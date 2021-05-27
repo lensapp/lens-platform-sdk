@@ -16,7 +16,7 @@
   },
   "main": "./dist/cjs/index.js",
   "scripts": {
-    "test": "run -p lint check:type test:unit test:e2e",
+    "test": "npm run lint && npm run check:type && npm run test:unit && npm run test:e2e",
     "test:unit": "jest",
     "test:e2e": "jest --runInBand --config ./integration-test/integration-test.json",
     "lint": "eslint \"{src,test}/**/*.ts\"",
