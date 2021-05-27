@@ -36,7 +36,7 @@ describe(".users.*", () => {
     const expectedException = new NotFoundException(`User ${invalidUserName} not found`);
 
     try {
-      const _ = await lensPlatformClient.user.getOne({ username: invalidUserName });
+      await lensPlatformClient.user.getOne({ username: invalidUserName });
     } catch (e: unknown) {
       // Check exact exception
       expect(e).toStrictEqual(expectedException);
@@ -48,7 +48,7 @@ describe(".users.*", () => {
 
   it("throws proper unexpected exception", async () => {
     try {
-      const _ = await lensPlatformClient.user.getOne({ username: brokenUserName });
+      await lensPlatformClient.user.getOne({ username: brokenUserName });
     } catch (e: unknown) {
       expect(e).toBeInstanceOf(LensSDKException);
 
