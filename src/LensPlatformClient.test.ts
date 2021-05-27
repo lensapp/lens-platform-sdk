@@ -81,12 +81,14 @@ describe("LensPlatformClient", () => {
           _got.head(apiEndpointAddress),
           _got.delete(apiEndpointAddress)
         ]);
-      } catch (e: unknown) {}
-
-      spies.forEach(spy => {
-        expect(spy).toBeCalledWith(apiEndpointAddress, { headers: expectedHeaders });
-        spy.mockRestore();
-      });
+      } catch (e: unknown) {
+        // Do not handle exceptions
+      } finally {
+        spies.forEach(spy => {
+          expect(spy).toBeCalledWith(apiEndpointAddress, { headers: expectedHeaders });
+          spy.mockRestore();
+        });
+      }
     });
 
     it(("merged request options"), async () => {
@@ -115,12 +117,14 @@ describe("LensPlatformClient", () => {
           _got.head(apiEndpointAddress, extraOptions),
           _got.delete(apiEndpointAddress, extraOptions)
         ]);
-      } catch (e: unknown) {}
-
-      spies.forEach(spy => {
-        expect(spy).toBeCalledWith(apiEndpointAddress, { headers: expectedHeaders, ...extraOptions });
-        spy.mockRestore();
-      });
+      } catch (e: unknown) {
+        // Do not handle exceptions
+      } finally {
+        spies.forEach(spy => {
+          expect(spy).toBeCalledWith(apiEndpointAddress, { headers: expectedHeaders, ...extraOptions });
+          spy.mockRestore();
+        });
+      }
     });
 
     it(("merged headers"), async () => {
@@ -154,12 +158,14 @@ describe("LensPlatformClient", () => {
           _got.head(apiEndpointAddress, { headers: extraHeader }),
           _got.delete(apiEndpointAddress, { headers: extraHeader })
         ]);
-      } catch (e: unknown) {}
-
-      spies.forEach(spy => {
-        expect(spy).toBeCalledWith(apiEndpointAddress, { headers: expectedHeaders });
-        spy.mockRestore();
-      });
+      } catch (e: unknown) {
+        // Do not handle exceptions
+      } finally {
+        spies.forEach(spy => {
+          expect(spy).toBeCalledWith(apiEndpointAddress, { headers: expectedHeaders });
+          spy.mockRestore();
+        });
+      }
     });
 
     it(("merged headers and request options at the same time"), async () => {
@@ -189,18 +195,20 @@ describe("LensPlatformClient", () => {
           _got.head(apiEndpointAddress, { ...extraOption, headers: extraHeader }),
           _got.delete(apiEndpointAddress, { ...extraOption, headers: extraHeader })
         ]);
-      } catch (e: unknown) {}
-
-      spies.forEach(spy => {
-        expect(spy).toBeCalledWith(apiEndpointAddress, {
-          headers: {
-            ...extraHeader,
-            ...{ Authorization: `Bearer ${accessToken}` }
-          },
-          ...extraOption
+      } catch (e: unknown) {
+        // Do not handle exceptions
+      } finally {
+        spies.forEach(spy => {
+          expect(spy).toBeCalledWith(apiEndpointAddress, {
+            headers: {
+              ...extraHeader,
+              ...{ Authorization: `Bearer ${accessToken}` }
+            },
+            ...extraOption
+          });
+          spy.mockRestore();
         });
-        spy.mockRestore();
-      });
+      }
     });
   });
 });
