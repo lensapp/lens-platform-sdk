@@ -10,6 +10,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      STAGING_USERNAME: ${{ secrets.STAGING_USERNAME }}
+      STAGING_PASSWORD: ${{ secrets.STAGING_PASSWORD }}
     strategy:
       matrix:
         node-version: [12, 14, 16]
