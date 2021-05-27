@@ -16,7 +16,6 @@ jobs:
       KEYCLOAK_ADDRESS: ${{ secrets.KEYCLOAK_ADDRESS }}
       KEYCLOAK_REALM: ${{ secrets.KEYCLOAK_REALM }}
       API_ENDPOINT_ADDRESS: ${{ secrets.API_ENDPOINT_ADDRESS }}
-      TOKEN_HOST: ${{ secrets.TOKEN_HOST }}
     strategy:
       matrix:
         node-version: [12, 14, 16]
