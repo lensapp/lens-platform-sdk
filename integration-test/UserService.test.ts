@@ -1,4 +1,4 @@
-import { LensPlatformClient } from "../";
+import LensPlatformClient from "../src/LensPlatformClient";
 
 const user = {
   username: process.env.STAGING_USERNAME,
