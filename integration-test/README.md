@@ -10,3 +10,5 @@ The integration tests expect `STAGING_USERNAME` and `STAGING_PASSWORD` environme
 - API_ENDPOINT_ADDRESS, Url to the backend
 
 You may specify these in .env file in the root of the project (don't commit this file to the repository).
+
+Note: The Keycloak instance must allow Direct Access Grant so that the test user can fetch token using username/password credentials.
