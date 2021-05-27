@@ -9,7 +9,7 @@ import { PlanService } from "./PlanService";
 import decode from "jwt-decode";
 import got from "got";
 import _console from "./helpers/_console";
-import type { Options, Got, Response, CancelableRequest } from "got";
+import type { Options, Got, CancelableRequest, GotRequestFunction } from "got";
 
 export interface LensPlatformClientOptions {
   accessToken?: string;
@@ -45,6 +45,25 @@ interface DecodedAccessToken {
   sub: string;
   typ: string;
 }
+
+/**
+ * TypeGuard to determine if type is GotRequestFunction
+ */
+const isGotRequestFunction = (
+  func: any, key: keyof Got
+): func is GotRequestFunction =>
+  typeof func === "function" &&
+  ["get", "post", "put", "patch", "head", "delete"].includes(key);
+
+/**
+ * TypeGuard to determine if type is CancelableRequest | Request
+ * @remarks This is needed because for some reason the return of GotRequestFunction
+ * in got is Request | CancelableRequest
+ */
+const isCancelableRequest = (obj: any): obj is CancelableRequest => {
+  // Unlike CancelableRequest, Request doesn't have these props
+  return obj.json !== undefined && obj.buffer !== undefined && obj.text !== undefined;
+};
 
 class LensPlatformClient {
   accessToken: LensPlatformClientOptions["accessToken"];
@@ -130,11 +149,10 @@ class LensPlatformClient {
     const token = getAccessToken && typeof getAccessToken === "function" ? getAccessToken() : accessToken;
     const defaultHeaders = this.defaultHeaders;
     const proxy = new Proxy(got, {
-      get(target: Got, key: string) {
-        // @ts-ignore
-        const prop = target[key]; // Method = get/post/put etc
+      get(target: Got, key: keyof Got) {
+        const prop = target[key];
 
-        if (typeof prop === "function") {
+        if (isGotRequestFunction(prop, key)) {
           return async (...arg: [string, Options, ...any]) => {
             try {
               const url = arg[0];
@@ -158,25 +176,27 @@ class LensPlatformClient {
                 ...defaultHeaders
               };
 
-              const _arg = [
-                url,
-                {
-                  headers: requestHeaders,
-                  // Merge options
-                  ...restOptions
-                }
-              ];
+              const requestOptions = {
+                headers: requestHeaders,
+                // Merge options
+                ...restOptions
+              };
 
-              _console.log(`request arguments ${JSON.stringify(_arg)}`);
+              _console.log(`request arguments ${JSON.stringify(requestOptions)}`);
 
-              const responsePromise: CancelableRequest<Response<string>> = prop(..._arg);
-              const [response, json] = await Promise.all([responsePromise, responsePromise?.json()]);
+              const request = prop(url, requestOptions);
 
-              // Print HTTP response info in developer console
-              _console.log(`${key?.toUpperCase()} ${response?.statusCode} ${response?.statusMessage} ${url}`);
-              _console.log(`response body: ${response?.body}`);
+              if (isCancelableRequest(request)) {
+                const [response, json] = await Promise.all([request, request.json()]);
 
-              return json;
+                // Print HTTP response info in developer console
+                _console.log(`${key?.toUpperCase()} ${(response as any)?.statusCode} ${(response as any)?.statusMessage} ${url} `);
+                _console.log(`response body: ${(response as any)?.body}`);
+                return json;
+              }
+
+              // Unlikely to reach here, throw if does
+              throw new Error("[LENS-SPACES-SDK-INTERNAL-ERROR] request type is not CancelableRequest");
             } catch (error: unknown) {
               // @ts-expect-error
               _console.error(`error message: ${error?.message}`);
