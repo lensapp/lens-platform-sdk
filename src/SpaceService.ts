@@ -1,5 +1,5 @@
 import { Base } from "./Base";
-import type { User } from "./UserService";
+import { User, UserService } from "./UserService";
 import type { Team } from "./TeamService";
 import type { K8sCluster } from "./K8sCluster";
 import type { Invitation } from "./InvitationService";
@@ -12,7 +12,8 @@ import {
   TokenNotFoundException,
   SpaceHasTooManyClustersException,
   BadRequestException,
-  CantRemoveOwnerFromSpaceException
+  CantRemoveOwnerFromSpaceException,
+  UserNameNotFoundException
 } from "./exceptions";
 
 /**
@@ -269,6 +270,7 @@ class SpaceService extends Base {
 
   /**
    * Remove one user by username from a space by space name
+   * @throws SpaceNotFoundException, UserNameNotFoundException, ForbiddenException, CantRemoveOwnerFromSpaceException
    */
   async removeOneUser({ username, name }: { username: string; name: string }): Promise<void> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
@@ -277,10 +279,9 @@ class SpaceService extends Base {
     await throwExpected(
       () => got.delete(url),
       {
-        // eslint-disable-next-line
-        // TODO: differentiate between space and cluster not being found,
-        // improve error handling here overall
-        404: () => new SpaceNotFoundException(name),
+        404: (e: unknown) => (e as any)?.message?.includes(name) ?
+          new SpaceNotFoundException(name) :
+          new UserNameNotFoundException(username),
         403: () => new ForbiddenException(),
         422: () => new CantRemoveOwnerFromSpaceException(username)
       }
