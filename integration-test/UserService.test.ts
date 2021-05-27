@@ -15,7 +15,7 @@ describe("UserService", () => {
           secret: "<client-secret>"
         },
         auth: {
-          tokenHost: "https://frontend.lc-staging1.staging-k8slens.cloud",
+          tokenHost: config.tokenHost,
           tokenPath: "/auth/realms/lensCloud/protocol/openid-connect/token"
         }
       });

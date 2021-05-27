@@ -8,6 +8,7 @@ The integration tests expect `STAGING_USERNAME` and `STAGING_PASSWORD` environme
 - KEYCLOAK_ADDRESS, Url to the Keycloak instance
 - KEYCLOAK_REALM, Name of the Keycloak Realm
 - API_ENDPOINT_ADDRESS, Url to the backend
+- TOKEN_HOST, Url to the token host
 
 You may specify these in .env file in the root of the project (don't commit this file to the repository).
 
