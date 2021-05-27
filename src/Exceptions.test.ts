@@ -16,18 +16,20 @@ export const plaform500response = {
 describe(".users.*", () => {
   const invalidUserName = "idonotexist";
   const brokenUserName = "ibreakthings";
+  const username = "randomuser";
+  const userResponse = { username };
   const lensPlatformClient = new LensPlatformClient(options);
 
   beforeAll(() => {
     nock(apiEndpointAddress).get(`/users/${invalidUserName}`).reply(404, plaform404response);
     nock(apiEndpointAddress).get(`/users/${brokenUserName}`).reply(500, plaform500response).persist();
-    nock(apiEndpointAddress).get("/users/test").reply(200, { });
+    nock(apiEndpointAddress).get(`/users/${username}`).reply(200, userResponse);
   });
 
   it("doesn't break functionality", async () => {
-    const result = await lensPlatformClient.user.getOne({ username: "test" });
+    const result = await lensPlatformClient.user.getOne({ username });
 
-    expect(result).toStrictEqual({});
+    expect(result).toStrictEqual(userResponse);
   });
 
   it("throws proper expected exception", async () => {
