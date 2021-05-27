@@ -46,7 +46,7 @@ describe(".users.*", () => {
     }
   });
 
-  it("thows proper unexpected exception", async () => {
+  it("throws proper unexpected exception", async () => {
     try {
       const _ = await lensPlatformClient.user.getOne({ username: brokenUserName });
     } catch (e: unknown) {
