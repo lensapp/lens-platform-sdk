@@ -1,5 +1,4 @@
 import { Base } from "./Base";
-import { Except } from "type-fest";
 import { throwExpected, NotFoundException } from "./exceptions";
 
 /**
