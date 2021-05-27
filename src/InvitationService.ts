@@ -1,5 +1,14 @@
 import { Base } from "./Base";
 import type { User } from "./UserService";
+import {
+  throwExpected,
+  SpaceNotFoundException,
+  PastExpiryException,
+  UserAlreadyExistsException,
+  PendingInvitationException,
+  EmailMissingException,
+  BadRequestException
+} from "./exceptions";
 import { Except } from "type-fest";
 
 /**
@@ -54,9 +63,32 @@ class InvitationService extends Base {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/invitations`;
 
-    const json = await got.post(url, {
-      json: invitation
-    });
+    const json = await throwExpected(
+      () => got.post(url, {
+        json: invitation
+      }),
+      {
+        404: (e: unknown) => new SpaceNotFoundException(`id: ${invitation.spaceId}`),
+        422: (e: unknown) => {
+          const msg: string = (e as any)?.message ?? "";
+
+          if (msg.includes("is already in space")) {
+            return new UserAlreadyExistsException(invitation.invitedUsername);
+          }
+
+          if (msg.includes("pending invitation")) {
+            return new PendingInvitationException(invitation.invitedUsername);
+          }
+
+          if (msg.includes("email missing")) {
+            return new EmailMissingException();
+          }
+
+          return new PastExpiryException();
+        },
+        400: () => new BadRequestException("Invalid invitation kind")
+      }
+    );
 
     return (json as unknown) as Invitation;
   }
