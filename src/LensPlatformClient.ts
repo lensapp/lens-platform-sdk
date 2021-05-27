@@ -18,7 +18,6 @@ export interface LensPlatformClientOptions {
   keycloakRealm: string;
   apiEndpointAddress: string;
   defaultHeaders?: RequestHeaders;
-  exceptionHandler?: (exception: unknown) => void;
 }
 
 type RequestHeaders = Record<string, string>;
@@ -53,7 +52,6 @@ class LensPlatformClient {
   keyCloakAddress: LensPlatformClientOptions["keyCloakAddress"];
   keycloakRealm: LensPlatformClientOptions["keycloakRealm"];
   apiEndpointAddress: LensPlatformClientOptions["apiEndpointAddress"];
-  exceptionHandler: LensPlatformClientOptions["exceptionHandler"];
 
   user: UserService;
   space: SpaceService;
@@ -80,7 +78,6 @@ class LensPlatformClient {
     this.keycloakRealm = options.keycloakRealm;
     this.apiEndpointAddress = options.apiEndpointAddress;
     this.defaultHeaders = options.defaultHeaders ?? {};
-    this.exceptionHandler = options.exceptionHandler;
 
     this.user = new UserService(this);
     this.space = new SpaceService(this);
@@ -129,7 +126,7 @@ class LensPlatformClient {
    *
    */
   get got() {
-    const { accessToken, getAccessToken, exceptionHandler } = this;
+    const { accessToken, getAccessToken } = this;
     const token = getAccessToken && typeof getAccessToken === "function" ? getAccessToken() : accessToken;
     const defaultHeaders = this.defaultHeaders;
     const proxy = new Proxy(got, {
@@ -186,12 +183,6 @@ class LensPlatformClient {
               // @ts-expect-error
               _console.error(`error response body: ${error?.response?.body}`);
               throw error;
-              // Disable exception handler for testing purposes
-              // if (exceptionHandler) {
-              //   exceptionHandler(error);
-              // } else {
-              //   throw error;
-              // }
             }
           };
         }
