@@ -1,6 +1,6 @@
 import type { HTTPErrorCode } from "./HTTPErrrorCodes";
 import { HTTPErrorCodes } from "./HTTPErrrorCodes";
-import { LensSDKException } from "./common.exceptions";
+import { LensSDKException, UnauthorizedException } from "./common.exceptions";
 
 // Use 'Bad Request' as a fallback exception
 const FALLBACK_HTTP_ERROR_CODE: HTTPErrorCode = 400;
@@ -31,6 +31,10 @@ const parseHTTPErrorCode = (exception: unknown): HTTPErrorCode | null => {
  */
 export type HTTPErrCodeExceptionMap<T = LensSDKException> = Partial<Record<HTTPErrorCode, (e?: unknown) => T>>;
 
+const DEFAULT_MAP: HTTPErrCodeExceptionMap = {
+  401: e => new UnauthorizedException((e as any)?.message)
+};
+
 /**
  * Executes a given function, catching all exceptions. When an exception is caught
  * it is converted to strongly-typed `LensPlatformExtension` and thrown again.
@@ -58,7 +62,7 @@ export const throwExpected = async <T = any>(fn: () => Promise<T>, exceptionsMap
     return result;
   } catch (e: unknown) {
     const errCode = parseHTTPErrorCode(e) ?? FALLBACK_HTTP_ERROR_CODE;
-    const mappedExceptionFn = exceptionsMap[errCode];
+    const mappedExceptionFn = exceptionsMap[errCode] ?? DEFAULT_MAP[errCode];
 
     if (mappedExceptionFn) {
       // Throw expected exception
