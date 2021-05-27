@@ -51,8 +51,11 @@ describe(".users.*", () => {
       const _ = await lensPlatformClient.user.getOne({ username: brokenUserName });
     } catch (e: unknown) {
       expect(e).toBeInstanceOf(LensSDKException);
-      expect((e as LensSDKException).errorCode).toEqual(500);
-      expect((e as LensSDKException).message).toMatch(/Unexpected exception \[Lens Platform SDK\]/);
+
+      if (e instanceof LensSDKException) {
+        expect(e.errorCode).toEqual(500);
+        expect(e.message).toMatch(/Unexpected exception \[Lens Platform SDK\]/);
+      }
     }
   });
 });
