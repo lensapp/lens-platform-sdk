@@ -1,16 +1,15 @@
 import LensPlatformClient from "../src/LensPlatformClient";
-
-const user = {
-  username: process.env.STAGING_USERNAME,
-  password: process.env.STAGING_PASSWORD
-};
-
-if (!user.username || !user.password) {
-  throw new Error("STAGING_USERNAME or STAGING_PASSWORD environmental variable not set");
-}
+import { config } from "./configuration";
 
 describe("UserService", () => {
   describe("getOne", () => {
+    const lensPlatformClient = new LensPlatformClient({
+      getAccessToken: () => "",
+      keyCloakAddress: config.keyCloakAddress,
+      keycloakRealm: config.keycloakRealm,
+      apiEndpointAddress: config.apiEndpointAddress
+    });
+
     it("can get itself", () => {
       //
     });

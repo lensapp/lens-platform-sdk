@@ -13,6 +13,9 @@ jobs:
     env:
       STAGING_USERNAME: ${{ secrets.STAGING_USERNAME }}
       STAGING_PASSWORD: ${{ secrets.STAGING_PASSWORD }}
+      KEYCLOAK_ADDRESS: ${{ secrets.KEYCLOAK_ADDRESS }}
+      KEYCLOAK_REALM: ${{ secrets.KEYCLOAK_REALM }}
+      API_ENDPOINT_ADDRESS: ${{ secrets.API_ENDPOINT_ADDRESS }}
     strategy:
       matrix:
         node-version: [12, 14, 16]
