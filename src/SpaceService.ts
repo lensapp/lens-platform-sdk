@@ -279,7 +279,7 @@ class SpaceService extends Base {
     await throwExpected(
       () => got.delete(url),
       {
-        404: (e: unknown) => (e as any)?.message?.includes(name) ?
+        404: e => e?.body.message.includes(name) ?
           new SpaceNotFoundException(name) :
           new UserNameNotFoundException(username),
         403: () => new ForbiddenException(),

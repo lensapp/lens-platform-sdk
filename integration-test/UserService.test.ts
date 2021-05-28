@@ -97,11 +97,11 @@ describe("UserService", () => {
         expect(users.length).toEqual(0);
       });
 
-      it("rejects bad requests", async () => {
-        return expect(
+      it("rejects bad requests", async () =>
+        expect(
           lensPlatformClient.user.getMany()
-        ).rejects.toThrowError(BadRequestException);
-      });
+        ).rejects.toThrowError(BadRequestException)
+      );
     });
   });
 });

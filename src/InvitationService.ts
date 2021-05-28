@@ -68,9 +68,9 @@ class InvitationService extends Base {
         json: invitation
       }),
       {
-        404: (e: unknown) => new SpaceNotFoundException(`id: ${invitation.spaceId}`),
-        422: (e: unknown) => {
-          const msg: string = (e as any)?.message ?? "";
+        404: () => new SpaceNotFoundException(`id: ${invitation.spaceId}`),
+        422: e => {
+          const msg: string = e?.body.message ?? "";
 
           if (msg.includes("is already in space")) {
             return new UserAlreadyExistsException(invitation.invitedUsername);
