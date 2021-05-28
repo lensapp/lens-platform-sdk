@@ -1,5 +1,5 @@
 import { Base } from "./Base";
-import { throwExpected, NotFoundException } from "./exceptions";
+import { throwExpected, NotFoundException, ForbiddenException, BadRequestException } from "./exceptions";
 
 /**
  *
@@ -54,7 +54,12 @@ class UserService extends Base {
   async getMany(queryString?: string): Promise<User[]> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users${queryString ? `?${queryString}` : ""}`;
-    const json = await got.get(url);
+    const json = await throwExpected(
+      () => got.get(url),
+      {
+        400: (e: unknown) => new BadRequestException((e as any)?.response?.body?.message)
+      }
+    );
 
     return (json as unknown) as User[];
   }
@@ -65,7 +70,13 @@ class UserService extends Base {
   async updateOne(username: string, user: User & { attributes?: UserAttributes } & { password?: string }): Promise<User> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}`;
-    const json = await got.patch(url, { json: user });
+    const json = await throwExpected(
+      () => got.patch(url, { json: user }),
+      {
+        404: () => new NotFoundException(`User ${username} not found`),
+        403: () => new ForbiddenException(`Modification of user @${username} is forbidden`)
+      }
+    );
 
     return (json as unknown) as User;
   }

@@ -1,11 +1,12 @@
 import LensPlatformClient from "../src/LensPlatformClient";
 import { ResourceOwnerPassword } from "simple-oauth2";
 import { config } from "./configuration";
-import { NotFoundException } from "../src/exceptions";
+import { BadRequestException, ForbiddenException, LensSDKException, NotFoundException, UnauthorizedException } from "../src/exceptions";
 
 describe("UserService", () => {
   describe("getOne", () => {
     let lensPlatformClient: LensPlatformClient;
+    let useInvalidToken: boolean;
 
     beforeAll(async () => {
       const client = new ResourceOwnerPassword({
@@ -29,14 +30,25 @@ describe("UserService", () => {
       const accessToken = (await client.getToken(tokenParams)).token.access_token as string;
 
       lensPlatformClient = new LensPlatformClient({
-        getAccessToken: () => accessToken,
+        getAccessToken: () => useInvalidToken ? "invalid_token" : accessToken,
         keyCloakAddress: config.keyCloakAddress,
         keycloakRealm: config.keycloakRealm,
         apiEndpointAddress: config.apiEndpointAddress
       });
     });
 
+    beforeEach(() => {
+      useInvalidToken = false;
+    });
+
     describe("getOne", () => {
+      it("rejects requiests with invalid tokens", async () => {
+        useInvalidToken = true;
+
+        return expect(lensPlatformClient.user.getOne({ username: config.user.username }))
+          .rejects.toThrowError(UnauthorizedException);
+      });
+
       it("can get itself", async () => {
         const user = await lensPlatformClient.user.getOne({ username: config.user.username });
 
@@ -52,10 +64,43 @@ describe("UserService", () => {
     });
 
     describe("updateOne", () => {
+      it("rejects requiests with invalid tokens", async () => {
+        useInvalidToken = true;
+
+        return expect(lensPlatformClient.user.updateOne(config.user.username, {}))
+          .rejects.toThrowError(UnauthorizedException);
+      });
+
       it("can update itself", async () => {
         const user = await lensPlatformClient.user.updateOne(config.user.username, {});
-
         expect(user.username).toEqual(config.user.username);
+      });
+
+      it("throws ForbiddenException when trying to modify unrelated users", async () => {
+        const username = "abcdef-12345-missing-" + String(Math.random() * 1000000000);
+
+        return expect(lensPlatformClient.user.updateOne(username, {}))
+          .rejects.toThrowError(ForbiddenException);
+      });
+    });
+
+    describe("getMany", () => {
+      it("rejects requiests with invalid tokens", async () => {
+        useInvalidToken = true;
+
+        return expect(lensPlatformClient.user.getMany())
+          .rejects.toThrowError(UnauthorizedException);
+      });
+
+      it("can get users", async () => {
+        const users = await lensPlatformClient.user.getMany(`filter=email||$eq||${config.user.username}@mirantis.com`);
+        expect(users.length).toEqual(0);
+      });
+
+      it("rejects bad requests", async () => {
+        return expect(
+          lensPlatformClient.user.getMany()
+        ).rejects.toThrowError(BadRequestException);
       });
     });
   });
