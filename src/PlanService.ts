@@ -1,0 +1,27 @@
+import { Base } from "./Base";
+import type { BillingPlan } from "./BillingPlan";
+
+/**
+ *
+ * The class for consuming all `plan` resources.
+ *
+ * @remarks
+ * This class should be generated using OpenAPI generator in the future.
+ *
+ * @alpha
+ */
+class PlanService extends Base {
+  /**
+   * Get one space by space name
+   */
+  async getOne({ name, queryString }: { name: string; queryString?: string }): Promise<BillingPlan> {
+    const { apiEndpointAddress, got } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/plans/${name}${queryString ? `/?${queryString}` : ""}`;
+
+    const json = await got.get(url);
+
+    return (json as unknown) as BillingPlan;
+  }
+}
+
+export { PlanService };
