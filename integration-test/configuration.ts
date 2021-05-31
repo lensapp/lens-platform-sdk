@@ -7,10 +7,16 @@ const getEnvironmentalVariable = (name: string) => {
 };
 
 export const config = {
-  user: {
-    username: getEnvironmentalVariable("STAGING_USERNAME"),
-    password: getEnvironmentalVariable("STAGING_PASSWORD")
-  },
+  users: [
+    {
+      username: getEnvironmentalVariable("STAGING_USERNAME_1"),
+      password: getEnvironmentalVariable("STAGING_PASSWORD_1")
+    },
+    {
+      username: getEnvironmentalVariable("STAGING_USERNAME_2"),
+      password: getEnvironmentalVariable("STAGING_PASSWORD_2")
+    }
+  ],
   keyCloakAddress: getEnvironmentalVariable("KEYCLOAK_ADDRESS"),
   keycloakClientId: "lens-extension",
   keycloakRealm: getEnvironmentalVariable("KEYCLOAK_REALM"),
