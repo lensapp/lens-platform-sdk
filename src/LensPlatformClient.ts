@@ -46,14 +46,15 @@ interface DecodedAccessToken {
   typ: string;
 }
 
+const gotMethods: Array<keyof Got> = ["get", "post", "put", "patch", "head", "delete"];
+
 /**
  * TypeGuard to determine if type is GotRequestFunction
  */
 const isGotRequestFunction = (
   func: any, key: keyof Got
 ): func is GotRequestFunction =>
-  typeof func === "function" &&
-  ["get", "post", "put", "patch", "head", "delete"].includes(key);
+  typeof func === "function" && gotMethods.includes(key);
 
 /**
  * TypeGuard to determine if type is CancelableRequest | Request
@@ -61,7 +62,7 @@ const isGotRequestFunction = (
  * in got is Request | CancelableRequest
  */
 const isCancelableRequest = (obj: any): obj is CancelableRequest => {
-  // Unlike CancelableRequest, Request doesn't have these props
+  // CancelableRequest has these properties unlike Request
   return obj.json !== undefined && obj.buffer !== undefined && obj.text !== undefined;
 };
 
