@@ -5,21 +5,25 @@ import type { TestPlatformClient } from "./utils";
 import {
   UnauthorizedException,
   SpaceNameReservedException,
-  SpaceNotFoundException
+  SpaceNotFoundException,
+  ForbiddenException
 } from "../src/exceptions";
 
 const TEST_SPACE_NAME = "test-space";
 const [credBob, credAlice] = config.users;
 
-describe("SpaceService", () => {
+describe.only("SpaceService", () => {
   let testPlatformBob: TestPlatformClient;
+  let testPlatformAlice: TestPlatformClient;
 
   beforeAll(async () => {
+    testPlatformAlice = await testPlatformClientFactory(credAlice.username, credAlice.password);
     testPlatformBob = await testPlatformClientFactory(credBob.username, credBob.password);
   });
 
   beforeEach(() => {
     testPlatformBob.fakeToken = undefined;
+    testPlatformAlice.fakeToken = undefined;
   });
 
   it("allows to create, update and delete a space", async () => {
@@ -66,18 +70,27 @@ describe("SpaceService", () => {
   });
 
   describe("getOne", () => {
-    let existingSpace: Space;
+    let bobSpace: Space;
+    let aliceSpace: Space;
 
     beforeAll(async () => {
-      existingSpace = await testPlatformBob.client.space.createOne({
-        name: "create-one-test-space",
-        description: "Test space for createOne function"
+      bobSpace = await testPlatformBob.client.space.createOne({
+        name: "create-bob-test-space",
+        description: "Test space for getOne function"
+      });
+      aliceSpace = await testPlatformAlice.client.space.createOne({
+        name: "create-alice-test-space",
+        description: "Test space for getOne function"
       });
     });
 
     afterAll(async () => {
-      if (existingSpace) {
-        await testPlatformBob.client.space.deleteOne({ name: existingSpace.name });
+      if (bobSpace) {
+        await testPlatformBob.client.space.deleteOne({ name: bobSpace.name });
+      }
+
+      if (aliceSpace) {
+        await testPlatformAlice.client.space.deleteOne({ name: aliceSpace.name });
       }
     });
 
@@ -93,6 +106,11 @@ describe("SpaceService", () => {
 
       return expect(testPlatformBob.client.space.getOne({ name }))
         .rejects.toThrowError(SpaceNotFoundException);
+    });
+
+    it("reports Forbidden errors", async () => {
+      return expect(testPlatformBob.client.space.getOne({ name: aliceSpace.name }))
+        .rejects.toThrowError(ForbiddenException);
     });
   });
 });
