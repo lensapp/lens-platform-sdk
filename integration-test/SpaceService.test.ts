@@ -1,0 +1,98 @@
+import { testPlatformClientFactory } from "./utils";
+import { config } from "./configuration";
+import type { Space } from "../src";
+import type { TestPlatformClient } from "./utils";
+import {
+  UnauthorizedException,
+  SpaceNameReservedException,
+  SpaceNotFoundException
+} from "../src/exceptions";
+
+const TEST_SPACE_NAME = "test-space";
+const [credBob, credAlice] = config.users;
+
+describe("SpaceService", () => {
+  let testPlatformBob: TestPlatformClient;
+
+  beforeAll(async () => {
+    testPlatformBob = await testPlatformClientFactory(credBob.username, credBob.password);
+  });
+
+  beforeEach(() => {
+    testPlatformBob.fakeToken = undefined;
+  });
+
+  it("allows to create, update and delete a space", async () => {
+    const name = "another-space";
+    const description = "My space description";
+    const updatedDescription = "New description";
+
+    let space = await testPlatformBob.client.space.createOne({ name, description });
+    expect(space.name).toEqual(name);
+
+    space = await testPlatformBob.client.space.updateOne(name, { name, description: updatedDescription });
+    expect(space.description).toEqual(updatedDescription);
+
+    await testPlatformBob.client.space.deleteOne({ name: name });
+  });
+
+  describe("createOne", () => {
+    let existingSpace: Space;
+
+    beforeAll(async () => {
+      existingSpace = await testPlatformBob.client.space.createOne({
+        name: "create-one-test-space",
+        description: "Test space for createOne function"
+      });
+    });
+
+    afterAll(async () => {
+      if (existingSpace) {
+        await testPlatformBob.client.space.deleteOne({ name: existingSpace.name });
+      }
+    });
+
+    it("rejects requests with invalid tokens", async () => {
+      testPlatformBob.fakeToken = "fake token";
+
+      return expect(testPlatformBob.client.space.createOne({ name: TEST_SPACE_NAME, description: "My space description" }))
+        .rejects.toThrowError(UnauthorizedException);
+    });
+
+    it("rejects when space already exists", async () => {
+      return expect(testPlatformBob.client.space.createOne({ name: existingSpace.name }))
+        .rejects.toThrowError(SpaceNameReservedException);
+    });
+  });
+
+  describe("getOne", () => {
+    let existingSpace: Space;
+
+    beforeAll(async () => {
+      existingSpace = await testPlatformBob.client.space.createOne({
+        name: "create-one-test-space",
+        description: "Test space for createOne function"
+      });
+    });
+
+    afterAll(async () => {
+      if (existingSpace) {
+        await testPlatformBob.client.space.deleteOne({ name: existingSpace.name });
+      }
+    });
+
+    it("rejects requests with invalid tokens", async () => {
+      testPlatformBob.fakeToken = "fake token";
+
+      return expect(testPlatformBob.client.space.getOne({ name: TEST_SPACE_NAME }))
+        .rejects.toThrowError(UnauthorizedException);
+    });
+
+    it("reports NotFound errors", async () => {
+      const name = "abcdef-12345-missing-" + String(Math.random() * 1000000000);
+
+      return expect(testPlatformBob.client.space.getOne({ name }))
+        .rejects.toThrowError(SpaceNotFoundException);
+    });
+  });
+});
