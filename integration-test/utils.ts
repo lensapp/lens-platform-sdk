@@ -43,4 +43,4 @@ export const testPlatformFactory = async (username: string, password: string) =>
   return new TestPlatform(accessToken);
 };
 
-export const rng = () => String(Math.random() * 1000000000);
+export const rng = () => String(Math.ceil(Math.random() * 1000000000));

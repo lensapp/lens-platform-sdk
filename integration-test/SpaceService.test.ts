@@ -27,7 +27,7 @@ describe.only("SpaceService", () => {
   });
 
   it("allows to create, update and delete a space", async () => {
-    const name = "another-space";
+    const name = `create-${rng()}`;
     const description = "My space description";
     const updatedDescription = "New description";
 
@@ -45,7 +45,7 @@ describe.only("SpaceService", () => {
 
     beforeAll(async () => {
       existingSpace = await testPlatformBob.client.space.createOne({
-        name: `create-one-test-space-${rng()}`,
+        name: `test-${rng()}`,
         description: "Test space for createOne function"
       });
     });
@@ -75,11 +75,11 @@ describe.only("SpaceService", () => {
 
     beforeAll(async () => {
       bobSpace = await testPlatformBob.client.space.createOne({
-        name: `create-bob-test-space-${rng()}`,
+        name: `bob-${rng()}`,
         description: "Test space for getOne function"
       });
       aliceSpace = await testPlatformAlice.client.space.createOne({
-        name: `create-alice-test-space-${rng()}`,
+        name: `bob-${rng()}`,
         description: "Test space for getOne function"
       });
     });
@@ -102,7 +102,7 @@ describe.only("SpaceService", () => {
     });
 
     it("reports NotFound errors", async () => {
-      const name = "abcdef-12345-missing-" + rng();
+      const name = "missing-" + rng();
 
       return expect(testPlatformBob.client.space.getOne({ name }))
         .rejects.toThrowError(SpaceNotFoundException);
@@ -120,11 +120,11 @@ describe.only("SpaceService", () => {
 
     beforeAll(async () => {
       bobSpace = await testPlatformBob.client.space.createOne({
-        name: `create-bobs-test-space-${rng()}`,
+        name: `bob-${rng()}`,
         description: "Test space for updateOne function"
       });
       aliceSpace = await testPlatformAlice.client.space.createOne({
-        name: `create-alices-test-space-${rng()}`,
+        name: `bob-${rng()}`,
         description: "Test space for updateOne function"
       });
     });
