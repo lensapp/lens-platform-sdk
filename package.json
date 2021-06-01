@@ -19,7 +19,7 @@
     "test": "npm run lint && npm run check:type && npm run test:unit && npm run test:e2e",
     "test:unit": "jest",
     "test:e2e": "jest --runInBand --config ./integration-test/integration-test.json",
-    "lint": "eslint \"{src,test}/**/*.ts\"",
+    "lint": "npx eslint \"{src,test}/**/*.ts\"",
     "check:type": "tsc -p tsconfig.json --noEmit",
     "build": "npm run build:dist",
     "build:dist": "rm -rf dist && run-p build:cjs build:esm",
