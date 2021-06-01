@@ -1,30 +1,38 @@
 import { config } from "./configuration";
-import { testPlatformClientFactory } from "./utils";
-import type { TestPlatformClient } from "./utils";
-import { BadRequestException, ForbiddenException, LensSDKException, NotFoundException, UnauthorizedException } from "../src/exceptions";
+import { testPlatformFactory } from "./utils";
+import type { TestPlatform } from "./utils";
+import {
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+  UnauthorizedException
+} from "../src/exceptions";
 
 describe("UserService", () => {
-  const mainUser = config.users[0];
-  let testPlatform: TestPlatformClient;
+  const [userBob, userAlice] = config.users;
+  let bobPlatform: TestPlatform;
+  let alicePlatform: TestPlatform;
 
   beforeAll(async () => {
-    testPlatform = await testPlatformClientFactory(mainUser.username, mainUser.password);
+    bobPlatform = await testPlatformFactory(userBob.username, userBob.password);
+    alicePlatform = await testPlatformFactory(userAlice.username, userAlice.password);
   });
 
   beforeEach(() => {
-    testPlatform.fakeToken = undefined;
+    bobPlatform.fakeToken = undefined;
+    alicePlatform.fakeToken = undefined;
   });
 
   describe("getOne", () => {
     it("rejects requests with invalid tokens", async () => {
-      testPlatform.fakeToken = "fake token";
+      bobPlatform.fakeToken = "fake token";
 
-      return expect(testPlatform.client.user.getOne({ username: mainUser.username }))
+      return expect(bobPlatform.client.user.getOne({ username: userBob.username }))
         .rejects.toThrowError(UnauthorizedException);
     });
 
     it("can get itself", async () => {
-      const user = await testPlatform.client.user.getOne({ username: mainUser.username });
+      const user = await bobPlatform.client.user.getOne({ username: userBob.username });
 
       expect(user.username).toEqual(user.username);
     });
@@ -32,63 +40,63 @@ describe("UserService", () => {
     it("throws NotFoundException if user is missing", async () => {
       const username = "abcdef-12345-missing-" + String(Math.random() * 1000000000);
 
-      return expect(testPlatform.client.user.getOne({ username }))
+      return expect(bobPlatform.client.user.getOne({ username }))
         .rejects.toThrowError(NotFoundException);
     });
   });
 
   describe("updateOne", () => {
     it("rejects requests with invalid tokens", async () => {
-      testPlatform.fakeToken = "fake token";
+      bobPlatform.fakeToken = "fake token";
 
-      return expect(testPlatform.client.user.updateOne(mainUser.username, {}))
+      return expect(bobPlatform.client.user.updateOne(userBob.username, {}))
         .rejects.toThrowError(UnauthorizedException);
     });
 
     it("can update itself", async () => {
-      const user = await testPlatform.client.user.updateOne(mainUser.username, {});
-      expect(user.username).toEqual(mainUser.username);
+      const user = await bobPlatform.client.user.updateOne(userBob.username, {});
+      expect(user.username).toEqual(userBob.username);
     });
 
     it("throws ForbiddenException when trying to modify unrelated users", async () => {
       const username = "abcdef-12345-missing-" + String(Math.random() * 1000000000);
 
-      return expect(testPlatform.client.user.updateOne(username, {}))
+      return expect(bobPlatform.client.user.updateOne(username, {}))
         .rejects.toThrowError(ForbiddenException);
     });
   });
 
   describe("getMany", () => {
     it("rejects requests with invalid tokens", async () => {
-      testPlatform.fakeToken = "fake token";
+      bobPlatform.fakeToken = "fake token";
 
-      return expect(testPlatform.client.user.getMany())
+      return expect(bobPlatform.client.user.getMany())
         .rejects.toThrowError(UnauthorizedException);
     });
 
     it("can get users", async () => {
-      const users = await testPlatform.client.user.getMany(`filter=email||$eq||${mainUser.username}@mirantis.com`);
+      const users = await bobPlatform.client.user.getMany(`filter=email||$eq||${userBob.username}@mirantis.com`);
       expect(users.length).toEqual(0);
     });
 
     it("rejects bad requests", async () =>
       expect(
-        testPlatform.client.user.getMany()
+        bobPlatform.client.user.getMany()
       ).rejects.toThrowError(BadRequestException)
     );
   });
 
   describe("getSelf", () => {
     it("rejects requiests with invalid tokens", async () => {
-      testPlatform.fakeToken = "fake token";
+      bobPlatform.fakeToken = "fake token";
 
-      return expect(testPlatform.client.user.getSelf())
+      return expect(bobPlatform.client.user.getSelf())
         .rejects.toThrow();
     });
 
     it("can get self", async () => {
-      const user = await testPlatform.client.user.getSelf();
-      expect(user.username).toEqual(mainUser.username);
+      const user = await bobPlatform.client.user.getSelf();
+      expect(user.username).toEqual(userBob.username);
     });
   });
 });

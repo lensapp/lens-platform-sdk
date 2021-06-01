@@ -3,7 +3,7 @@ import { ResourceOwnerPassword } from "simple-oauth2";
 import LensPlatformClient from "../src/LensPlatformClient";
 import { config } from "./configuration";
 
-export class TestPlatformClient {
+export class TestPlatform {
   public fakeToken?: string;
   public readonly client: LensPlatformClient;
 
@@ -19,7 +19,7 @@ export class TestPlatformClient {
   }
 }
 
-export const testPlatformClientFactory = async (username: string, password: string) => {
+export const testPlatformFactory = async (username: string, password: string) => {
   const client = new ResourceOwnerPassword({
     client: {
       id: config.keycloakClientId,
@@ -40,5 +40,5 @@ export const testPlatformClientFactory = async (username: string, password: stri
 
   const accessToken = (await client.getToken(tokenParams)).token.access_token as string;
 
-  return new TestPlatformClient(accessToken);
+  return new TestPlatform(accessToken);
 };

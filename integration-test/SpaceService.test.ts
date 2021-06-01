@@ -1,7 +1,7 @@
-import { testPlatformClientFactory } from "./utils";
+import { testPlatformFactory } from "./utils";
 import { config } from "./configuration";
 import type { Space } from "../src";
-import type { TestPlatformClient } from "./utils";
+import type { TestPlatform } from "./utils";
 import {
   UnauthorizedException,
   SpaceNameReservedException,
@@ -13,12 +13,12 @@ const TEST_SPACE_NAME = "test-space";
 const [credBob, credAlice] = config.users;
 
 describe.only("SpaceService", () => {
-  let testPlatformBob: TestPlatformClient;
-  let testPlatformAlice: TestPlatformClient;
+  let testPlatformBob: TestPlatform;
+  let testPlatformAlice: TestPlatform;
 
   beforeAll(async () => {
-    testPlatformAlice = await testPlatformClientFactory(credAlice.username, credAlice.password);
-    testPlatformBob = await testPlatformClientFactory(credBob.username, credBob.password);
+    testPlatformAlice = await testPlatformFactory(credAlice.username, credAlice.password);
+    testPlatformBob = await testPlatformFactory(credBob.username, credBob.password);
   });
 
   beforeEach(() => {
@@ -110,6 +110,49 @@ describe.only("SpaceService", () => {
 
     it("reports Forbidden errors", async () => {
       return expect(testPlatformBob.client.space.getOne({ name: aliceSpace.name }))
+        .rejects.toThrowError(ForbiddenException);
+    });
+  });
+
+  describe("updateOne", () => {
+    let bobSpace: Space;
+    let aliceSpace: Space;
+
+    beforeAll(async () => {
+      bobSpace = await testPlatformBob.client.space.createOne({
+        name: "create-bobs-test-space",
+        description: "Test space for updateOne function"
+      });
+      aliceSpace = await testPlatformAlice.client.space.createOne({
+        name: "create-alices-test-space",
+        description: "Test space for updateOne function"
+      });
+    });
+
+    afterAll(async () => {
+      if (bobSpace) {
+        await testPlatformBob.client.space.deleteOne({ name: bobSpace.name });
+      }
+
+      if (aliceSpace) {
+        await testPlatformAlice.client.space.deleteOne({ name: aliceSpace.name });
+      }
+    });
+
+    it("rejects requests with invalid tokens", async () => {
+      testPlatformBob.fakeToken = "fake token";
+
+      return expect(testPlatformBob.client.space.updateOne(bobSpace.name, { name: bobSpace.name, description: "My space description" }))
+        .rejects.toThrowError(UnauthorizedException);
+    });
+
+    it("rejects when space already exists", async () => {
+      return expect(testPlatformBob.client.space.updateOne(bobSpace.name, { name: aliceSpace.name }))
+        .rejects.toThrowError(SpaceNameReservedException);
+    });
+
+    it("rejects when trying to modify space without permissions", async () => {
+      return expect(testPlatformBob.client.space.updateOne(aliceSpace.name, { name: aliceSpace.name, description: "Pwned by Bob" }))
         .rejects.toThrowError(ForbiddenException);
     });
   });
