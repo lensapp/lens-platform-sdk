@@ -1,5 +1,5 @@
 import { config } from "./configuration";
-import { testPlatformFactory } from "./utils";
+import { testPlatformFactory, rng } from "./utils";
 import type { TestPlatform } from "./utils";
 import {
   BadRequestException,
@@ -38,7 +38,7 @@ describe("UserService", () => {
     });
 
     it("throws NotFoundException if user is missing", async () => {
-      const username = "abcdef-12345-missing-" + String(Math.random() * 1000000000);
+      const username = "abcdef-12345-missing-" + rng();
 
       return expect(bobPlatform.client.user.getOne({ username }))
         .rejects.toThrowError(NotFoundException);
@@ -59,7 +59,7 @@ describe("UserService", () => {
     });
 
     it("throws ForbiddenException when trying to modify unrelated users", async () => {
-      const username = "abcdef-12345-missing-" + String(Math.random() * 1000000000);
+      const username = "abcdef-12345-missing-" + rng();
 
       return expect(bobPlatform.client.user.updateOne(username, {}))
         .rejects.toThrowError(ForbiddenException);

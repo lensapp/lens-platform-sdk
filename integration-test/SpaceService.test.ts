@@ -1,4 +1,4 @@
-import { testPlatformFactory } from "./utils";
+import { rng, testPlatformFactory } from "./utils";
 import { config } from "./configuration";
 import type { Space } from "../src";
 import type { TestPlatform } from "./utils";
@@ -45,7 +45,7 @@ describe.only("SpaceService", () => {
 
     beforeAll(async () => {
       existingSpace = await testPlatformBob.client.space.createOne({
-        name: "create-one-test-space",
+        name: `create-one-test-space-${rng()}`,
         description: "Test space for createOne function"
       });
     });
@@ -75,11 +75,11 @@ describe.only("SpaceService", () => {
 
     beforeAll(async () => {
       bobSpace = await testPlatformBob.client.space.createOne({
-        name: "create-bob-test-space",
+        name: `create-bob-test-space-${rng()}`,
         description: "Test space for getOne function"
       });
       aliceSpace = await testPlatformAlice.client.space.createOne({
-        name: "create-alice-test-space",
+        name: `create-alice-test-space-${rng()}`,
         description: "Test space for getOne function"
       });
     });
@@ -102,7 +102,7 @@ describe.only("SpaceService", () => {
     });
 
     it("reports NotFound errors", async () => {
-      const name = "abcdef-12345-missing-" + String(Math.random() * 1000000000);
+      const name = "abcdef-12345-missing-" + rng();
 
       return expect(testPlatformBob.client.space.getOne({ name }))
         .rejects.toThrowError(SpaceNotFoundException);
@@ -120,11 +120,11 @@ describe.only("SpaceService", () => {
 
     beforeAll(async () => {
       bobSpace = await testPlatformBob.client.space.createOne({
-        name: "create-bobs-test-space",
+        name: `create-bobs-test-space-${rng()}`,
         description: "Test space for updateOne function"
       });
       aliceSpace = await testPlatformAlice.client.space.createOne({
-        name: "create-alices-test-space",
+        name: `create-alices-test-space-${rng()}`,
         description: "Test space for updateOne function"
       });
     });
