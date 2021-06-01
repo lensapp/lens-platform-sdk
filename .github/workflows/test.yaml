@@ -27,6 +27,9 @@ jobs:
     - uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
+    # there is a problem in node 16 in CI
+    # which can't find eslint/eslint from dependencies
+    # so we install them global
     - run: npm install -g eslint
     - run: npm install -g jest
     - run: npm install
