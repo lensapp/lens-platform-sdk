@@ -18,4 +18,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install
+    - run: npm list npm-run-all
+    - run: ls node_modules/.bin/
     - run: npm run build
