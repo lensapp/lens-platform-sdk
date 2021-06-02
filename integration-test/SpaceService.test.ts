@@ -27,7 +27,7 @@ describe("SpaceService", () => {
   });
 
   it("allows to create, update and delete a space", async () => {
-    const name = `create-${rng()}`;
+    const name = `sdk-e2e-test-${rng()}`;
     const description = "My space description";
     const updatedDescription = "New description";
 
@@ -45,7 +45,7 @@ describe("SpaceService", () => {
 
     beforeAll(async () => {
       existingSpace = await testPlatformBob.client.space.createOne({
-        name: `test-${rng()}`,
+        name: `sdk-e2e-test-${rng()}`,
         description: "Test space for createOne function"
       });
     });
@@ -75,11 +75,11 @@ describe("SpaceService", () => {
 
     beforeAll(async () => {
       bobSpace = await testPlatformBob.client.space.createOne({
-        name: `bob-${rng()}`,
+        name: `sdk-e2e-${rng()}`,
         description: "Test space for getOne function"
       });
       aliceSpace = await testPlatformAlice.client.space.createOne({
-        name: `bob-${rng()}`,
+        name: `sdk-e2e-${rng()}`,
         description: "Test space for getOne function"
       });
     });
@@ -120,11 +120,11 @@ describe("SpaceService", () => {
 
     beforeAll(async () => {
       bobSpace = await testPlatformBob.client.space.createOne({
-        name: `bob-${rng()}`,
+        name: `sdk-e2e-${rng()}`,
         description: "Test space for updateOne function"
       });
       aliceSpace = await testPlatformAlice.client.space.createOne({
-        name: `bob-${rng()}`,
+        name: `sdk-e2e-${rng()}`,
         description: "Test space for updateOne function"
       });
     });
