@@ -9,14 +9,14 @@ export class PastExpiryException extends UnprocessableEntityException {
 
 export class UserAlreadyExistsException extends UnprocessableEntityException {
   constructor(userName?: string) {
-    super(`User${userName ? " @" + userName : ""} already exists in space`);
+    super(`User${userName ? " " + userName : ""} already exists in space`);
     Object.setPrototypeOf(this, UserAlreadyExistsException.prototype);
   }
 }
 
 export class PendingInvitationException extends UnprocessableEntityException {
   constructor(userName?: string) {
-    super(`User${userName ? " @" + userName : ""} already has a pending invitation to this space`);
+    super(`User${userName ? " " + userName : ""} already has a pending invitation to this space`);
     Object.setPrototypeOf(this, PendingInvitationException.prototype);
   }
 }
