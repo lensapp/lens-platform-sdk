@@ -80,7 +80,7 @@ describe("UserService", () => {
     });
 
     it("rejects bad requests", async () =>
-      expect(
+      return expect(
         bobPlatform.client.user.getMany()
       ).rejects.toThrowError(BadRequestException)
     );
