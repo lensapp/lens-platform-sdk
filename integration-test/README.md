@@ -2,9 +2,11 @@
 
 The integration tests are executed against the staging environment. The GitHub Action secrets are specified to provide the required environmental variables.
 
-The integration tests expect `STAGING_USERNAME` and `STAGING_PASSWORD` environmental variables when running the tests:
-- `STAGING_USERNAME`, Username of the test user
-- `STAGING_PASSWORD`, Password of the test user
+The integration tests expect `STAGING_USERNAME_1` , `STAGING_PASSWORD_1`, `STAGING_USERNAME_2` and `STAGING_PASSWORD_2`  environmental variables when running the tests:
+- `STAGING_USERNAME_1`, Username of the test user 1
+- `STAGING_PASSWORD_1`, Password of the test user 1
+- `STAGING_USERNAME_2`, Username of the test user 2
+- `STAGING_PASSWORD_2`, Password of the test user 2
 - `KEYCLOAK_ADDRESS`, Url to the Keycloak instance
 - `KEYCLOAK_REALM`, Name of the Keycloak Realm
 - `API_ENDPOINT_ADDRESS`, Url to the backend
