@@ -12,3 +12,4 @@ import type { OpenIdConnectUserInfo } from "./OpenIdConnect";
 export type { User, UserAttributes, Space, Team, K8sCluster, Invitation, BillingPlan, OpenIdConnectUserInfo };
 export type { LensPlatformClientType, LensPlatformClientOptions };
 export { LensPlatformClient, Roles, Actions, K8sClusterActions, Permissions };
+export * from "./exceptions";

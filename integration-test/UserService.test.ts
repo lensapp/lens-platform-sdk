@@ -1,0 +1,102 @@
+import { config } from "./configuration";
+import { testPlatformFactory, rng } from "./utils";
+import type { TestPlatform } from "./utils";
+import {
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+  UnauthorizedException
+} from "../src/exceptions";
+
+describe("UserService", () => {
+  const [userBob, userAlice] = config.users;
+  let bobPlatform: TestPlatform;
+  let alicePlatform: TestPlatform;
+
+  beforeAll(async () => {
+    bobPlatform = await testPlatformFactory(userBob.username, userBob.password);
+    alicePlatform = await testPlatformFactory(userAlice.username, userAlice.password);
+  });
+
+  beforeEach(() => {
+    bobPlatform.fakeToken = undefined;
+    alicePlatform.fakeToken = undefined;
+  });
+
+  describe("getOne", () => {
+    it("rejects requests with invalid tokens", async () => {
+      bobPlatform.fakeToken = "fake token";
+
+      return expect(bobPlatform.client.user.getOne({ username: userBob.username }))
+        .rejects.toThrowError(UnauthorizedException);
+    });
+
+    it("can get itself", async () => {
+      const user = await bobPlatform.client.user.getOne({ username: userBob.username });
+
+      expect(user.username).toEqual(user.username);
+    });
+
+    it("throws NotFoundException if user is missing", async () => {
+      const username = "abcdef-12345-missing-" + rng();
+
+      return expect(bobPlatform.client.user.getOne({ username }))
+        .rejects.toThrowError(NotFoundException);
+    });
+  });
+
+  describe("updateOne", () => {
+    it("rejects requests with invalid tokens", async () => {
+      bobPlatform.fakeToken = "fake token";
+
+      return expect(bobPlatform.client.user.updateOne(userBob.username, {}))
+        .rejects.toThrowError(UnauthorizedException);
+    });
+
+    it("can update itself", async () => {
+      const user = await bobPlatform.client.user.updateOne(userBob.username, {});
+      expect(user.username).toEqual(userBob.username);
+    });
+
+    it("throws ForbiddenException when trying to modify unrelated users", async () => {
+      const username = "abcdef-12345-missing-" + rng();
+
+      return expect(bobPlatform.client.user.updateOne(username, {}))
+        .rejects.toThrowError(ForbiddenException);
+    });
+  });
+
+  describe("getMany", () => {
+    it("rejects requests with invalid tokens", async () => {
+      bobPlatform.fakeToken = "fake token";
+
+      return expect(bobPlatform.client.user.getMany())
+        .rejects.toThrowError(UnauthorizedException);
+    });
+
+    it("can get users", async () => {
+      const users = await bobPlatform.client.user.getMany(`filter=email||$eq||${userBob.username}@mirantis.com`);
+      expect(users.length).toEqual(0);
+    });
+
+    it("rejects bad requests", async () =>
+      expect(
+        bobPlatform.client.user.getMany()
+      ).rejects.toThrowError(BadRequestException)
+    );
+  });
+
+  describe("getSelf", () => {
+    it("rejects requests with invalid tokens", async () => {
+      bobPlatform.fakeToken = "fake token";
+
+      return expect(bobPlatform.client.user.getSelf())
+        .rejects.toThrow();
+    });
+
+    it("can get self", async () => {
+      const user = await bobPlatform.client.user.getSelf();
+      expect(user.username).toEqual(userBob.username);
+    });
+  });
+});
