@@ -87,7 +87,7 @@ describe("UserService", () => {
   });
 
   describe("getSelf", () => {
-    it("rejects requiests with invalid tokens", async () => {
+    it("rejects requests with invalid tokens", async () => {
       bobPlatform.fakeToken = "fake token";
 
       return expect(bobPlatform.client.user.getSelf())
