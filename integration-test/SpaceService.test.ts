@@ -12,7 +12,7 @@ import {
 const TEST_SPACE_NAME = "test-space";
 const [credBob, credAlice] = config.users;
 
-describe.only("SpaceService", () => {
+describe("SpaceService", () => {
   let testPlatformBob: TestPlatform;
   let testPlatformAlice: TestPlatform;
 
