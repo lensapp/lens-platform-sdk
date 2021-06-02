@@ -1,7 +1,7 @@
 #
 #   This CI triggered on PRs.
 #
-#   Verify if `npm run build` pass
+#   Verify if `npm run build:dist` pass
 #
 on:
   - pull_request
@@ -17,10 +17,5 @@ jobs:
     - uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm --version
-    - run: which npm
-    - run: npm config ls -l
     - run: npm install
-    - run: npm list npm-run-all
-    - run: ls node_modules/.bin/
-    - run: npm run build
+    - run: npm run build:dist
