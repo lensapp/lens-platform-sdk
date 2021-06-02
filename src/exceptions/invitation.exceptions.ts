@@ -23,7 +23,7 @@ export class PendingInvitationException extends UnprocessableEntityException {
 
 export class EmailMissingException extends UnprocessableEntityException {
   constructor() {
-    super("E-mail address is missing from invitation object");
+    super("Email address is missing from invitation object");
     Object.setPrototypeOf(this, EmailMissingException.prototype);
   }
 }
