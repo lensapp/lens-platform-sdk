@@ -11,6 +11,9 @@ import {
 } from "./exceptions";
 import { Except } from "type-fest";
 
+export const invitationEntityKinds = ["directInvite", "emailInvite", "weblinkInvite"] as const;
+export type InvitationEntityKind = typeof invitationEntityKinds[number];
+
 /**
  *
  * @remarks
@@ -23,7 +26,7 @@ export interface Invitation {
   spaceName?: string;
   spaceDescription?: string;
   invitedUsername?: string;
-  kind?: string;
+  kind?: InvitationEntityKind;
   id?: string;
   createdBy?: User;
   createdById?: string;
@@ -59,7 +62,7 @@ class InvitationService extends Base {
   /**
    * Create one invitation
    */
-  async createOne(invitation: Invitation): Promise<Invitation> {
+  async createOne(invitation: Invitation) {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/invitations`;
 
@@ -90,7 +93,7 @@ class InvitationService extends Base {
       }
     );
 
-    return (json as unknown) as Invitation;
+    return json as Invitation & { weblink?: string };
   }
 
   /**
