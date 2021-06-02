@@ -146,7 +146,6 @@ class SpaceService extends Base {
     const json = await throwExpected(
       () => got.get(url),
       {
-        // eslint-disable-next-line
         // TODO: differentiate between space cluster and secret not being found
         404: () => new SpaceNotFoundException(name),
         400: () => new BadRequestException("Invalid cluster")
@@ -169,7 +168,6 @@ class SpaceService extends Base {
     const json = await throwExpected(
       () => got.get(url),
       {
-        // eslint-disable-next-line
         // TODO: differentiate between space, cluster, user and token not being found
         404: () => new SpaceNotFoundException(name),
         400: () => new BadRequestException()
@@ -203,7 +201,6 @@ class SpaceService extends Base {
 
     const json = await throwExpected(
       () => got.get(url),
-      // eslint-disable-next-line
       // TODO: differentiate between space and cluster not being found
       { 404: () => new SpaceNotFoundException(name) }
     );
@@ -240,7 +237,6 @@ class SpaceService extends Base {
     const json = await throwExpected(
       () => got.put(url, { json: cluster }),
       {
-        // eslint-disable-next-line
         // TODO: differentiate between space and cluster not being found
         404: () => new SpaceNotFoundException(cluster.space?.name ?? "undefined"),
         400: () => new BadRequestException("Property 'kind' of cluster object is invalid")
@@ -260,7 +256,6 @@ class SpaceService extends Base {
     await throwExpected(
       () => got.delete(url),
       {
-        // eslint-disable-next-line
         // TODO: differentiate between space and cluster not being found,
         // improve error handling here overall
         404: () => new SpaceNotFoundException(name)
