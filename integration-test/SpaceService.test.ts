@@ -34,10 +34,12 @@ describe("SpaceService", () => {
     let space = await testPlatformBob.client.space.createOne({ name, description });
     expect(space.name).toEqual(name);
 
-    space = await testPlatformBob.client.space.updateOne(name, { name, description: updatedDescription });
-    expect(space.description).toEqual(updatedDescription);
-
-    await testPlatformBob.client.space.deleteOne({ name: name });
+    try {
+      space = await testPlatformBob.client.space.updateOne(name, { name, description: updatedDescription });
+      expect(space.description).toEqual(updatedDescription);
+    } finally {
+      await testPlatformBob.client.space.deleteOne({ name: name });
+    }
   });
 
   describe("createOne", () => {
