@@ -202,7 +202,10 @@ class SpaceService extends Base {
     const json = await throwExpected(
       () => got.get(url),
       // TODO: differentiate between space and cluster not being found
-      { 404: () => new SpaceNotFoundException(name) }
+      {
+        404: () => new SpaceNotFoundException(name),
+        403: () => new ForbiddenException()
+      }
     );
 
     return (json as unknown) as K8sCluster;
