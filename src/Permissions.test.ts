@@ -22,6 +22,11 @@ const mockUser4: User = {
   id: "3"
 };
 
+// Member of Space, but not team
+const mockUser5: User = {
+  id: "4"
+};
+
 const mockTeam1: Team = {
   kind: "Owner",
   id: "mt1",
@@ -50,7 +55,7 @@ const mockSpace1: Space = {
   id: "ms1",
   name: "ms1",
   description: "ms1",
-  users: [mockUser1, mockUser2, mockUser3],
+  users: [mockUser1, mockUser2, mockUser3, mockUser5],
   teams: [mockTeam1, mockTeam2, mockTeam3]
 };
 const mockK8sCluster1: K8sCluster = {
@@ -76,6 +81,9 @@ describe("PermissionsService", () => {
       expect(client.permission.getRole(mockSpace1)).toEqual(Roles.Owner);
       expect(client.permission.getRole(mockSpace1, mockUser2.id)).toEqual(Roles.Admin);
       expect(client.permission.getRole(mockSpace1, mockUser3.id)).toEqual(Roles.Member);
+
+      // MockUser5 is Space member but is not in any team
+      expect(client.permission.getRole(mockSpace1, mockUser5.id)).toEqual(Roles.Member);
     });
 
     it("recognizes lack of role", () => {
