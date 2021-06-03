@@ -118,7 +118,7 @@ export class Permissions {
       return Roles.Admin;
     }
 
-    if (space.teams?.length && space.teams.filter(t => this.isUserInTeam(t, forUserId)).length > 0) {
+    if (space.users?.map(user => user.id).includes(forUserId)) {
       return Roles.Member;
     }
 
