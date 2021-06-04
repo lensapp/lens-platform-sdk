@@ -1,6 +1,6 @@
 import { rng, testPlatformFactory } from "./utils";
 import { config } from "./configuration";
-import type { Space } from "../src";
+import type { Space, K8sCluster } from "../src";
 import type { TestPlatform } from "./utils";
 import {
   UnauthorizedException,
@@ -112,6 +112,45 @@ describe("SpaceService", () => {
 
     it("reports Forbidden errors", async () => {
       return expect(testPlatformBob.client.space.getOne({ name: aliceSpace.name }))
+        .rejects.toThrowError(ForbiddenException);
+    });
+  });
+
+  describe("getOneCluster", () => {
+    let aliceSpace: Space;
+    let aliceCluster: K8sCluster;
+    const spaceName = `sdk-e2e-${rng()}`;
+
+    beforeAll(async () => {
+      aliceSpace = await testPlatformAlice.client.space.createOne({
+        name: spaceName,
+        description: "Test space for getOne function"
+      });
+      aliceCluster = await testPlatformAlice.client.space.createOneCluster({
+        name: spaceName,
+        cluster: {
+          name: `${spaceName}-cluster`,
+          description: "Integration Test Cluster Description",
+          kind: "K8sCluster",
+          region: "eu"
+        }
+      });
+    });
+
+    afterAll(async () => {
+      if (aliceSpace) {
+        await testPlatformAlice.client.space.deleteOne({ name: aliceSpace.name });
+      }
+
+      if (aliceCluster) {
+        await testPlatformAlice.client.space.deleteOneCluster({
+          name: aliceSpace.name, clusterId: aliceCluster.id!
+        });
+      }
+    });
+
+    it("reports Forbidden errors", async () => {
+      return expect(testPlatformBob.client.space.getOneCluster({ name: aliceSpace.name, clusterId: aliceCluster.id! }))
         .rejects.toThrowError(ForbiddenException);
     });
   });
