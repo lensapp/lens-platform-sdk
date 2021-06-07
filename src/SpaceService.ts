@@ -1,9 +1,10 @@
 import { Base } from "./Base";
-import { User, UserService } from "./UserService";
+import { User } from "./UserService";
 import type { Team } from "./TeamService";
 import type { K8sCluster } from "./K8sCluster";
 import type { Invitation } from "./InvitationService";
 import type { BillingPlan } from "./BillingPlan";
+import type { InvitationDomain } from "./InvitationDomain";
 import {
   throwExpected,
   SpaceNotFoundException,
@@ -13,7 +14,8 @@ import {
   SpaceHasTooManyClustersException,
   BadRequestException,
   CantRemoveOwnerFromSpaceException,
-  UserNameNotFoundException
+  UserNameNotFoundException,
+  NotFoundException
 } from "./exceptions";
 
 /**
@@ -34,6 +36,7 @@ export interface Space {
   users?: User[];
   teams?: Team[];
   invitations?: Invitation[];
+  invitationDomains?: InvitationDomain[];
 }
 
 /**
@@ -190,6 +193,64 @@ class SpaceService extends Base {
     );
 
     return (json as unknown) as K8sCluster[];
+  }
+
+  /**
+   * Get all invitation domains in one space by space name
+   */
+  async getInvitationDomains({ name }: { name: string }): Promise<InvitationDomain[]> {
+    const { apiEndpointAddress, got } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/spaces/${name}/security/invitation-domains`;
+
+    const json = await throwExpected(
+      () => got.get(url),
+      {
+        403: () => new ForbiddenException(),
+        404: () => new SpaceNotFoundException(name)
+      }
+    );
+
+    return (json as unknown) as InvitationDomain[];
+  }
+
+  /**
+   * Add one invitation domain in a Space by space name
+   */
+  async addInvitationDomain({ name, domain }: { name: Space["name"]; domain: InvitationDomain["domain"] }): Promise<InvitationDomain> {
+    const { apiEndpointAddress, got } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/spaces/${name}/security/invitation-domains`;
+
+    const json = await throwExpected(
+      () => got.post(url, {
+        json: {
+          domain
+        }
+      }),
+      {
+        400: () => new BadRequestException(),
+        403: () => new ForbiddenException(),
+        404: () => new SpaceNotFoundException(name)
+      }
+    );
+
+    return (json as unknown) as InvitationDomain;
+  }
+
+  /**
+   * Delete one invitation domain in a Space by space name and invitation domain id
+   */
+  async deleteInvitationDomain({ name, invitationDomainId }: { name: Space["name"]; invitationDomainId: InvitationDomain["id"] }): Promise<void> {
+    const { apiEndpointAddress, got } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/spaces/${name}/security/invitation-domains/${invitationDomainId}`;
+
+    await throwExpected(
+      () => got.delete(url),
+      {
+        403: () => new ForbiddenException(),
+        // Space or InvitationDomain missing
+        404: () => new NotFoundException()
+      }
+    );
   }
 
   /**
