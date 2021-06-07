@@ -6,7 +6,8 @@ import {
   UnauthorizedException,
   SpaceNameReservedException,
   SpaceNotFoundException,
-  ForbiddenException
+  ForbiddenException,
+  NotFoundException
 } from "../src/exceptions";
 
 const TEST_SPACE_NAME = "test-space";
@@ -113,6 +114,72 @@ describe("SpaceService", () => {
     it("reports Forbidden errors", async () => {
       return expect(testPlatformBob.client.space.getOne({ name: aliceSpace.name }))
         .rejects.toThrowError(ForbiddenException);
+    });
+  });
+
+  describe("invitationDomain", () => {
+    let bobSpace: Space;
+    let aliceSpace: Space;
+
+    beforeAll(async () => {
+      bobSpace = await testPlatformBob.client.space.createOne({
+        name: `sdk-e2e-${rng()}`,
+        description: "Test space for getOne function"
+      });
+      aliceSpace = await testPlatformAlice.client.space.createOne({
+        name: `sdk-e2e-${rng()}`,
+        description: "Test space for getOne function"
+      });
+    });
+
+    afterAll(async () => {
+      if (bobSpace) {
+        await testPlatformBob.client.space.deleteOne({ name: bobSpace.name });
+      }
+
+      if (aliceSpace) {
+        await testPlatformAlice.client.space.deleteOne({ name: aliceSpace.name });
+      }
+    });
+
+    it("adds, gets and deletes invitation domains", async () => {
+      const domain = "mirantis.com";
+
+      expect(await testPlatformBob.client.space.getInvitationDomains({ name: bobSpace.name })).toEqual([]);
+
+      expect(await testPlatformBob.client.space.addInvitationDomain({ name: bobSpace.name, domain })).toEqual({
+        createdAt: expect.any(String),
+        createdById: "userId",
+        id: expect.any(String),
+        domain,
+        spaceId: bobSpace.id,
+        updatedAt: expect.any(String)
+      });
+
+      const invitationDomains = await testPlatformBob.client.space.getInvitationDomains({ name: bobSpace.name });
+
+      expect(invitationDomains).toEqual([{
+        createdAt: expect.any(String),
+        createdById: "userId",
+        id: expect.any(String),
+        domain,
+        spaceId: bobSpace.id,
+        updatedAt: expect.any(String)
+      }]);
+
+      await testPlatformBob.client.space.deleteInvitationDomain({ name: bobSpace.name, invitationDomainId: invitationDomains[0].id });
+
+      expect(await testPlatformBob.client.space.getInvitationDomains({ name: bobSpace.name })).toEqual([]);
+    });
+
+    it("returns forbidden if fetching another user's Space's invitation domains", async () => {
+      return expect(testPlatformBob.client.space.getInvitationDomains({ name: aliceSpace.name }))
+        .rejects.toThrowError(ForbiddenException);
+    });
+
+    it("returns not found if fetching not existing Space", async () => {
+      return expect(testPlatformBob.client.space.getInvitationDomains({ name: "missing-foobar-space" }))
+        .rejects.toThrowError(NotFoundException);
     });
   });
 
