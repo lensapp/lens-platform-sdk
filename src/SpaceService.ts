@@ -205,7 +205,7 @@ class SpaceService extends Base {
     const json = await throwExpected(
       () => got.get(url),
       {
-        401: () => new ForbiddenException(),
+        403: () => new ForbiddenException(),
         404: () => new SpaceNotFoundException(name)
       }
     );
@@ -228,7 +228,7 @@ class SpaceService extends Base {
       }),
       {
         400: () => new BadRequestException(),
-        401: () => new ForbiddenException(),
+        403: () => new ForbiddenException(),
         404: () => new SpaceNotFoundException(name)
       }
     );
@@ -246,7 +246,7 @@ class SpaceService extends Base {
     await throwExpected(
       () => got.delete(url),
       {
-        401: () => new ForbiddenException(),
+        403: () => new ForbiddenException(),
         // Space or InvitationDomain missing
         404: () => new NotFoundException()
       }
