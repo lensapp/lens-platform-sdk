@@ -149,7 +149,7 @@ describe("SpaceService", () => {
 
       expect(await testPlatformBob.client.space.addInvitationDomain({ name: bobSpace.name, domain })).toEqual({
         createdAt: expect.any(String),
-        createdById: "userId",
+        createdById: bobSpace.createdById,
         id: expect.any(String),
         domain,
         spaceId: bobSpace.id,
@@ -160,7 +160,7 @@ describe("SpaceService", () => {
 
       expect(invitationDomains).toEqual([{
         createdAt: expect.any(String),
-        createdById: "userId",
+        createdById: bobSpace.createdById,
         id: expect.any(String),
         domain,
         spaceId: bobSpace.id,
