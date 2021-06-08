@@ -9,12 +9,17 @@ export enum Roles {
   None = "None"
 }
 
+/**
+ * Space Actions
+ */
 export enum Actions {
   DeleteSpace,
   PatchSpace,
   CreateInvitation,
   PatchInvitation,
   RevokeInvitation,
+  AddInvitationDomain,
+  DeleteInvitationDomain,
   CreateTeam,
   DeleteTeam,
   PatchTeam
@@ -49,6 +54,8 @@ export class Permissions {
       case Actions.PatchSpace:
       case Actions.CreateTeam:
       case Actions.DeleteTeam:
+      case Actions.AddInvitationDomain:
+      case Actions.DeleteInvitationDomain:
       default:
         canI = [Roles.Owner, Roles.Admin].includes(this.getRole(forSpace, forUserId));
         break;
