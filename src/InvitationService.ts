@@ -7,7 +7,9 @@ import {
   UserAlreadyExistsException,
   PendingInvitationException,
   EmailMissingException,
-  BadRequestException
+  BadRequestException,
+  ForbiddenException,
+  InvalidEmailDomainException
 } from "./exceptions";
 import { Except } from "type-fest";
 
@@ -103,9 +105,20 @@ class InvitationService extends Base {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/invitations/${invitation.id}`;
 
-    const json = await got.patch(url, {
-      json: invitation
-    });
+    const json = await throwExpected(
+      () => got.patch(url, {
+        json: invitation
+      }),
+      {
+        403: error => {
+          if (error?.body?.message?.includes("your email address domain")) {
+            return new InvalidEmailDomainException(error?.body?.message);
+          }
+
+          return new ForbiddenException();
+        }
+      }
+    );
 
     return (json as unknown) as Invitation;
   }

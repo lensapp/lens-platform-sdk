@@ -27,3 +27,12 @@ export class EmailMissingException extends UnprocessableEntityException {
     Object.setPrototypeOf(this, EmailMissingException.prototype);
   }
 }
+
+export class InvalidEmailDomainException extends UnprocessableEntityException {
+  // The message is e.g.:
+  // "Sorry, your email address domain example.com is not authorized to join this Space. Please contact your Space Administrator."
+  constructor(message?: string) {
+    super(message);
+    Object.setPrototypeOf(this, EmailMissingException.prototype);
+  }
+}
