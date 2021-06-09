@@ -111,6 +111,9 @@ class InvitationService extends Base {
       }),
       {
         403: error => {
+          console.error(error);
+          console.log(error?.body);
+          console.log(error?.body?.message);
           if (error?.body?.message?.includes("your email address domain")) {
             return new InvalidEmailDomainException(error?.body?.message);
           }
