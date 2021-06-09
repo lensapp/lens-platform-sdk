@@ -36,7 +36,7 @@ describe("InvitationService", () => {
       }
     });
 
-    it("returns InvalidEmailDomainException", async () => {
+    it("returns InvalidEmailDomainException", async done => {
       const domain = "foobar-example.com";
 
       await testPlatformBob.client.space.addInvitationDomain({ name: bobSpace.name, domain });
@@ -47,12 +47,15 @@ describe("InvitationService", () => {
         kind: "directInvite"
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      expect(async () =>
-        testPlatformAlice.client.invitation.updateOne({
+      try {
+        await testPlatformAlice.client.invitation.updateOne({
           id: invitation.id!,
           state: "accepted"
-        })).rejects.toThrow(InvalidEmailDomainException);
+        });
+      } catch (error: unknown) {
+        expect(error instanceof InvalidEmailDomainException).toBeTruthy();
+        done();
+      }
     });
   });
 });
