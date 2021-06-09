@@ -47,11 +47,12 @@ describe("InvitationService", () => {
         kind: "directInvite"
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       expect(async () =>
         testPlatformAlice.client.invitation.updateOne({
           id: invitation.id!,
           state: "accepted"
-        })).toThrowError(InvalidEmailDomainException);
+        })).rejects.toThrow(InvalidEmailDomainException);
     });
   });
 });
