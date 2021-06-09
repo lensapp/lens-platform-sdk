@@ -53,7 +53,6 @@ describe("InvitationService", () => {
           state: "accepted"
         });
       } catch (error: unknown) {
-        console.error(error);
         expect(error instanceof InvalidEmailDomainException).toBeTruthy();
         done();
       }
