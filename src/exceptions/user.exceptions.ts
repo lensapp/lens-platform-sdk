@@ -1,4 +1,4 @@
-import { NotFoundException, LensSDKException } from "./common.exceptions";
+import { NotFoundException, ConflictException } from "./common.exceptions";
 
 export class UserNameNotFoundException extends NotFoundException {
   constructor(userName: string) {
@@ -11,5 +11,12 @@ export class UserIdNotFoundException extends NotFoundException {
   constructor(userId: string) {
     super(`Could not find user by id ${userId}`);
     Object.setPrototypeOf(this, UserIdNotFoundException.prototype);
+  }
+}
+
+export class UsernameAlreadyExistsException extends ConflictException {
+  constructor() {
+    super();
+    Object.setPrototypeOf(this, UsernameAlreadyExistsException.prototype);
   }
 }

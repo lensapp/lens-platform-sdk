@@ -47,15 +47,10 @@ describe("InvitationService", () => {
         kind: "directInvite"
       });
 
-      try {
-        await testPlatformAlice.client.invitation.updateOne({
-          id: invitation.id!,
-          state: "accepted"
-        });
-      } catch (error: unknown) {
-        expect(error instanceof InvalidEmailDomainException).toBeTruthy();
-        done();
-      }
+      return expect(await testPlatformAlice.client.invitation.updateOne({
+        id: invitation.id!,
+        state: "accepted"
+      })).rejects.toThrowError(InvalidEmailDomainException);
     });
   });
 });

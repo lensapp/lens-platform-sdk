@@ -1,5 +1,5 @@
 import { Base } from "./Base";
-import { throwExpected, NotFoundException, ForbiddenException, BadRequestException } from "./exceptions";
+import { throwExpected, NotFoundException, ForbiddenException, BadRequestException, UsernameAlreadyExistsException } from "./exceptions";
 
 /**
  *
@@ -74,7 +74,8 @@ class UserService extends Base {
       () => got.patch(url, { json: user }),
       {
         404: () => new NotFoundException(`User ${username} not found`),
-        403: () => new ForbiddenException(`Modification of user ${username} is forbidden`)
+        403: () => new ForbiddenException(`Modification of user ${username} is forbidden`),
+        409: () => new UsernameAlreadyExistsException()
       }
     );
 
