@@ -14,9 +14,6 @@ const lensPlatformClient = new LensPlatformClient({
     keyCloakAddress: "", // keycloak address, e.g. "https://keycloak.k8slens.dev"
     keycloakRealm: "", // the realm name, e.g. "lensCloud" 
     apiEndpointAddress: "", // api endpoint address, e.g. "https://api.k8slens.dev"
-    exceptionHandler: (exception): void => {
-      Component.Notifications.error(`${exception.message} ${exception.response?.body}`)
-    }
 });
 ```
 
