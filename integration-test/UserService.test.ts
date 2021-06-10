@@ -5,7 +5,8 @@ import {
   BadRequestException,
   ForbiddenException,
   NotFoundException,
-  UnauthorizedException
+  UnauthorizedException,
+  UsernameAlreadyExistsException
 } from "../src/exceptions";
 
 describe("UserService", () => {
@@ -63,6 +64,12 @@ describe("UserService", () => {
 
       return expect(bobPlatform.client.user.updateOne(username, {}))
         .rejects.toThrowError(ForbiddenException);
+    });
+
+    it("throws UsernameAlreadyExistsException when trying to change username to existing user's", async () => {
+      return expect(bobPlatform.client.user.updateOne(userBob.username, {
+        username: userAlice.username
+      })).rejects.toThrowError(UsernameAlreadyExistsException);
     });
   });
 

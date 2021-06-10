@@ -33,8 +33,15 @@ export class UnauthorizedException extends LensSDKException {
   }
 }
 
+export class ConflictException extends LensSDKException {
+  constructor(message = "Conflict") {
+    super(409, message);
+    Object.setPrototypeOf(this, UnauthorizedException.prototype);
+  }
+}
+
 export class ForbiddenException extends LensSDKException {
-  constructor(message = "Fobidden") {
+  constructor(message = "Forbidden") {
     super(403, message);
     Object.setPrototypeOf(this, ForbiddenException.prototype);
   }

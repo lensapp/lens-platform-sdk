@@ -1,4 +1,4 @@
-import { LensSDKException, UnprocessableEntityException } from "./common.exceptions";
+import { UnprocessableEntityException, ForbiddenException } from "./common.exceptions";
 
 export class PastExpiryException extends UnprocessableEntityException {
   constructor(msg = "Expiry time can't be in the past") {
@@ -28,7 +28,7 @@ export class EmailMissingException extends UnprocessableEntityException {
   }
 }
 
-export class InvalidEmailDomainException extends UnprocessableEntityException {
+export class InvalidEmailDomainException extends ForbiddenException {
   // The message is e.g.:
   // "Sorry, your email address domain example.com is not authorized to join this Space. Please contact your Space Administrator."
   constructor(message?: string) {
