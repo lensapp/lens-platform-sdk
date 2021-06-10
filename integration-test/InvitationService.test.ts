@@ -36,7 +36,7 @@ describe("InvitationService", () => {
       }
     });
 
-    it("returns InvalidEmailDomainException", async done => {
+    it("returns InvalidEmailDomainException", async () => {
       const domain = "foobar-example.com";
 
       await testPlatformBob.client.space.addInvitationDomain({ name: bobSpace.name, domain });

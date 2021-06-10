@@ -66,7 +66,7 @@ describe("UserService", () => {
         .rejects.toThrowError(ForbiddenException);
     });
 
-    it("throws UsernameAlreadyExistsException when trying to change username to existing user's", async done => {
+    it("throws UsernameAlreadyExistsException when trying to change username to existing user's", async () => {
       return expect(bobPlatform.client.user.updateOne(userBob.username, {
         username: userAlice.username
       })).rejects.toThrowError(UsernameAlreadyExistsException);
