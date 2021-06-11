@@ -106,8 +106,8 @@
     "typescript": "^4.2.4"
   },
   "dependencies": {
-    "got": "^11.8.2",
     "jwt-decode": "^3.1.2",
+    "ky-universal": "^0.9.1",
     "type-fest": "^0.21.3"
   }
 }

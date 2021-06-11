@@ -7,9 +7,9 @@ import { InvitationService } from "./InvitationService";
 import { PlanService } from "./PlanService";
 
 import decode from "jwt-decode";
-import got from "got";
+import ky from "ky-universal";
 import _console from "./helpers/_console";
-import type { Options, Got, CancelableRequest, GotRequestFunction } from "got";
+import type { Options } from "ky-universal";
 
 export interface LensPlatformClientOptions {
   accessToken?: string;
@@ -46,22 +46,25 @@ interface DecodedAccessToken {
   typ: string;
 }
 
-const gotMethods: Array<keyof Got> = ["get", "post", "put", "patch", "head", "delete"];
+const requestLibraryMethods: Array<keyof typeof ky> = ["get", "post", "put", "patch", "head", "delete"];
 
 /**
- * TypeGuard to determine if type is GotRequestFunction
+ * Function to determine if func is a function of ky for making a request
  */
-const isGotRequestFunction = (
-  func: any, key: keyof Got
-): func is GotRequestFunction =>
-  typeof func === "function" && gotMethods.includes(key);
+const isRequestLibraryFunction = (
+  func: any, key: keyof typeof ky
+): func is (typeof ky)["get"] |
+(typeof ky)["post"] |
+(typeof ky)["put"] |
+(typeof ky)["patch"] |
+(typeof ky)["head"] |
+(typeof ky)["delete"] =>
+  typeof func === "function" && requestLibraryMethods.includes(key);
 
 /**
- * TypeGuard to determine if type is CancelableRequest | Request
- * @remarks This is needed because for some reason the return of GotRequestFunction
- * in got is Request | CancelableRequest
+ * Function to determine if obj is CancelableRequest
  */
-const isCancelableRequest = (obj: any): obj is CancelableRequest => {
+const isCancelableRequest = (obj: any) => {
   // CancelableRequest has these properties unlike Request
   return obj.json !== undefined && obj.buffer !== undefined && obj.text !== undefined;
 };
@@ -139,27 +142,28 @@ class LensPlatformClient {
   }
 
   /**
-   * A proxied version of `got` that
+   * A proxied version of `ky-universal` that
    *
    * 1) Prints request/response in console (for developer to debug issues)
    * 2) Auto add `Authorization: Bearer [token]`
    *
    */
-  get got() {
+  get fetch() {
     const { accessToken, getAccessToken } = this;
     const token = getAccessToken && typeof getAccessToken === "function" ? getAccessToken() : accessToken;
     const defaultHeaders = this.defaultHeaders;
-    const proxy = new Proxy(got, {
-      get(target: Got, key: keyof Got) {
+    const proxy = new Proxy(ky, {
+      get(target: typeof ky, key: keyof typeof ky) {
         const prop = target[key];
 
-        if (isGotRequestFunction(prop, key)) {
+        if (isRequestLibraryFunction(prop, key)) {
           return async (...arg: [string, Options, ...any]) => {
             try {
               const url = arg[0];
               let options = arg[1];
-              const headers = arg[1]?.headers;
+              const headers = arg[1]?.headers as RequestHeaders;
               let restOptions;
+
               if (headers) {
                 const clone = Object.assign({}, options);
                 delete clone.headers;

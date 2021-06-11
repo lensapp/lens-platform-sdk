@@ -17,8 +17,8 @@ class OpenIdConnect extends Base {
    * see {@link https://openid.net/specs/openid-connect-core-1_0.html#UserInfo}
    */
   async getUserInfo(): Promise<OpenIdConnectUserInfo> {
-    const { keyCloakAddress, keycloakRealm, got } = this.lensPlatformClient;
-    const json = await got.get(`${keyCloakAddress}/auth/realms/${keycloakRealm}/protocol/openid-connect/userinfo`);
+    const { keyCloakAddress, keycloakRealm, fetch } = this.lensPlatformClient;
+    const json = await fetch.get(`${keyCloakAddress}/auth/realms/${keycloakRealm}/protocol/openid-connect/userinfo`);
 
     return (json as unknown) as OpenIdConnectUserInfo;
   }

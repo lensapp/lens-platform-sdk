@@ -1,4 +1,3 @@
-import type { Response } from "got";
 import type { HTTPErrorCode } from "./HTTPErrrorCodes";
 import { HTTPErrorCodes } from "./HTTPErrrorCodes";
 import { LensSDKException, UnauthorizedException } from "./common.exceptions";
@@ -20,7 +19,7 @@ const parseHTTPErrorCode = (exception: unknown): HTTPErrorCode | null => {
   return null;
 };
 
-type PlatformErrorResponse = Pick<Response<{ statusCode: HTTPErrorCode; message: string; error: string }>, "body" | "url">;
+type PlatformErrorResponse = Pick<Response, "body" | "url"> & { statusCode: HTTPErrorCode; message: string; error: string };
 
 /**
  * Converts an error object of unknown type
@@ -68,7 +67,7 @@ const DEFAULT_MAP: HTTPErrCodeExceptionMap = {
  * @example
  * ```
  * const json = throwExpected(
- *  () => got.get(url),
+ *  () => fetch.get(url),
  *    {
  *      404: e => e.url.includes("/user") ?
  *        new NotFoundException(`User ${username} not found`) :
