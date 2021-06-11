@@ -20,22 +20,22 @@ describe("InvitationService", () => {
     testPlatformAlice.fakeToken = undefined;
   });
 
-  describe("invitationDomain", () => {
-    let bobSpace: Space;
+  let bobSpace: Space;
 
-    beforeAll(async () => {
-      bobSpace = await testPlatformBob.client.space.createOne({
-        name: `sdk-e2e-${rng()}`,
-        description: "Test space for InvitationService"
-      });
+  beforeAll(async () => {
+    bobSpace = await testPlatformBob.client.space.createOne({
+      name: `sdk-e2e-${rng()}`,
+      description: "Test space for InvitationService"
     });
+  });
 
-    afterAll(async () => {
-      if (bobSpace) {
-        await testPlatformBob.client.space.deleteOne({ name: bobSpace.name });
-      }
-    });
+  afterAll(async () => {
+    if (bobSpace) {
+      await testPlatformBob.client.space.deleteOne({ name: bobSpace.name });
+    }
+  });
 
+  describe("InvitationDomain", () => {
     it("returns InvalidEmailDomainException", async () => {
       const domain = "foobar-example.com";
 
@@ -52,17 +52,26 @@ describe("InvitationService", () => {
         state: "accepted"
       })).rejects.toThrowError(InvalidEmailDomainException);
     });
+  });
 
+  describe("invitations", () => {
     it("creates and returns invitation", async () => {
+      const space = await testPlatformBob.client.space.createOne({
+        name: `sdk-e2e-${rng()}`,
+        description: "Test space for InvitationService"
+      });
+
       // Note: this invitation can't be deleted after the test
       const invitation = await testPlatformBob.client.invitation.createOne({
-        spaceId: bobSpace.id,
+        spaceId: space.id,
         invitedUsername: credAlice.username,
         kind: "directInvite"
       });
 
       await testPlatformBob.client.invitation.getOne({ id: invitation.id! });
       await testPlatformAlice.client.invitation.getOne({ id: invitation.id! });
+
+      await testPlatformBob.client.space.deleteOne({ name: space.name });
     });
   });
 });
