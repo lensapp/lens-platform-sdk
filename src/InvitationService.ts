@@ -70,6 +70,23 @@ class InvitationService extends Base {
   }
 
   /**
+   * Get invitation by key
+   */
+  async getOneByKey({ key }: { key: string }): Promise<Invitation> {
+    const { apiEndpointAddress, got } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/invitations/by-key/${key}`;
+
+    const json = await throwExpected(
+      () => got.get(url),
+      {
+        404: () => new NotFoundException()
+      }
+    );
+
+    return (json as unknown) as Invitation;
+  }
+
+  /**
    * Get invitations
    */
   async getMany(): Promise<Invitation[]> {
