@@ -52,5 +52,17 @@ describe("InvitationService", () => {
         state: "accepted"
       })).rejects.toThrowError(InvalidEmailDomainException);
     });
+
+    it("creates and returns invitation", async () => {
+      // Note: this invitation can't be deleted after the test
+      const invitation = await testPlatformBob.client.invitation.createOne({
+        spaceId: bobSpace.id,
+        invitedUsername: credAlice.username,
+        kind: "directInvite"
+      });
+
+      await testPlatformBob.client.invitation.getOne({ id: invitation.id! });
+      await testPlatformAlice.client.invitation.getOne({ id: invitation.id! });
+    });
   });
 });

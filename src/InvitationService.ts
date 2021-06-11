@@ -9,7 +9,8 @@ import {
   EmailMissingException,
   BadRequestException,
   ForbiddenException,
-  InvalidEmailDomainException
+  InvalidEmailDomainException,
+  NotFoundException
 } from "./exceptions";
 import { Except } from "type-fest";
 
@@ -50,6 +51,24 @@ export interface Invitation {
  * @alpha
  */
 class InvitationService extends Base {
+  /**
+   * Get invitation by id
+   */
+  async getOne({ id, queryString }: { id: string; queryString?: string }): Promise<Invitation> {
+    const { apiEndpointAddress, got } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/invitations/${id}${queryString ? `?${queryString}` : ""}`;
+
+    const json = await throwExpected(
+      () => got.get(url),
+      {
+        403: () => new ForbiddenException(),
+        404: () => new NotFoundException()
+      }
+    );
+
+    return (json as unknown) as Invitation;
+  }
+
   /**
    * Get invitations
    */

@@ -12,7 +12,7 @@ import type { BillingPlan } from "./BillingPlan";
  */
 class PlanService extends Base {
   /**
-   * Get one space by space name
+   * Get one plan by space name
    */
   async getOne({ name, queryString }: { name: string; queryString?: string }): Promise<BillingPlan> {
     const { apiEndpointAddress, got } = this.lensPlatformClient;
