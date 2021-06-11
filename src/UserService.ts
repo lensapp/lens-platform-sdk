@@ -1,5 +1,5 @@
 import { Base } from "./Base";
-import { throwExpected, NotFoundException, ForbiddenException, BadRequestException, UsernameAlreadyExistsException } from "./exceptions";
+import { throwExpected, NotFoundException, ForbiddenException, BadRequestException, UsernameAlreadyExistsException, UnprocessableEntityException, UserNameNotFoundException, LensSDKException } from "./exceptions";
 
 /**
  *
@@ -90,6 +90,34 @@ class UserService extends Base {
     }
 
     throw new Error(`jwt.preferred_username is ${decodedAccessToken?.preferred_username}`);
+  }
+
+  async deleteOne(username: string): Promise<void> {
+    const { apiEndpointAddress, got } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/users/${username}`;
+
+    await throwExpected(
+      () => got.delete(url),
+      {
+        500: error => {
+          if (error?.body.message.includes("Token")) {
+            return new NotFoundException("Token not found");
+          }
+
+          if (error?.body.message.includes("User")) {
+            return new UserNameNotFoundException(username);
+          }
+
+          return new LensSDKException(
+            500,
+            `Unexpected exception [Lens Platform SDK]: ${error?.body.message ?? "Internal server error"}`,
+            error
+          );
+        },
+        403: error => new ForbiddenException(error?.body.message),
+        422: error => new UnprocessableEntityException(error?.body.message)
+      }
+    );
   }
 }
 
