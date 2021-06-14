@@ -89,9 +89,7 @@ class SpaceService extends Base {
     const url = `${apiEndpointAddress}/spaces`;
 
     const json = await throwExpected(
-      async () => fetch.post(url, {
-        json: space
-      }),
+      async () => fetch.post(url, space),
       { 422: () => new SpaceNameReservedException(space.name) }
     );
 
@@ -106,9 +104,7 @@ class SpaceService extends Base {
     const url = `${apiEndpointAddress}/spaces/${spaceName}`;
 
     const json = await throwExpected(
-      async () => fetch.patch(url, {
-        json: space
-      }),
+      async () => fetch.patch(url, space),
       {
         500: () => new TokenNotFoundException(),
         403: () => new ForbiddenException(),
@@ -222,9 +218,7 @@ class SpaceService extends Base {
 
     const json = await throwExpected(
       async () => fetch.post(url, {
-        json: {
-          domain
-        }
+        domain
       }),
       {
         400: () => new BadRequestException(),
@@ -280,7 +274,7 @@ class SpaceService extends Base {
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters`;
 
     const json = await throwExpected(
-      async () => fetch.post(url, { json: cluster }),
+      async () => fetch.post(url, cluster),
       {
         404: () => new SpaceNotFoundException(name),
         422: () => new SpaceHasTooManyClustersException(name),
@@ -299,7 +293,7 @@ class SpaceService extends Base {
     const url = `${apiEndpointAddress}/spaces/${cluster.space?.name}/k8sclusters/${cluster.id}`;
 
     const json = await throwExpected(
-      async () => fetch.put(url, { json: cluster }),
+      async () => fetch.put(url, cluster),
       {
         // TODO: differentiate between space and cluster not being found
         404: () => new SpaceNotFoundException(cluster.space?.name ?? "undefined"),

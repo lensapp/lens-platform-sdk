@@ -71,7 +71,7 @@ class UserService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}`;
     const json = await throwExpected(
-      async () => fetch.patch(url, { json: user }),
+      async () => fetch.patch(url, user),
       {
         404: () => new NotFoundException(`User ${username} not found`),
         403: () => new ForbiddenException(`Modification of user ${username} is forbidden`),

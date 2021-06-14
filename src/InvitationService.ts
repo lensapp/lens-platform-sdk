@@ -105,9 +105,7 @@ class InvitationService extends Base {
     const url = `${apiEndpointAddress}/invitations`;
 
     const json = await throwExpected(
-      async () => fetch.post(url, {
-        json: invitation
-      }),
+      async () => fetch.post(url, invitation),
       {
         404: () => new SpaceNotFoundException(`id: ${invitation.spaceId}`),
         422: e => {
@@ -142,9 +140,7 @@ class InvitationService extends Base {
     const url = `${apiEndpointAddress}/invitations/${invitation.id}`;
 
     const json = await throwExpected(
-      async () => fetch.patch(url, {
-        json: invitation
-      }),
+      async () => fetch.patch(url, invitation),
       {
         403: error => {
           if (error?.body?.message?.includes("your email address domain")) {

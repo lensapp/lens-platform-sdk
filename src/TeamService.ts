@@ -61,7 +61,7 @@ class TeamService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/teams`;
 
-    const json = await fetch.post(url, { json: team });
+    const json = await fetch.post(url, team);
 
     return (json as unknown) as Team;
   }
@@ -83,7 +83,7 @@ class TeamService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/teams/${id}/users`;
 
-    const json = await fetch.post(url, { json: { username } });
+    const json = await fetch.post(url, { username });
 
     return (json as unknown) as Team;
   }

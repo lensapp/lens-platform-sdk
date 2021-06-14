@@ -85,6 +85,7 @@ class LensPlatformClient {
     }
 
     const { accessToken, getAccessToken } = options;
+
     if (!accessToken && !getAccessToken) {
       throw new Error(`Both accessToken ${accessToken} or getAccessToken are ${getAccessToken}`);
     }
@@ -155,8 +156,14 @@ class LensPlatformClient {
           return async (...arg: [string, RequestOptions, ...any]) => {
             try {
               const url = arg[0];
-              let options = arg[1];
-              const headers = arg[1]?.headers as RequestHeaders;
+
+              // "get", "head", "delete" has options in the second parameter
+              // "patch", "post", "put" has the options in the third parameter
+              const hasBody = !["get", "head", "delete"].includes(key);
+
+              let options = hasBody ? arg[2] : arg[1];
+              const requestBody = hasBody ? arg[1] : null;
+              const headers = options?.headers as RequestHeaders;
               let restOptions;
 
               if (headers) {
@@ -183,8 +190,7 @@ class LensPlatformClient {
               };
 
               _console.log(`request arguments ${JSON.stringify(requestOptions)}`);
-
-              const response = await prop(url, requestOptions);
+              const response = await (hasBody ? prop(url, requestBody, requestOptions) : prop(url, requestOptions));
 
               // Body as JavaScript plain object
               const body = response.data;
