@@ -1,6 +1,11 @@
 import type { HTTPErrorCode } from "./HTTPErrrorCodes";
 import { HTTPErrorCodes } from "./HTTPErrrorCodes";
 import { LensSDKException, UnauthorizedException } from "./common.exceptions";
+import { ResponsePromise } from "ky-universal";
+
+// Helper to unwrap Promise<T> to T
+type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
+type Response = ThenArg<ResponsePromise>;
 
 // Use 'Bad Request' as a fallback exception
 const FALLBACK_HTTP_ERROR_CODE: HTTPErrorCode = 400;
@@ -19,20 +24,25 @@ const parseHTTPErrorCode = (exception: unknown): HTTPErrorCode | null => {
   return null;
 };
 
-type PlatformErrorResponse = Pick<Response, "body" | "url"> & { statusCode: HTTPErrorCode; message: string; error: string };
+type PlatformErrorResponse = Pick<Response, "body" | "url"> & { statusCode: HTTPErrorCode; message: string; error: string; body: any };
 
 /**
  * Converts an error object of unknown type
  * to a typed response object if possible
  * @param e - unknown error
  */
-const toPlatformErrorResponse = (e: unknown): PlatformErrorResponse | undefined => {
+const toPlatformErrorResponse = async (e: unknown): Promise<PlatformErrorResponse | undefined> => {
   const obj = e as any;
 
   if (obj?.url && obj?.body) {
     try {
-      const body = JSON.parse(obj?.body);
-      return { ...obj, body };
+      const body = await obj.response.json();
+      return {
+        ...obj,
+        body,
+        // TODO: Verify
+        statusCode: obj.status
+      };
     } catch (_: unknown) {
       return undefined;
     }
@@ -54,7 +64,7 @@ const toPlatformErrorResponse = (e: unknown): PlatformErrorResponse | undefined 
 export type HTTPErrCodeExceptionMap<T = LensSDKException> = Partial<Record<HTTPErrorCode, (e?: PlatformErrorResponse) => T>>;
 
 const DEFAULT_MAP: HTTPErrCodeExceptionMap = {
-  401: e => new UnauthorizedException(e?.body.message)
+  401: _e => new UnauthorizedException("" /* TODO: e?.body.message */)
 };
 
 /**
@@ -83,8 +93,9 @@ export const throwExpected = async <T = any>(fn: () => Promise<T>, exceptionsMap
 
     return result;
   } catch (e: unknown) {
-    const response = toPlatformErrorResponse((e as any)?.response);
-    const errCode = response?.body.statusCode ?? parseHTTPErrorCode(e) ?? FALLBACK_HTTP_ERROR_CODE;
+    const response = await toPlatformErrorResponse((e as any)?.response);
+    // TODO: Fix
+    const errCode = response?.statusCode!; // Response?.body.statusCode ?? parseHTTPErrorCode(e) ?? FALLBACK_HTTP_ERROR_CODE;
     const mappedExceptionFn = exceptionsMap[errCode] ?? DEFAULT_MAP[errCode];
 
     if (mappedExceptionFn) {

@@ -114,6 +114,7 @@ class LensPlatformClient {
   get decodedAccessToken(): DecodedAccessToken | undefined {
     const { accessToken, getAccessToken } = this;
     const token = getAccessToken && typeof getAccessToken === "function" ? getAccessToken() : accessToken;
+
     if (token) {
       return decode(token);
     }
