@@ -5,11 +5,10 @@ import { TeamService } from "./TeamService";
 import { PermissionsService } from "./PermissionsService";
 import { InvitationService } from "./InvitationService";
 import { PlanService } from "./PlanService";
+import axios, { AxiosRequestConfig } from "axios";
 
 import decode from "jwt-decode";
-import ky from "ky-universal";
 import _console from "./helpers/_console";
-import type { Options } from "ky-universal";
 
 export interface LensPlatformClientOptions {
   accessToken?: string;
@@ -46,28 +45,23 @@ interface DecodedAccessToken {
   typ: string;
 }
 
-const requestLibraryMethods: Array<keyof typeof ky> = ["get", "post", "put", "patch", "head", "delete"];
+type RequestLibrary = typeof axios;
+type KeyOfRequestLibrary = keyof RequestLibrary;
+type RequestOptions = AxiosRequestConfig;
+const requestLibraryMethods: KeyOfRequestLibrary[] = ["get", "post", "put", "patch", "head", "delete"];
 
 /**
- * Function to determine if func is a function of ky for making a request
+ * Function to determine if func is a function of the request library for making a request
  */
 const isRequestLibraryFunction = (
-  func: any, key: keyof typeof ky
-): func is (typeof ky)["get"] |
-(typeof ky)["post"] |
-(typeof ky)["put"] |
-(typeof ky)["patch"] |
-(typeof ky)["head"] |
-(typeof ky)["delete"] =>
+  func: any, key: KeyOfRequestLibrary
+): func is (RequestLibrary)["get"] |
+(RequestLibrary)["post"] |
+(RequestLibrary)["put"] |
+(RequestLibrary)["patch"] |
+(RequestLibrary)["head"] |
+(RequestLibrary)["delete"] =>
   typeof func === "function" && requestLibraryMethods.includes(key);
-
-/**
- * Function to determine if obj is CancelableRequest
- */
-const isCancelableRequest = (obj: any) => {
-  // CancelableRequest has these properties unlike Request
-  return obj.json !== undefined && obj.buffer !== undefined && obj.text !== undefined;
-};
 
 class LensPlatformClient {
   accessToken: LensPlatformClientOptions["accessToken"];
@@ -143,7 +137,7 @@ class LensPlatformClient {
   }
 
   /**
-   * A proxied version of `ky-universal` that
+   * A proxied version of request library that
    *
    * 1) Prints request/response in console (for developer to debug issues)
    * 2) Auto add `Authorization: Bearer [token]`
@@ -153,12 +147,12 @@ class LensPlatformClient {
     const { accessToken, getAccessToken } = this;
     const token = getAccessToken && typeof getAccessToken === "function" ? getAccessToken() : accessToken;
     const defaultHeaders = this.defaultHeaders;
-    const proxy = new Proxy(ky, {
-      get(target: typeof ky, key: keyof typeof ky) {
+    const proxy = new Proxy(axios, {
+      get(target: RequestLibrary, key: KeyOfRequestLibrary) {
         const prop = target[key];
 
         if (isRequestLibraryFunction(prop, key)) {
-          return async (...arg: [string, Options, ...any]) => {
+          return async (...arg: [string, RequestOptions, ...any]) => {
             try {
               const url = arg[0];
               let options = arg[1];
@@ -190,19 +184,15 @@ class LensPlatformClient {
 
               _console.log(`request arguments ${JSON.stringify(requestOptions)}`);
 
-              const request = prop(url, requestOptions);
+              const response = await prop(url, requestOptions);
 
-              if (isCancelableRequest(request)) {
-                const [response, json] = await Promise.all([request, request.json()]);
+              // Body as JavaScript plain object
+              const body = response.data;
 
-                // Print HTTP response info in developer console
-                _console.log(`${key?.toUpperCase()} ${(response as any)?.statusCode} ${(response as any)?.statusMessage} ${url} `);
-                _console.log(`response body: ${(response as any)?.body}`);
-                return json;
-              }
-
-              // Unlikely to reach here, throw if does
-              throw new Error("[LENS-SPACES-SDK-INTERNAL-ERROR] request type is not CancelableRequest");
+              // Print HTTP response info in developer console
+              _console.log(`${key?.toUpperCase()} ${(response)?.status} ${(response)?.statusText} ${url} `);
+              _console.log(`response body: ${body}`);
+              return body;
             } catch (error: unknown) {
               // @ts-expect-error
               _console.error(`error message: ${error?.message}`);
