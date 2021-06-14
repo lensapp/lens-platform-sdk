@@ -1,3 +1,4 @@
+import { TokenNotFoundException } from "../dist/cjs";
 import { Base } from "./Base";
 import { throwExpected, NotFoundException, ForbiddenException, BadRequestException, UsernameAlreadyExistsException, UnprocessableEntityException, UserNameNotFoundException, LensSDKException } from "./exceptions";
 
@@ -101,7 +102,7 @@ class UserService extends Base {
       {
         500: error => {
           if (error?.body.message.includes("Token")) {
-            return new NotFoundException("Token not found");
+            return new TokenNotFoundException();
           }
 
           if (error?.body.message.includes("User")) {
@@ -115,6 +116,7 @@ class UserService extends Base {
           );
         },
         403: error => new ForbiddenException(error?.body.message),
+        404: () => new UserNameNotFoundException(username),
         422: error => new UnprocessableEntityException(error?.body.message)
       }
     );
