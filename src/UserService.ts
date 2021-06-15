@@ -98,7 +98,7 @@ class UserService extends Base {
     const url = `${apiEndpointAddress}/users/${username}`;
 
     await throwExpected(
-      () => fetch.delete(url),
+      async () => fetch.delete(url),
       {
         500: error => {
           if (error?.body.message.includes("Token")) {
