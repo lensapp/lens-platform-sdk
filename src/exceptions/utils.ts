@@ -1,7 +1,7 @@
-import type { Response } from "got";
 import type { HTTPErrorCode } from "./HTTPErrrorCodes";
 import { HTTPErrorCodes } from "./HTTPErrrorCodes";
 import { LensSDKException, UnauthorizedException } from "./common.exceptions";
+import { AxiosResponse } from "axios";
 
 // Use 'Bad Request' as a fallback exception
 const FALLBACK_HTTP_ERROR_CODE: HTTPErrorCode = 400;
@@ -20,23 +20,21 @@ const parseHTTPErrorCode = (exception: unknown): HTTPErrorCode | null => {
   return null;
 };
 
-type PlatformErrorResponse = Pick<Response<{ statusCode: HTTPErrorCode; message: string; error: string }>, "body" | "url">;
+type PlatformErrorResponse = AxiosResponse & { status: HTTPErrorCode; body: any };
 
 /**
- * Converts an error object of unknown type
+ * Converts a possible response object of unknown type
  * to a typed response object if possible
  * @param e - unknown error
  */
-const toPlatformErrorResponse = (e: unknown): PlatformErrorResponse | undefined => {
-  const obj = e as any;
+const toPlatformErrorResponse = async (response: undefined | unknown): Promise<PlatformErrorResponse | undefined> => {
+  const obj = response as any;
 
-  if (obj?.url && obj?.body) {
-    try {
-      const body = JSON.parse(obj?.body);
-      return { ...obj, body };
-    } catch (_: unknown) {
-      return undefined;
-    }
+  if (obj?.data) {
+    return {
+      ...obj,
+      body: obj?.data
+    };
   }
 
   return undefined;
@@ -55,7 +53,7 @@ const toPlatformErrorResponse = (e: unknown): PlatformErrorResponse | undefined 
 export type HTTPErrCodeExceptionMap<T = LensSDKException> = Partial<Record<HTTPErrorCode, (e?: PlatformErrorResponse) => T>>;
 
 const DEFAULT_MAP: HTTPErrCodeExceptionMap = {
-  401: e => new UnauthorizedException(e?.body.message)
+  401: e => new UnauthorizedException(e?.body?.message)
 };
 
 /**
@@ -68,7 +66,7 @@ const DEFAULT_MAP: HTTPErrCodeExceptionMap = {
  * @example
  * ```
  * const json = throwExpected(
- *  () => got.get(url),
+ *  () => fetch.get(url),
  *    {
  *      404: e => e.url.includes("/user") ?
  *        new NotFoundException(`User ${username} not found`) :
@@ -84,8 +82,8 @@ export const throwExpected = async <T = any>(fn: () => Promise<T>, exceptionsMap
 
     return result;
   } catch (e: unknown) {
-    const response = toPlatformErrorResponse((e as any)?.response);
-    const errCode = response?.body.statusCode ?? parseHTTPErrorCode(e) ?? FALLBACK_HTTP_ERROR_CODE;
+    const response = await toPlatformErrorResponse((e as any)?.response);
+    const errCode = response?.status! ?? parseHTTPErrorCode(e) ?? FALLBACK_HTTP_ERROR_CODE;
     const mappedExceptionFn = exceptionsMap[errCode] ?? DEFAULT_MAP[errCode];
 
     if (mappedExceptionFn) {

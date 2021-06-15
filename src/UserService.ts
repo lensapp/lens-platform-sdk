@@ -41,10 +41,10 @@ export interface UserAttributes {
  */
 class UserService extends Base {
   async getOne({ username }: { username: string }, queryString?: string): Promise<User> {
-    const { apiEndpointAddress, got } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}${queryString ? `?${queryString}` : ""}`;
     const json = await throwExpected(
-      () => got.get(url),
+      async () => fetch.get(url),
       { 404: () => new NotFoundException(`User ${username} not found`) }
     );
 
@@ -52,12 +52,12 @@ class UserService extends Base {
   }
 
   async getMany(queryString?: string): Promise<User[]> {
-    const { apiEndpointAddress, got } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users${queryString ? `?${queryString}` : ""}`;
     const json = await throwExpected(
-      () => got.get(url),
+      async () => fetch.get(url),
       {
-        400: e => new BadRequestException(e?.body.message)
+        400: e => new BadRequestException(e?.body?.message)
       }
     );
 
@@ -68,10 +68,10 @@ class UserService extends Base {
    * Update user
    */
   async updateOne(username: string, user: User & { attributes?: UserAttributes } & { password?: string }): Promise<User> {
-    const { apiEndpointAddress, got } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}`;
     const json = await throwExpected(
-      () => got.patch(url, { json: user }),
+      async () => fetch.patch(url, user),
       {
         404: () => new NotFoundException(`User ${username} not found`),
         403: () => new ForbiddenException(`Modification of user ${username} is forbidden`),

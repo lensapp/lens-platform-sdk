@@ -1,7 +1,7 @@
 import LensPlatformClient from "./LensPlatformClient";
-import got from "got";
+import axios from "axios";
 
-// A randome jwt from https://www.jsonwebtoken.io/
+// A random jwt from https://www.jsonwebtoken.io/
 export const accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImp0aSI6ImI4Y2RmMmRjLTA3ZmUtNDc5Ny1iOWZkLThmYjlmYTMyZGMyZiIsImlhdCI6MTYxODQ4Mjc3OCwiZXhwIjoxNjE4NDg2Mzc4fQ.h9jJveiwYLPDIX3ZIqB-06QH6CLTDVKToSfWJnwRAgg";
 export const apiEndpointAddress = "http://api.endpoint";
 export const minimumOptions = {
@@ -12,7 +12,7 @@ export const minimumOptions = {
 };
 
 describe("LensPlatformClient", () => {
-  jest.mock("got");
+  jest.mock("axios");
 
   it("is a class", () => {
     // @ts-expect-error
@@ -54,7 +54,7 @@ describe("LensPlatformClient", () => {
     expect(lensPlatformClient.currentUserId).toEqual("1234567890");
   });
 
-  describe("proxied version of got.*", () => {
+  describe("proxied version of fetch", () => {
     it(("adds Authorization header"), async () => {
       const expectedHeaders = { Authorization: `Bearer ${accessToken}` };
       const lensPlatformClient = new LensPlatformClient({
@@ -62,24 +62,18 @@ describe("LensPlatformClient", () => {
       });
 
       const spies = [
-        jest.spyOn(got, "get"),
-        jest.spyOn(got, "post"),
-        jest.spyOn(got, "put"),
-        jest.spyOn(got, "patch"),
-        jest.spyOn(got, "head"),
-        jest.spyOn(got, "delete")
+        jest.spyOn(axios, "get"),
+        jest.spyOn(axios, "head"),
+        jest.spyOn(axios, "delete")
       ];
 
-      const _got = lensPlatformClient.got;
+      const _fetch = lensPlatformClient.fetch;
 
       try {
         await Promise.all([
-          _got.get(apiEndpointAddress),
-          _got.post(apiEndpointAddress),
-          _got.put(apiEndpointAddress),
-          _got.patch(apiEndpointAddress),
-          _got.head(apiEndpointAddress),
-          _got.delete(apiEndpointAddress)
+          _fetch.get(apiEndpointAddress),
+          _fetch.head(apiEndpointAddress),
+          _fetch.delete(apiEndpointAddress)
         ]);
       } catch (e: unknown) {
         // Do not handle exceptions
@@ -91,37 +85,91 @@ describe("LensPlatformClient", () => {
       }
     });
 
-    it(("merged request options"), async () => {
-      const extraOptions = { json: { an: "example_extra_option" } };
+    it(("adds Authorization header with body"), async () => {
       const expectedHeaders = { Authorization: `Bearer ${accessToken}` };
       const lensPlatformClient = new LensPlatformClient({
         ...minimumOptions
       });
 
       const spies = [
-        jest.spyOn(got, "get"),
-        jest.spyOn(got, "post"),
-        jest.spyOn(got, "put"),
-        jest.spyOn(got, "patch"),
-        jest.spyOn(got, "head"),
-        jest.spyOn(got, "delete")
+        jest.spyOn(axios, "post"),
+        jest.spyOn(axios, "put"),
+        jest.spyOn(axios, "patch")
       ];
 
-      const _got = lensPlatformClient.got;
+      const _fetch = lensPlatformClient.fetch;
+
       try {
         await Promise.all([
-          _got.get(apiEndpointAddress, extraOptions),
-          _got.post(apiEndpointAddress, extraOptions),
-          _got.put(apiEndpointAddress, extraOptions),
-          _got.patch(apiEndpointAddress, extraOptions),
-          _got.head(apiEndpointAddress, extraOptions),
-          _got.delete(apiEndpointAddress, extraOptions)
+          _fetch.post(apiEndpointAddress),
+          _fetch.put(apiEndpointAddress),
+          _fetch.patch(apiEndpointAddress)
+        ]);
+      } catch (e: unknown) {
+        // Do not handle exceptions
+      } finally {
+        spies.forEach(spy => {
+          expect(spy).toBeCalledWith(apiEndpointAddress, undefined, { headers: expectedHeaders });
+          spy.mockRestore();
+        });
+      }
+    });
+
+    it(("merged request options"), async () => {
+      const extraOptions = { withCredentials: true };
+      const expectedHeaders = { Authorization: `Bearer ${accessToken}` };
+      const lensPlatformClient = new LensPlatformClient({
+        ...minimumOptions
+      });
+
+      const spies = [
+        jest.spyOn(axios, "get"),
+        jest.spyOn(axios, "head"),
+        jest.spyOn(axios, "delete")
+      ];
+
+      const _fetch = lensPlatformClient.fetch;
+      try {
+        await Promise.all([
+          _fetch.get(apiEndpointAddress, extraOptions),
+          _fetch.head(apiEndpointAddress, extraOptions),
+          _fetch.delete(apiEndpointAddress, extraOptions)
         ]);
       } catch (e: unknown) {
         // Do not handle exceptions
       } finally {
         spies.forEach(spy => {
           expect(spy).toBeCalledWith(apiEndpointAddress, { headers: expectedHeaders, ...extraOptions });
+          spy.mockRestore();
+        });
+      }
+    });
+
+    it(("merged request options with body"), async () => {
+      const extraOptions = { withCredentials: true };
+      const expectedHeaders = { Authorization: `Bearer ${accessToken}` };
+      const lensPlatformClient = new LensPlatformClient({
+        ...minimumOptions
+      });
+
+      const spies = [
+        jest.spyOn(axios, "post"),
+        jest.spyOn(axios, "put"),
+        jest.spyOn(axios, "patch")
+      ];
+
+      const _fetch = lensPlatformClient.fetch;
+      try {
+        await Promise.all([
+          _fetch.post(apiEndpointAddress, undefined, extraOptions),
+          _fetch.put(apiEndpointAddress, undefined, extraOptions),
+          _fetch.patch(apiEndpointAddress, undefined, extraOptions)
+        ]);
+      } catch (e: unknown) {
+        // Do not handle exceptions
+      } finally {
+        spies.forEach(spy => {
+          expect(spy).toBeCalledWith(apiEndpointAddress, undefined, { headers: expectedHeaders, ...extraOptions });
           spy.mockRestore();
         });
       }
@@ -139,30 +187,59 @@ describe("LensPlatformClient", () => {
       });
 
       const spies = [
-        jest.spyOn(got, "get"),
-        jest.spyOn(got, "post"),
-        jest.spyOn(got, "put"),
-        jest.spyOn(got, "patch"),
-        jest.spyOn(got, "head"),
-        jest.spyOn(got, "delete")
+        jest.spyOn(axios, "get"),
+        jest.spyOn(axios, "head"),
+        jest.spyOn(axios, "delete")
       ];
 
-      const _got = lensPlatformClient.got;
+      const _fetch = lensPlatformClient.fetch;
 
       try {
         await Promise.all([
-          _got.get(apiEndpointAddress, { headers: extraHeader }),
-          _got.post(apiEndpointAddress, { headers: extraHeader }),
-          _got.put(apiEndpointAddress, { headers: extraHeader }),
-          _got.patch(apiEndpointAddress, { headers: extraHeader }),
-          _got.head(apiEndpointAddress, { headers: extraHeader }),
-          _got.delete(apiEndpointAddress, { headers: extraHeader })
+          _fetch.get(apiEndpointAddress, { headers: extraHeader }),
+          _fetch.head(apiEndpointAddress, { headers: extraHeader }),
+          _fetch.delete(apiEndpointAddress, { headers: extraHeader })
         ]);
       } catch (e: unknown) {
         // Do not handle exceptions
       } finally {
         spies.forEach(spy => {
           expect(spy).toBeCalledWith(apiEndpointAddress, { headers: expectedHeaders });
+          spy.mockRestore();
+        });
+      }
+    });
+
+    it(("merged headers with body"), async () => {
+      const defaultHeaders = { "X-Consumer-Id": "xx-yy-zz" };
+      const extraHeader = { "X-An-Example": "Header" };
+      const expectedHeaders = { Authorization: `Bearer ${accessToken}`, ...extraHeader, ...defaultHeaders };
+      const lensPlatformClient = new LensPlatformClient({
+        ...minimumOptions,
+        ...{
+          defaultHeaders: { "X-Consumer-Id": "xx-yy-zz" }
+        }
+      });
+
+      const spies = [
+        jest.spyOn(axios, "post"),
+        jest.spyOn(axios, "put"),
+        jest.spyOn(axios, "patch")
+      ];
+
+      const _fetch = lensPlatformClient.fetch;
+
+      try {
+        await Promise.all([
+          _fetch.post(apiEndpointAddress, {}, { headers: extraHeader }),
+          _fetch.put(apiEndpointAddress, {}, { headers: extraHeader }),
+          _fetch.patch(apiEndpointAddress, {}, { headers: extraHeader })
+        ]);
+      } catch (e: unknown) {
+        // Do not handle exceptions
+      } finally {
+        spies.forEach(spy => {
+          expect(spy).toBeCalledWith(apiEndpointAddress, {}, { headers: expectedHeaders });
           spy.mockRestore();
         });
       }
@@ -176,30 +253,61 @@ describe("LensPlatformClient", () => {
       });
 
       const spies = [
-        jest.spyOn(got, "get"),
-        jest.spyOn(got, "post"),
-        jest.spyOn(got, "put"),
-        jest.spyOn(got, "patch"),
-        jest.spyOn(got, "head"),
-        jest.spyOn(got, "delete")
+        jest.spyOn(axios, "get"),
+        jest.spyOn(axios, "head"),
+        jest.spyOn(axios, "delete")
       ];
 
-      const _got = lensPlatformClient.got;
+      const _fetch = lensPlatformClient.fetch;
 
       try {
         await Promise.all([
-          _got.get(apiEndpointAddress, { ...extraOption, headers: extraHeader }),
-          _got.post(apiEndpointAddress, { ...extraOption, headers: extraHeader }),
-          _got.put(apiEndpointAddress, { ...extraOption, headers: extraHeader }),
-          _got.patch(apiEndpointAddress, { ...extraOption, headers: extraHeader }),
-          _got.head(apiEndpointAddress, { ...extraOption, headers: extraHeader }),
-          _got.delete(apiEndpointAddress, { ...extraOption, headers: extraHeader })
+          _fetch.get(apiEndpointAddress, { ...extraOption, headers: extraHeader }),
+          _fetch.head(apiEndpointAddress, { ...extraOption, headers: extraHeader }),
+          _fetch.delete(apiEndpointAddress, { ...extraOption, headers: extraHeader })
         ]);
       } catch (e: unknown) {
         // Do not handle exceptions
       } finally {
         spies.forEach(spy => {
           expect(spy).toBeCalledWith(apiEndpointAddress, {
+            headers: {
+              ...extraHeader,
+              ...{ Authorization: `Bearer ${accessToken}` }
+            },
+            ...extraOption
+          });
+          spy.mockRestore();
+        });
+      }
+    });
+
+    it(("merged headers and request options at the same time with body"), async () => {
+      const extraHeader = { "X-An-Example": "Header" };
+      const extraOption = { json: { an: "example_extra_option" } };
+      const lensPlatformClient = new LensPlatformClient({
+        ...minimumOptions
+      });
+
+      const spies = [
+        jest.spyOn(axios, "post"),
+        jest.spyOn(axios, "put"),
+        jest.spyOn(axios, "patch")
+      ];
+
+      const _fetch = lensPlatformClient.fetch;
+
+      try {
+        await Promise.all([
+          _fetch.post(apiEndpointAddress, { a: 1 }, { ...extraOption, headers: extraHeader }),
+          _fetch.put(apiEndpointAddress, { a: 1 }, { ...extraOption, headers: extraHeader }),
+          _fetch.patch(apiEndpointAddress, { a: 1 }, { ...extraOption, headers: extraHeader })
+        ]);
+      } catch (e: unknown) {
+        // Do not handle exceptions
+      } finally {
+        spies.forEach(spy => {
+          expect(spy).toBeCalledWith(apiEndpointAddress, { a: 1 }, {
             headers: {
               ...extraHeader,
               ...{ Authorization: `Bearer ${accessToken}` }

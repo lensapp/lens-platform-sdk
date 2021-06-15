@@ -5,11 +5,10 @@ import { TeamService } from "./TeamService";
 import { PermissionsService } from "./PermissionsService";
 import { InvitationService } from "./InvitationService";
 import { PlanService } from "./PlanService";
+import axios, { AxiosRequestConfig } from "axios";
 
 import decode from "jwt-decode";
-import got from "got";
 import _console from "./helpers/_console";
-import type { Options, Got, CancelableRequest, GotRequestFunction } from "got";
 
 export interface LensPlatformClientOptions {
   accessToken?: string;
@@ -46,25 +45,23 @@ interface DecodedAccessToken {
   typ: string;
 }
 
-const gotMethods: Array<keyof Got> = ["get", "post", "put", "patch", "head", "delete"];
+type RequestLibrary = typeof axios;
+type KeyOfRequestLibrary = keyof RequestLibrary;
+type RequestOptions = AxiosRequestConfig;
+const requestLibraryMethods: KeyOfRequestLibrary[] = ["get", "post", "put", "patch", "head", "delete"];
 
 /**
- * TypeGuard to determine if type is GotRequestFunction
+ * Function to determine if func is a function of the request library for making a request
  */
-const isGotRequestFunction = (
-  func: any, key: keyof Got
-): func is GotRequestFunction =>
-  typeof func === "function" && gotMethods.includes(key);
-
-/**
- * TypeGuard to determine if type is CancelableRequest | Request
- * @remarks This is needed because for some reason the return of GotRequestFunction
- * in got is Request | CancelableRequest
- */
-const isCancelableRequest = (obj: any): obj is CancelableRequest => {
-  // CancelableRequest has these properties unlike Request
-  return obj.json !== undefined && obj.buffer !== undefined && obj.text !== undefined;
-};
+const isRequestLibraryFunction = (
+  func: any, key: KeyOfRequestLibrary
+): func is (RequestLibrary)["get"] |
+(RequestLibrary)["post"] |
+(RequestLibrary)["put"] |
+(RequestLibrary)["patch"] |
+(RequestLibrary)["head"] |
+(RequestLibrary)["delete"] =>
+  typeof func === "function" && requestLibraryMethods.includes(key);
 
 class LensPlatformClient {
   accessToken: LensPlatformClientOptions["accessToken"];
@@ -88,6 +85,7 @@ class LensPlatformClient {
     }
 
     const { accessToken, getAccessToken } = options;
+
     if (!accessToken && !getAccessToken) {
       throw new Error(`Both accessToken ${accessToken} or getAccessToken are ${getAccessToken}`);
     }
@@ -111,6 +109,7 @@ class LensPlatformClient {
   get decodedAccessToken(): DecodedAccessToken | undefined {
     const { accessToken, getAccessToken } = this;
     const token = getAccessToken && typeof getAccessToken === "function" ? getAccessToken() : accessToken;
+
     if (token) {
       return decode(token);
     }
@@ -139,27 +138,34 @@ class LensPlatformClient {
   }
 
   /**
-   * A proxied version of `got` that
+   * A proxied version of request library that
    *
    * 1) Prints request/response in console (for developer to debug issues)
    * 2) Auto add `Authorization: Bearer [token]`
    *
    */
-  get got() {
+  get fetch() {
     const { accessToken, getAccessToken } = this;
     const token = getAccessToken && typeof getAccessToken === "function" ? getAccessToken() : accessToken;
     const defaultHeaders = this.defaultHeaders;
-    const proxy = new Proxy(got, {
-      get(target: Got, key: keyof Got) {
+    const proxy = new Proxy(axios, {
+      get(target: RequestLibrary, key: KeyOfRequestLibrary) {
         const prop = target[key];
 
-        if (isGotRequestFunction(prop, key)) {
-          return async (...arg: [string, Options, ...any]) => {
+        if (isRequestLibraryFunction(prop, key)) {
+          return async (...arg: [string, RequestOptions, ...any]) => {
             try {
               const url = arg[0];
-              let options = arg[1];
-              const headers = arg[1]?.headers;
+
+              // "get", "head", "delete" has options in the second parameter
+              // "patch", "post", "put" has the options in the third parameter
+              const hasBody = !["get", "head", "delete"].includes(key);
+
+              let options = hasBody ? arg[2] : arg[1];
+              const requestBody = hasBody ? arg[1] : null;
+              const headers = options?.headers as RequestHeaders;
               let restOptions;
+
               if (headers) {
                 const clone = Object.assign({}, options);
                 delete clone.headers;
@@ -184,20 +190,15 @@ class LensPlatformClient {
               };
 
               _console.log(`request arguments ${JSON.stringify(requestOptions)}`);
+              const response = await (hasBody ? prop(url, requestBody, requestOptions) : prop(url, requestOptions));
 
-              const request = prop(url, requestOptions);
+              // Body as JavaScript plain object
+              const body = response.data;
 
-              if (isCancelableRequest(request)) {
-                const [response, json] = await Promise.all([request, request.json()]);
-
-                // Print HTTP response info in developer console
-                _console.log(`${key?.toUpperCase()} ${(response as any)?.statusCode} ${(response as any)?.statusMessage} ${url} `);
-                _console.log(`response body: ${(response as any)?.body}`);
-                return json;
-              }
-
-              // Unlikely to reach here, throw if does
-              throw new Error("[LENS-SPACES-SDK-INTERNAL-ERROR] request type is not CancelableRequest");
+              // Print HTTP response info in developer console
+              _console.log(`${key?.toUpperCase()} ${(response)?.status} ${(response)?.statusText} ${url} `);
+              _console.log(`response body: ${body}`);
+              return body;
             } catch (error: unknown) {
               // @ts-expect-error
               _console.error(`error message: ${error?.message}`);
