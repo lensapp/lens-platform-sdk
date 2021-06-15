@@ -1,6 +1,15 @@
-import { TokenNotFoundException } from "../dist/cjs";
 import { Base } from "./Base";
-import { throwExpected, NotFoundException, ForbiddenException, BadRequestException, UsernameAlreadyExistsException, UnprocessableEntityException, UserNameNotFoundException, LensSDKException } from "./exceptions";
+import {
+  throwExpected,
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+  UsernameAlreadyExistsException,
+  UnprocessableEntityException,
+  UserNameNotFoundException,
+  LensSDKException,
+  TokenNotFoundException
+} from "./exceptions";
 
 /**
  *
