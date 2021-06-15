@@ -91,7 +91,7 @@ export const throwExpected = async <T = any>(fn: () => Promise<T>, exceptionsMap
       throw mappedExceptionFn(response);
     } else {
       // Throw strongly-typed unexpected exception
-      throw new LensSDKException(errCode, "Unexpected exception [Lens Platform SDK]: " + HTTPErrorCodes[errCode], e);
+      throw new LensSDKException(errCode, `Unexpected exception [Lens Platform SDK]: ${HTTPErrorCodes[errCode]}`, e);
     }
   }
 };
