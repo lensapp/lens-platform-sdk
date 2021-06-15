@@ -57,7 +57,7 @@ class UserService extends Base {
     const json = await throwExpected(
       async () => fetch.get(url),
       {
-        400: e => new BadRequestException(String(e?.body?.message))
+        400: e => new BadRequestException(e?.body?.message)
       }
     );
 
