@@ -1,6 +1,7 @@
 import type { HTTPErrorCode } from "./HTTPErrrorCodes";
 import { HTTPErrorCodes } from "./HTTPErrrorCodes";
 import { LensSDKException, UnauthorizedException } from "./common.exceptions";
+import { AxiosResponse } from "axios";
 
 // Use 'Bad Request' as a fallback exception
 const FALLBACK_HTTP_ERROR_CODE: HTTPErrorCode = 400;
@@ -19,7 +20,7 @@ const parseHTTPErrorCode = (exception: unknown): HTTPErrorCode | null => {
   return null;
 };
 
-type PlatformErrorResponse = Pick<Response, "body"> & { status: HTTPErrorCode; body: any };
+type PlatformErrorResponse = AxiosResponse & { status: HTTPErrorCode; body: any };
 
 /**
  * Converts an error object of unknown type
