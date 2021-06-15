@@ -94,11 +94,11 @@ class UserService extends Base {
   }
 
   async deleteOne(username: string): Promise<void> {
-    const { apiEndpointAddress, got } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}`;
 
     await throwExpected(
-      () => got.delete(url),
+      () => fetch.delete(url),
       {
         500: error => {
           if (error?.body.message.includes("Token")) {
