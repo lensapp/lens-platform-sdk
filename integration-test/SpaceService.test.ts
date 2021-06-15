@@ -205,14 +205,14 @@ describe("SpaceService", () => {
     });
 
     afterAll(async () => {
-      if (aliceSpace) {
-        await testPlatformAlice.client.space.deleteOne({ name: aliceSpace.name });
-      }
-
       if (aliceCluster) {
         await testPlatformAlice.client.space.deleteOneCluster({
           name: aliceSpace.name, clusterId: aliceCluster.id!
         });
+      }
+
+      if (aliceSpace) {
+        await testPlatformAlice.client.space.deleteOne({ name: aliceSpace.name });
       }
     });
 

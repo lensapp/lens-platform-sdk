@@ -143,7 +143,6 @@ class InvitationService extends Base {
       async () => fetch.patch(url, invitation),
       {
         403: error => {
-          console.error(error);
           if (error?.body?.message?.includes("your email address domain")) {
             return new InvalidEmailDomainException(error?.body?.message);
           }

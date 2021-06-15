@@ -19,7 +19,7 @@ const parseHTTPErrorCode = (exception: unknown): HTTPErrorCode | null => {
   return null;
 };
 
-type PlatformErrorResponse = Pick<Response, "body" | "url"> & { statusCode: HTTPErrorCode; message: string; error: string; body: any };
+type PlatformErrorResponse = Pick<Response, "body"> & { status: HTTPErrorCode; body: any };
 
 /**
  * Converts an error object of unknown type
@@ -29,19 +29,11 @@ type PlatformErrorResponse = Pick<Response, "body" | "url"> & { statusCode: HTTP
 const toPlatformErrorResponse = async (e: unknown): Promise<PlatformErrorResponse | undefined> => {
   const obj = e as any;
 
-  if (obj?.url && obj?.body) {
-    try {
-      const body = await obj.response.json();
-
-      return {
-        ...obj,
-        body,
-        // TODO: Verify
-        statusCode: obj.status
-      };
-    } catch (_: unknown) {
-      return undefined;
-    }
+  if (obj?.data) {
+    return {
+      ...obj,
+      body: obj?.data
+    };
   }
 
   return undefined;
@@ -60,7 +52,7 @@ const toPlatformErrorResponse = async (e: unknown): Promise<PlatformErrorRespons
 export type HTTPErrCodeExceptionMap<T = LensSDKException> = Partial<Record<HTTPErrorCode, (e?: PlatformErrorResponse) => T>>;
 
 const DEFAULT_MAP: HTTPErrCodeExceptionMap = {
-  401: e => new UnauthorizedException(e?.body /* TODO: e?.body.message */)
+  401: e => new UnauthorizedException(e?.body?.message)
 };
 
 /**
@@ -90,7 +82,7 @@ export const throwExpected = async <T = any>(fn: () => Promise<T>, exceptionsMap
     return result;
   } catch (e: unknown) {
     const response = await toPlatformErrorResponse((e as any)?.response);
-    const errCode = response?.statusCode! ?? parseHTTPErrorCode(e) ?? FALLBACK_HTTP_ERROR_CODE; // Response?.body.statusCode ?? parseHTTPErrorCode(e) ?? FALLBACK_HTTP_ERROR_CODE;
+    const errCode = response?.status! ?? parseHTTPErrorCode(e) ?? FALLBACK_HTTP_ERROR_CODE;
     const mappedExceptionFn = exceptionsMap[errCode] ?? DEFAULT_MAP[errCode];
 
     if (mappedExceptionFn) {
