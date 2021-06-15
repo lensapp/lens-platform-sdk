@@ -8,6 +8,12 @@ Use SDK in Lens extension:
 import { LensPlatformClient } from "lens-platform-sdk";
 import { Component } from "@k8slens/extensions";
 
+// axios is used by lens-platform-sdk
+import axios from "axios";
+
+// Use NodeJS HTTP adapter to get around CORS issues
+axios.defaults.adapter = require("axios/lib/adapters/http");
+
 const lensPlatformClient = new LensPlatformClient({
     accessToken: "", // the access token for apis
     getAccessToken: () => {}, // the callback to be called before every request, useful if the access token needs to be renew often.
@@ -17,10 +23,21 @@ const lensPlatformClient = new LensPlatformClient({
 });
 ```
 
+The SDK uses axios internally for HTTP(s) requests.
+
 ## Lint
 
 ```bash
 npm run lint
+```
+
+## Using the SDK in Electron
+
+You will need to change the Axios HTTP adapter to use Node to get around CORS issues:
+```
+import axios from "axios";
+
+axios.defaults.adapter = require("axios/lib/adapters/http");
 ```
 
 ## Type Check
