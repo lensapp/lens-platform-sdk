@@ -23,12 +23,12 @@ const parseHTTPErrorCode = (exception: unknown): HTTPErrorCode | null => {
 type PlatformErrorResponse = AxiosResponse & { status: HTTPErrorCode; body: any };
 
 /**
- * Converts an error object of unknown type
+ * Converts a possible response object of unknown type
  * to a typed response object if possible
  * @param e - unknown error
  */
-const toPlatformErrorResponse = async (e: unknown): Promise<PlatformErrorResponse | undefined> => {
-  const obj = e as any;
+const toPlatformErrorResponse = async (response: undefined | unknown): Promise<PlatformErrorResponse | undefined> => {
+  const obj = response as any;
 
   if (obj?.data) {
     return {
