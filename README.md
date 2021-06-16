@@ -20,6 +20,7 @@ const lensPlatformClient = new LensPlatformClient({
     keyCloakAddress: "", // keycloak address, e.g. "https://keycloak.k8slens.dev"
     keycloakRealm: "", // the realm name, e.g. "lensCloud" 
     apiEndpointAddress: "", // api endpoint address, e.g. "https://api.k8slens.dev"
+    httpAdapter: false // Optional, defaults to false. If true, the axios HTTP adapter is used instead of xhr
 });
 ```
 
@@ -35,9 +36,17 @@ npm run lint
 
 You will need to change the Axios HTTP adapter to use Node to get around CORS issues:
 ```
-import axios from "axios";
+// Set in LensPlatformClient options:
+httpAdapter: true
+```
 
-axios.defaults.adapter = require("axios/lib/adapters/http");
+If webpack is used, you also need to prevent webpack from using the "browser" property of package.json of axios, which would override http adapter resolving to use the xhr. xhr could cause CORS issues.
+
+```
+    resolve: {
+      // ...
+      aliasFields: []
+    },
 ```
 
 ## Type Check

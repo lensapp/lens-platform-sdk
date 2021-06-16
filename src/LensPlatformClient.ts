@@ -10,6 +10,12 @@ import axios, { AxiosRequestConfig } from "axios";
 import decode from "jwt-decode";
 import _console from "./helpers/_console";
 
+// Axios defaults to xhr adapter if XMLHttpRequest is available.
+// LensPlatformClient supports using the http adapter if httpAdapter
+// option is set to true
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const axiosHttpAdapter = require("axios/lib/adapters/http");
+
 export interface LensPlatformClientOptions {
   accessToken?: string;
   getAccessToken?: () => string;
@@ -17,6 +23,9 @@ export interface LensPlatformClientOptions {
   keycloakRealm: string;
   apiEndpointAddress: string;
   defaultHeaders?: RequestHeaders;
+
+  // If true, Node.JS http adapter is used by axios for HTTP(S) requests
+  httpAdapter?: boolean;
 }
 
 type RequestHeaders = Record<string, string>;
@@ -69,6 +78,7 @@ class LensPlatformClient {
   keyCloakAddress: LensPlatformClientOptions["keyCloakAddress"];
   keycloakRealm: LensPlatformClientOptions["keycloakRealm"];
   apiEndpointAddress: LensPlatformClientOptions["apiEndpointAddress"];
+  httpAdapter: LensPlatformClientOptions["httpAdapter"];
 
   user: UserService;
   space: SpaceService;
@@ -84,13 +94,14 @@ class LensPlatformClient {
       throw new Error(`Options can not be ${options}`);
     }
 
-    const { accessToken, getAccessToken } = options;
+    const { accessToken, getAccessToken, httpAdapter } = options;
 
     if (!accessToken && !getAccessToken) {
       throw new Error(`Both accessToken ${accessToken} or getAccessToken are ${getAccessToken}`);
     }
 
     this.accessToken = accessToken;
+    this.httpAdapter = httpAdapter;
     this.getAccessToken = getAccessToken;
     this.keyCloakAddress = options.keyCloakAddress;
     this.keycloakRealm = options.keycloakRealm;
@@ -148,6 +159,7 @@ class LensPlatformClient {
     const { accessToken, getAccessToken } = this;
     const token = getAccessToken && typeof getAccessToken === "function" ? getAccessToken() : accessToken;
     const defaultHeaders = this.defaultHeaders;
+    const httpAdapter = this.httpAdapter;
     const proxy = new Proxy(axios, {
       get(target: RequestLibrary, key: KeyOfRequestLibrary) {
         const prop = target[key];
@@ -185,6 +197,7 @@ class LensPlatformClient {
 
               const requestOptions = {
                 headers: requestHeaders,
+                ...(httpAdapter ? { adapter: axiosHttpAdapter } : {}),
                 // Merge options
                 ...restOptions
               };
