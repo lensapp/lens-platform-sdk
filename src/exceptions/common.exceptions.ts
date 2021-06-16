@@ -64,6 +64,6 @@ export class BadRequestException extends LensSDKException {
 export class UnprocessableEntityException extends LensSDKException {
   constructor(message = "Unprocessable entity") {
     super(422, message);
-    Object.setPrototypeOf(this, UnprocessableEntityException);
+    Object.setPrototypeOf(this, UnprocessableEntityException.prototype);
   }
 }
