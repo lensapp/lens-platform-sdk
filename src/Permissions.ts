@@ -1,6 +1,7 @@
 import type { Space } from "./SpaceService";
 import type { Team } from "./TeamService";
 import type { K8sCluster } from "./K8sCluster";
+import type { Invitation } from "./InvitationService";
 
 export enum Roles {
   Admin = "Admin",
@@ -35,10 +36,19 @@ export class Permissions {
    * @param action - `Actions` enum value
    * @param forSpace - Space object that must contain `{ teams: Team[] }`
    * @param forUserId - string userId
+   * @param forRevokeInvitation - Additional information to determine if a user can revoke invitation
    * @returns boolean
    * @throws "Could not get role for space with no teams" exception
    */
-  canSpace(action: Actions, forSpace: Space, forUserId: string) {
+  canSpace(
+    action: Actions,
+    forSpace: Space,
+    forUserId: string,
+    forRevokeInvitation?: {
+      invitationId: string;
+      invitationsCreatedByUserId: Invitation[];
+    }
+  ) {
     let canI = false;
 
     switch (action) {
@@ -49,7 +59,25 @@ export class Permissions {
         canI = this.getRole(forSpace, forUserId) !== Roles.None;
         break;
       case Actions.PatchInvitation:
-      case Actions.RevokeInvitation:
+      case Actions.RevokeInvitation: {
+        if ([Roles.Owner, Roles.Admin].includes(this.getRole(forSpace, forUserId))) {
+          canI = true;
+        }
+
+        if (
+          // If there is an invitationId to be revoked
+          forRevokeInvitation?.invitationId &&
+          // If this user has created more than one invitation
+          forRevokeInvitation?.invitationsCreatedByUserId?.length > 0 &&
+          // If invitation to revoke was created by userId
+          forRevokeInvitation?.invitationsCreatedByUserId.find(invitation => invitation.id === forRevokeInvitation?.invitationId)
+        ) {
+          canI = true;
+        }
+
+        break;
+      }
+
       case Actions.PatchTeam:
       case Actions.PatchSpace:
       case Actions.CreateTeam:
