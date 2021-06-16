@@ -13,6 +13,6 @@ export interface InvitationDomain {
   createdById?: string;
   spaceId?: string;
   space?: Space;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
