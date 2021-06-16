@@ -65,6 +65,9 @@ const mockK8sCluster1: K8sCluster = {
   kind: "K8sCluster"
 };
 
+const invitationToBeRevokedByMockUser3 = "invitation_id_to_be_revoked_by_user_3";
+const invitationIdsCreatedByMockUser3 = [invitationToBeRevokedByMockUser3, "another_invitation_id"];
+
 describe("PermissionsService", () => {
   let client: LensPlatformClient;
 
@@ -126,6 +129,11 @@ describe("PermissionsService", () => {
       expect(client.permission.canSpace(Actions.PatchTeam, mockSpace1, mockUser3.id)).toBeFalsy();
       expect(client.permission.canSpace(Actions.PatchInvitation, mockSpace1, mockUser3.id)).toBeFalsy();
       expect(client.permission.canSpace(Actions.RevokeInvitation, mockSpace1, mockUser3.id)).toBeFalsy();
+      expect(client.permission.canSpace(Actions.RevokeInvitation, mockSpace1, mockUser3.id)).toBeFalsy();
+      expect(client.permission.canSpace(Actions.RevokeInvitation, mockSpace1, mockUser3.id, {
+        invitationId: invitationToBeRevokedByMockUser3,
+        invitationIdsCreatedByUserId: invitationIdsCreatedByMockUser3
+      })).toBeTruthy();
       expect(client.permission.canSpace(Actions.PatchSpace, mockSpace1, mockUser3.id)).toBeFalsy();
       expect(client.permission.canSpace(Actions.AddInvitationDomain, mockSpace1, mockUser3.id)).toBeFalsy();
       expect(client.permission.canSpace(Actions.DeleteInvitationDomain, mockSpace1, mockUser3.id)).toBeFalsy();

@@ -1,6 +1,7 @@
 import { Base } from "./Base";
 import type { LensPlatformClientType } from "./index";
 import type { K8sCluster } from "./K8sCluster";
+import type { Invitation } from "./InvitationService";
 import { Actions, K8sClusterActions, Permissions } from "./Permissions";
 import type { Space } from "./SpaceService";
 
@@ -17,11 +18,15 @@ export class PermissionsService extends Base {
    * @param action - `Actions` enum value
    * @param forSpace - Space object that must contain `{ teams: Team[] }`
    * @param forUserId - string userId, defaults to the id of current access token bearer
+   * @param forRevokeInvitation - Additional information to determine if a user can revoke invitation
    * @returns boolean
    * @throws "Could not get role for space with no teams" exception
    */
-  canSpace(action: Actions, forSpace: Space, forUserId: string = this.lensPlatformClient.currentUserId) {
-    return this.permissions.canSpace(action, forSpace, forUserId);
+  canSpace(action: Actions, forSpace: Space, forUserId: string = this.lensPlatformClient.currentUserId, forRevokeInvitation?: {
+    invitationId: string;
+    invitationIdsCreatedByUserId: string[];
+  }) {
+    return this.permissions.canSpace(action, forSpace, forUserId, forRevokeInvitation);
   }
 
   /**
