@@ -27,7 +27,7 @@ export interface User {
     id: string;
     userId: string;
     value: string;
-    name: "company" | "tshirt" | "fullname";
+    name: string;
   }>;
 }
 
