@@ -46,7 +46,7 @@ export class Permissions {
     forUserId: string,
     forRevokeInvitation?: {
       invitationId: string;
-      invitationsCreatedByUserId: Invitation[];
+      invitationIdsCreatedByUserId: string[];
     }
   ) {
     let canI = false;
@@ -68,9 +68,11 @@ export class Permissions {
           // If there is an invitationId to be revoked
           forRevokeInvitation?.invitationId &&
           // If this user has created more than one invitation
-          forRevokeInvitation?.invitationsCreatedByUserId?.length > 0 &&
+          forRevokeInvitation?.invitationIdsCreatedByUserId?.length > 0 &&
           // If invitation to revoke was created by userId
-          forRevokeInvitation?.invitationsCreatedByUserId.find(invitation => invitation.id === forRevokeInvitation?.invitationId)
+          forRevokeInvitation?.invitationIdsCreatedByUserId.find(
+            invitationIdCreatedByUserId => invitationIdCreatedByUserId === forRevokeInvitation?.invitationId
+          )
         ) {
           canI = true;
         }

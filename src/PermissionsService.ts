@@ -24,7 +24,7 @@ export class PermissionsService extends Base {
    */
   canSpace(action: Actions, forSpace: Space, forUserId: string = this.lensPlatformClient.currentUserId, forRevokeInvitation?: {
     invitationId: string;
-    invitationsCreatedByUserId: Invitation[];
+    invitationIdsCreatedByUserId: string[];
   }) {
     return this.permissions.canSpace(action, forSpace, forUserId, forRevokeInvitation);
   }
