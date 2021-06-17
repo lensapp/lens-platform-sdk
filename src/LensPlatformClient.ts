@@ -190,7 +190,7 @@ class LensPlatformClient {
               _console.log(`${key?.toUpperCase()} ${url}`);
 
               const requestHeaders: RequestHeaders = {
-                Authorization: `Bearer ${token}`,
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 ...headers,
                 ...defaultHeaders
               };

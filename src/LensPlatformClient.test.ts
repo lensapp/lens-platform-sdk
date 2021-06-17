@@ -85,6 +85,26 @@ describe("LensPlatformClient", () => {
       }
     });
 
+    it(("doesn't add Authorization header if no token"), async () => {
+      const lensPlatformClient = new LensPlatformClient({
+        ...minimumOptions,
+        accessToken: "",
+        getAccessToken: () => ""
+      });
+
+      const spy = jest.spyOn(axios, "get");
+      const _fetch = lensPlatformClient.fetch;
+
+      try {
+        await _fetch.get(apiEndpointAddress);
+      } catch (e: unknown) {
+        // Do not handle exceptions
+      } finally {
+        expect(spy).toBeCalledWith(apiEndpointAddress, { headers: {} });
+        spy.mockRestore();
+      }
+    });
+
     it(("adds Authorization header with body"), async () => {
       const expectedHeaders = { Authorization: `Bearer ${accessToken}` };
       const lensPlatformClient = new LensPlatformClient({
