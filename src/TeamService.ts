@@ -1,6 +1,8 @@
 import { Base } from "./Base";
-import type { Space } from "./SpaceService";
+import type { Space, SpaceEntity } from "./SpaceService";
 import type { User } from "./UserService";
+import type { MapToEntity } from "./types/types";
+import type { Except } from "type-fest";
 
 /**
  *
@@ -21,6 +23,10 @@ export interface Team {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export type TeamEntity = Except<MapToEntity<Team>, "space"> & {
+  space?: SpaceEntity;
+};
 
 /**
  *
