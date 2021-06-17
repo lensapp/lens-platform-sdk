@@ -32,7 +32,8 @@ export interface Space {
   displayName?: string;
   website?: string;
   createdById?: string;
-  ownerId?: string;
+  createdAt?: string;
+  updatedAt?: string;
   users?: User[];
   teams?: Team[];
   invitations?: Invitation[];

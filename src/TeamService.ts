@@ -18,6 +18,8 @@ export interface Team {
   users?: User[];
   spaceId: string;
   space?: Space;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 /**

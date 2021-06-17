@@ -33,7 +33,11 @@ export interface Invitation {
   id?: string;
   createdBy?: User;
   createdById?: string;
+
+  // Note: this is string when fetched:
   createdAt?: Date;
+
+  updatedAt?: string;
   invitedEmail?: string;
   invitedUserId?: string;
   invitedUser?: User;

@@ -18,6 +18,8 @@ export interface K8sCluster {
   spaceId?: string;
   space?: Space;
   metadata?: Record<string, any>;
+  createdAt?: string;
+  updatedAt?: string;
   status?: {
     phase?: string;
     reason?: string;
