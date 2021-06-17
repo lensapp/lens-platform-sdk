@@ -1,10 +1,10 @@
 import { Base } from "./Base";
 import { User } from "./UserService";
-import type { Team } from "./TeamService";
+import type { Team, TeamEntity } from "./TeamService";
 import type { K8sCluster } from "./K8sCluster";
-import type { Invitation } from "./InvitationService";
+import type { Invitation, InvitationEntity } from "./InvitationService";
 import type { BillingPlan } from "./BillingPlan";
-import type { InvitationDomain } from "./InvitationDomain";
+import type { InvitationDomain, InvitationDomainEntity } from "./InvitationDomain";
 import {
   throwExpected,
   SpaceNotFoundException,
@@ -17,6 +17,8 @@ import {
   UserNameNotFoundException,
   NotFoundException
 } from "./exceptions";
+import type { MapToEntity } from "./types/types";
+import type { Except } from "type-fest";
 
 /**
  *
@@ -39,6 +41,12 @@ export interface Space {
   invitations?: Invitation[];
   invitationDomains?: InvitationDomain[];
 }
+
+export type SpaceEntity = Except<MapToEntity<Space>, "teams" | "invitations" | "invitationDomains"> & {
+  teams?: TeamEntity[];
+  invitations?: InvitationEntity[];
+  invitationDomains?: InvitationDomainEntity[];
+};
 
 /**
  *

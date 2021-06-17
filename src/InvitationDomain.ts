@@ -1,4 +1,6 @@
-import type { Space } from "./SpaceService";
+import type { Space, SpaceEntity } from "./SpaceService";
+import type { MapToEntity } from "./types/types";
+import type { Except } from "type-fest";
 
 /**
  *
@@ -16,3 +18,7 @@ export interface InvitationDomain {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export type InvitationDomainEntity = Except<MapToEntity<InvitationDomain>, "space"> & {
+  space?: SpaceEntity;
+};

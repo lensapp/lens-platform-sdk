@@ -1,4 +1,6 @@
-import type { Space } from "./SpaceService";
+import type { Space, SpaceEntity } from "./SpaceService";
+import type { MapToEntity } from "./types/types";
+import type { Except } from "type-fest";
 
 /**
  *
@@ -26,3 +28,8 @@ export interface K8sCluster {
     message?: string;
   };
 }
+
+export type K8sClusterEntity = Except<MapToEntity<K8sCluster>, "space"> & {
+  space?: SpaceEntity;
+};
+

@@ -1,7 +1,6 @@
-import type { Space } from "./SpaceService";
-import type { Team } from "./TeamService";
-import type { K8sCluster } from "./K8sCluster";
-import type { Invitation } from "./InvitationService";
+import type { Space, SpaceEntity } from "./SpaceService";
+import type { Team, TeamEntity } from "./TeamService";
+import type { K8sCluster, K8sClusterEntity } from "./K8sCluster";
 
 export enum Roles {
   Admin = "Admin",
@@ -42,7 +41,7 @@ export class Permissions {
    */
   canSpace(
     action: Actions,
-    forSpace: Space,
+    forSpace: Space | SpaceEntity,
     forUserId: string,
     forRevokeInvitation?: {
       invitationId: string;
@@ -103,7 +102,7 @@ export class Permissions {
    * @returns boolean
    * @throws "Could not get role for space with no teams" exception
    */
-  canK8sCluster(action: K8sClusterActions, forSpace: Space, forK8sCluster: K8sCluster, forUserId: string) {
+  canK8sCluster(action: K8sClusterActions, forSpace: Space | SpaceEntity, forK8sCluster: K8sCluster | K8sClusterEntity, forUserId: string) {
     let canI = false;
 
     switch (action) {
@@ -131,7 +130,7 @@ export class Permissions {
    * @throws "Could not get role for space with no teams" exception
    * @deprecated Use .canSpace instead.
    */
-  canI(action: Actions, forSpace: Space, forUserId: string) {
+  canI(action: Actions, forSpace: Space | SpaceEntity, forUserId: string) {
     return this.canSpace(action, forSpace, forUserId);
   }
 
@@ -142,7 +141,7 @@ export class Permissions {
    * @returns Role enum value
    * @throws "Could not get role for space with no teams" exception
    */
-  getRole(space: Space, forUserId: string) {
+  getRole(space: Space | SpaceEntity, forUserId: string) {
     if (!space.teams) {
       throw new Error("Could not get role for space with no teams");
     }
@@ -162,25 +161,25 @@ export class Permissions {
     return Roles.None;
   }
 
-  protected getOwnerTeams = (space: Space) => {
+  protected getOwnerTeams = (space: Space | SpaceEntity) => {
     const teams = space.teams ?? [];
 
-    return teams.filter(({ kind }) => kind === "Owner");
+    return (teams as Team[]).filter(({ kind }) => kind === "Owner");
   };
 
-  protected getAdminTeams = (space: Space) => {
+  protected getAdminTeams = (space: Space | SpaceEntity) => {
     const teams = space.teams ?? [];
 
-    return teams.filter(({ kind }) => kind === "Admin");
+    return (teams as Team[]).filter(({ kind }) => kind === "Admin");
   };
 
-  protected getNormalTeams = (space: Space) => {
+  protected getNormalTeams = (space: Space | SpaceEntity) => {
     const teams = space.teams ?? [];
 
-    return teams.filter(({ kind }) => kind === "Normal");
+    return (teams as Team[]).filter(({ kind }) => kind === "Normal");
   };
 
-  protected isUserInTeam = (team: Team, userId: string): boolean => {
+  protected isUserInTeam = (team: Team | TeamEntity, userId: string): boolean => {
     if (!team.users?.length) {
       return false;
     }

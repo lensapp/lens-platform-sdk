@@ -13,6 +13,7 @@ import {
   NotFoundException
 } from "./exceptions";
 import { Except } from "type-fest";
+import type { MapToEntity } from "./types/types";
 
 export const invitationEntityKinds = ["directInvite", "emailInvite", "weblinkInvite"] as const;
 export type InvitationEntityKind = typeof invitationEntityKinds[number];
@@ -33,10 +34,7 @@ export interface Invitation {
   id?: string;
   createdBy?: User;
   createdById?: string;
-
-  // Note: this is string when fetched:
-  createdAt?: Date;
-
+  createdAt?: string;
   updatedAt?: string;
   invitedEmail?: string;
   invitedUserId?: string;
@@ -44,6 +42,8 @@ export interface Invitation {
   state?: "pending" | "accepted" | "rejected" | "revoked";
   expiryTime?: Date | string;
 }
+
+export type InvitationEntity = MapToEntity<Invitation>;
 
 /**
  *
