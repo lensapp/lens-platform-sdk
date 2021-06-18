@@ -6,9 +6,8 @@ import { PermissionsService } from "./PermissionsService";
 import { InvitationService } from "./InvitationService";
 import { PlanService } from "./PlanService";
 import axios, { AxiosRequestConfig } from "axios";
-
+import pino from "pino";
 import decode from "jwt-decode";
-import _console from "./helpers/_console";
 
 // Axios defaults to xhr adapter if XMLHttpRequest is available.
 // LensPlatformClient supports using the http adapter if httpAdapter
@@ -23,9 +22,9 @@ export interface LensPlatformClientOptions {
   keycloakRealm: string;
   apiEndpointAddress: string;
   defaultHeaders?: RequestHeaders;
-
   // If true, Node.JS http adapter is used by axios for HTTP(S) requests
   httpAdapter?: boolean;
+  logLevel?: "error" | "silent" | "debug";
 }
 
 type RequestHeaders = Record<string, string>;
@@ -79,6 +78,8 @@ class LensPlatformClient {
   keycloakRealm: LensPlatformClientOptions["keycloakRealm"];
   apiEndpointAddress: LensPlatformClientOptions["apiEndpointAddress"];
   httpAdapter: LensPlatformClientOptions["httpAdapter"];
+  logLevel: LensPlatformClientOptions["logLevel"];
+  logger: pino.Logger;
 
   user: UserService;
   space: SpaceService;
@@ -99,6 +100,9 @@ class LensPlatformClient {
     if (!accessToken && !getAccessToken) {
       throw new Error(`Both accessToken ${accessToken} or getAccessToken are ${getAccessToken}`);
     }
+
+    this.logLevel = options.logLevel ?? "silent";
+    this.logger = pino({ level: this.logLevel });
 
     this.accessToken = accessToken;
     this.httpAdapter = httpAdapter;
@@ -160,6 +164,7 @@ class LensPlatformClient {
     const token = getAccessToken && typeof getAccessToken === "function" ? getAccessToken() : accessToken;
     const defaultHeaders = this.defaultHeaders;
     const httpAdapter = this.httpAdapter;
+    const logger = this.logger;
     const proxy = new Proxy(axios, {
       get(target: RequestLibrary, key: KeyOfRequestLibrary) {
         const prop = target[key];
@@ -187,7 +192,7 @@ class LensPlatformClient {
               }
 
               // Print HTTP request info in developer console
-              _console.log(`${key?.toUpperCase()} ${url}`);
+              logger.debug(`${key?.toUpperCase()} ${url}`);
 
               const requestHeaders: RequestHeaders = {
                 ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -202,21 +207,21 @@ class LensPlatformClient {
                 ...restOptions
               };
 
-              _console.log(`request arguments ${JSON.stringify(requestOptions)}`);
+              logger.debug(`request arguments ${JSON.stringify(requestOptions)}`);
               const response = await (hasBody ? prop(url, requestBody, requestOptions) : prop(url, requestOptions));
 
               // Body as JavaScript plain object
               const body = response.data;
 
               // Print HTTP response info in developer console
-              _console.log(`${key?.toUpperCase()} ${(response)?.status} ${(response)?.statusText} ${url} `);
-              _console.log(`response body: ${body}`);
+              logger.debug(`${key?.toUpperCase()} ${(response)?.status} ${(response)?.statusText} ${url} `);
+              logger.debug(`response body: ${body}`);
               return body;
             } catch (error: unknown) {
               // @ts-expect-error
-              _console.error(`error message: ${error?.message}`);
+              logger.error(`error message: ${error?.message}`);
               // @ts-expect-error
-              _console.error(`error response body: ${error?.response?.body}`);
+              logger.error(`error response body: ${error?.response?.body}`);
               throw error;
             }
           };
