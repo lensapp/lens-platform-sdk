@@ -21,6 +21,7 @@ const lensPlatformClient = new LensPlatformClient({
     keycloakRealm: "", // the realm name, e.g. "lensCloud" 
     apiEndpointAddress: "", // api endpoint address, e.g. "https://api.k8slens.dev"
     httpAdapter: false // Optional, defaults to false. If true, the axios HTTP adapter is used instead of xhr
+    logLevel: "debug" // Optional, defaults to 'silent'. Options are 'silent' | 'debug' | 'error'
 });
 ```
 
