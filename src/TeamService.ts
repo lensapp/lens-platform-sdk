@@ -1,8 +1,14 @@
-import { Base } from "./Base";
-import type { Space, SpaceEntity } from "./SpaceService";
-import type { User } from "./UserService";
-import type { MapToEntity } from "./types/types";
 import type { Except } from "type-fest";
+import { Base } from "./Base";
+import {
+  CantRemoveLastTeamUser, ForbiddenException, SpaceNotFoundException, throwExpected, UserNameNotFoundException
+} from "./exceptions";
+import type { Space, SpaceEntity } from "./SpaceService";
+import type { MapToEntity } from "./types/types";
+import type { User } from "./UserService";
+
+export const teamEntityKinds = ["Admin", "Normal", "Owner"] as const;
+export type TeamEntityKind = typeof teamEntityKinds[number];
 
 /**
  *
@@ -15,7 +21,7 @@ export interface Team {
   id?: string;
   name: string;
   description: string;
-  kind?: string;
+  kind?: TeamEntityKind;
   createdById?: string;
   users?: User[];
   spaceId: string;
@@ -103,7 +109,15 @@ class TeamService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/teams/${id}/users/${username}`;
 
-    const json = await fetch.delete(url);
+    const json = await throwExpected(
+      async () => fetch.delete(url), {
+        403: () => new ForbiddenException(),
+        404: e =>
+          e?.body.message?.includes("Space not found") ?
+            new SpaceNotFoundException() :
+            new UserNameNotFoundException(username),
+        422: () => new CantRemoveLastTeamUser()
+      });
 
     return (json as unknown) as Team;
   }

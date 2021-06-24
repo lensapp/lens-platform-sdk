@@ -1,8 +1,8 @@
 import { NotFoundException, LensSDKException } from "./common.exceptions";
 
 export class SpaceNotFoundException extends NotFoundException {
-  constructor(spaceName: string) {
-    super(`Couldn't find space "${spaceName}"`);
+  constructor(spaceName?: string) {
+    super(`Couldn't find space${spaceName ? ` "${spaceName}"` : ""}`);
     Object.setPrototypeOf(this, SpaceNotFoundException.prototype);
   }
 }
