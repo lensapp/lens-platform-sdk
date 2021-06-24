@@ -114,7 +114,7 @@ class TeamService extends Base {
         403: () => new ForbiddenException(),
         404: e =>
           e?.body.message?.includes("Space not found") ?
-            new SpaceNotFoundException("Space") :
+            new SpaceNotFoundException() :
             new UserNameNotFoundException(username),
         422: () => new CantRemoveLastTeamUser()
       });
