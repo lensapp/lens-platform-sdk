@@ -122,7 +122,7 @@ describe("PermissionsService", () => {
     });
 
     it("recognizes member privileges", () => {
-      expect(client.permission.canSpace(Actions.CreateInvitation, mockSpace1, mockUser3.id)).toBeTruthy();
+      expect(client.permission.canSpace(Actions.CreateInvitation, mockSpace1, mockUser3.id)).toBeFalsy();
       expect(client.permission.canSpace(Actions.DeleteSpace, mockSpace1, mockUser3.id)).toBeFalsy();
       expect(client.permission.canSpace(Actions.CreateTeam, mockSpace1, mockUser3.id)).toBeFalsy();
       expect(client.permission.canSpace(Actions.DeleteTeam, mockSpace1, mockUser3.id)).toBeFalsy();
