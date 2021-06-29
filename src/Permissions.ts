@@ -54,9 +54,6 @@ export class Permissions {
       case Actions.DeleteSpace:
         canI = this.getRole(forSpace, forUserId) === Roles.Owner;
         break;
-      case Actions.CreateInvitation:
-        canI = this.getRole(forSpace, forUserId) !== Roles.None;
-        break;
       case Actions.PatchInvitation:
       case Actions.RevokeInvitation: {
         if ([Roles.Owner, Roles.Admin].includes(this.getRole(forSpace, forUserId))) {
@@ -79,6 +76,7 @@ export class Permissions {
         break;
       }
 
+      case Actions.CreateInvitation:
       case Actions.PatchTeam:
       case Actions.PatchSpace:
       case Actions.CreateTeam:
