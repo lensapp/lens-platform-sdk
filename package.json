@@ -90,7 +90,6 @@
     "@babel/preset-typescript": "^7.13.0",
     "@types/jest": "^26.0.23",
     "@types/nock": "^11.1.0",
-    "@types/pino": "^6.3.8",
     "@types/simple-oauth2": "^4.1.0",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
@@ -110,6 +109,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "jwt-decode": "^3.1.2",
-    "pino": "^6.11.3"
+    "pino": "^6.11.3",
+    "@types/pino": "^6.3.8"
   }
 }
