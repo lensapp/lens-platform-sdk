@@ -129,7 +129,8 @@ class InvitationService extends Base {
 
           return new PastExpiryException();
         },
-        400: () => new BadRequestException("Invalid invitation kind")
+        400: () => new BadRequestException("Invalid invitation kind"),
+        403: () => new ForbiddenException()
       }
     );
 
