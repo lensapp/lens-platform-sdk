@@ -142,7 +142,8 @@ describe("SpaceService", () => {
       }
     });
 
-    it("adds, gets and deletes invitation domains", async () => {
+    // TODO: Space is not a paid plan, so the test doesn't work
+    it.skip("adds, gets and deletes invitation domains", async () => {
       const domain = "mirantis.com";
 
       expect(await testPlatformBob.client.space.getInvitationDomains({ name: bobSpace.name })).toEqual([]);
