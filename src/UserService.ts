@@ -20,7 +20,6 @@ import {
  */
 export interface User {
   id?: string;
-  email?: string;
   username?: string;
   fullname?: string;
   userAttributes?: Array<{
@@ -30,6 +29,8 @@ export interface User {
     name: string;
   }>;
 }
+
+type UserWithEmail = User & { email: string };
 
 export interface UserAttributes {
   fullname?: string;
@@ -50,7 +51,7 @@ export interface UserAttributes {
  * @alpha
  */
 class UserService extends Base {
-  async getOne({ username }: { username: string }, queryString?: string): Promise<User> {
+  async getOne({ username }: { username: string }, queryString?: string): Promise<UserWithEmail> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}${queryString ? `?${queryString}` : ""}`;
     const json = await throwExpected(
@@ -58,7 +59,7 @@ class UserService extends Base {
       { 404: () => new NotFoundException(`User ${username} not found`) }
     );
 
-    return (json as unknown) as User;
+    return (json as unknown) as UserWithEmail;
   }
 
   async getMany(queryString?: string): Promise<User[]> {
@@ -77,7 +78,7 @@ class UserService extends Base {
   /**
    * Update user
    */
-  async updateOne(username: string, user: User & { attributes?: UserAttributes } & { password?: string }): Promise<User> {
+  async updateOne(username: string, user: User & { attributes?: UserAttributes } & { password?: string } & { email?: string }): Promise<User> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}`;
     const json = await throwExpected(
@@ -92,11 +93,12 @@ class UserService extends Base {
     return (json as unknown) as User;
   }
 
-  async getSelf(): Promise<User> {
+  async getSelf(): Promise<UserWithEmail> {
     const { decodedAccessToken } = this.lensPlatformClient;
     if (decodedAccessToken?.preferred_username) {
       const json = await this.getOne({ username: decodedAccessToken?.preferred_username });
-      return (json as unknown) as User;
+
+      return (json as unknown) as UserWithEmail;
     }
 
     throw new Error(`jwt.preferred_username is ${decodedAccessToken?.preferred_username}`);
