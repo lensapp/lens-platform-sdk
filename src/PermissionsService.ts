@@ -21,7 +21,7 @@ export class PermissionsService extends Base {
    * @returns boolean
    * @throws "Could not get role for space with no teams" exception
    */
-  canSpace(action: Actions, forSpace: Space | SpaceEntity, forUserId: string = this.lensPlatformClient.currentUserId, forRevokeInvitation?: {
+  canSpace(action: Actions, forSpace: Space | SpaceEntity, forUserId: string, forRevokeInvitation?: {
     invitationId: string;
     invitationIdsCreatedByUserId: string[];
   }) {
@@ -37,7 +37,7 @@ export class PermissionsService extends Base {
    * @returns boolean
    * @throws "Could not get role for space with no teams" exception
    */
-  canK8sCluster(action: K8sClusterActions, forSpace: Space | SpaceEntity, forK8sCluster: K8sCluster | K8sClusterEntity, forUserId: string = this.lensPlatformClient.currentUserId) {
+  canK8sCluster(action: K8sClusterActions, forSpace: Space | SpaceEntity, forK8sCluster: K8sCluster | K8sClusterEntity, forUserId: string) {
     return this.permissions.canK8sCluster(action, forSpace, forK8sCluster, forUserId);
   }
 
@@ -51,7 +51,7 @@ export class PermissionsService extends Base {
    * @throws "Could not get role for space with no teams" exception
    * @deprecated Use .canSpace instead.
    */
-  canI(action: Actions, forSpace: Space | SpaceEntity, forUserId: string = this.lensPlatformClient.currentUserId) {
+  canI(action: Actions, forSpace: Space | SpaceEntity, forUserId: string) {
     return this.canSpace(action, forSpace, forUserId);
   }
 
@@ -62,7 +62,7 @@ export class PermissionsService extends Base {
    * @returns Role enum value
    * @throws "Could not get role for space with no teams" exception
    */
-  getRole(space: Space | SpaceEntity, forUserId: string = this.lensPlatformClient.currentUserId) {
+  getRole(space: Space | SpaceEntity, forUserId: string) {
     return this.permissions.getRole(space, forUserId);
   }
 }

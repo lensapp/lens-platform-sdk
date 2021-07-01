@@ -36,22 +36,11 @@ describe("LensPlatformClient", () => {
     ).not.toThrow();
   });
 
-  it(".decodedAccessToken", () => {
-    const lensPlatformClient = new LensPlatformClient(minimumOptions);
-    expect(lensPlatformClient.decodedAccessToken).toEqual({ admin: true, exp: 1618486378, iat: 1618482778, jti: "b8cdf2dc-07fe-4797-b9fd-8fb9fa32dc2f", name: "John Doe", sub: "1234567890" });
-  });
-
   it(".authHeader", () => {
     const lensPlatformClient = new LensPlatformClient(minimumOptions);
     expect(lensPlatformClient.authHeader).toEqual({
       Authorization: `Bearer ${accessToken}`
     });
-  });
-
-  it(".currentUserId", () => {
-    const lensPlatformClient = new LensPlatformClient(minimumOptions);
-
-    expect(lensPlatformClient.currentUserId).toEqual("1234567890");
   });
 
   describe("proxied version of fetch", () => {

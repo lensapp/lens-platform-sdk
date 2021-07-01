@@ -7,7 +7,6 @@ import { InvitationService } from "./InvitationService";
 import { PlanService } from "./PlanService";
 import axios, { AxiosRequestConfig } from "axios";
 import pino from "pino";
-import decode from "jwt-decode";
 
 // Axios defaults to xhr adapter if XMLHttpRequest is available.
 // LensPlatformClient supports using the http adapter if httpAdapter
@@ -80,8 +79,6 @@ class LensPlatformClient {
   httpAdapter: LensPlatformClientOptions["httpAdapter"];
   logLevel: LensPlatformClientOptions["logLevel"];
   logger: pino.Logger;
-  currentUserId: string | undefined;
-
   user: UserService;
   space: SpaceService;
   team: TeamService;
@@ -120,63 +117,12 @@ class LensPlatformClient {
     this.permission = new PermissionsService(this);
     this.invitation = new InvitationService(this);
     this.openIDConnect = new OpenIdConnect(this);
-    this.currentUserId = undefined;
-
-    if (this.accessToken) {
-      // If accessToken is available, we can use it directly
-      this.updateCurrentUserId(this.accessToken);
-    } else {
-      // Otherwise get it async with getAccessToken
-      this.getToken().then(token => {
-        this.updateCurrentUserId(token);
-      }, _error => {
-      // The current user id might not be able to be retrieved if e.g. access_token is not available
-      // In these cases we ignore the error
-      });
-    }
   }
 
   async getToken() {
     const token = this.getAccessToken && typeof this.getAccessToken === "function" ? await this.getAccessToken() : this.accessToken;
 
-    // TODO: Optimize. Only update if token changed
-    this.updateCurrentUserId(token);
-
     return token;
-  }
-
-  getDecodedAccessToken(token: string | undefined): DecodedAccessToken | undefined {
-    if (token) {
-      return decode(token);
-    }
-
-    return undefined;
-  }
-
-  /**
-   * Retrieves an ID of a current user for whom the authentication token was issued
-   * @returns Promise<string>
-   * @throws Error("Could not process access token to retrieve `userId`")
-   */
-  private getCurrentUserId(token: string | undefined): string {
-    const decodedAccessToken = this.getDecodedAccessToken(token);
-
-    if (!decodedAccessToken) {
-      throw new Error("Could not process access token to retrieve `userId`");
-    }
-
-    return decodedAccessToken.sub;
-  }
-
-  private updateCurrentUserId(token: string | undefined) {
-    try {
-      const currentUserId = this.getCurrentUserId(token);
-      this.currentUserId = currentUserId;
-    } catch (error: unknown) {
-      // The current user id might not be able to be retrieved if e.g. access_token is not available
-      // In these cases we ignore the error and reset current user id
-      this.currentUserId = undefined;
-    }
   }
 
   get authHeader(): Record<string, string> {
@@ -193,7 +139,7 @@ class LensPlatformClient {
    *
    */
   get fetch() {
-    const { getToken } = this;
+    const getToken = this.getToken.bind(this);
     const defaultHeaders = this.defaultHeaders;
     const httpAdapter = this.httpAdapter;
     const logger = this.logger;

@@ -16,7 +16,7 @@ axios.defaults.adapter = require("axios/lib/adapters/http");
 
 const lensPlatformClient = new LensPlatformClient({
     accessToken: "", // the access token for apis
-    getAccessToken: () => {}, // the callback to be called before every request, useful if the access token needs to be renew often.
+    getAccessToken: () => Promise.resolve("<token>"), // the callback to be called before every request, useful if the access token needs to be renew often.
     keyCloakAddress: "", // keycloak address, e.g. "https://keycloak.k8slens.dev"
     keycloakRealm: "", // the realm name, e.g. "lensCloud" 
     apiEndpointAddress: "", // api endpoint address, e.g. "https://api.k8slens.dev"
