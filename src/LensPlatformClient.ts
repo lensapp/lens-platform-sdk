@@ -7,6 +7,7 @@ import { InvitationService } from "./InvitationService";
 import { PlanService } from "./PlanService";
 import axios, { AxiosRequestConfig } from "axios";
 import pino from "pino";
+import decode from "jwt-decode";
 
 // Axios defaults to xhr adapter if XMLHttpRequest is available.
 // LensPlatformClient supports using the http adapter if httpAdapter
@@ -123,6 +124,16 @@ class LensPlatformClient {
     const token = this.getAccessToken && typeof this.getAccessToken === "function" ? await this.getAccessToken() : this.accessToken;
 
     return token;
+  }
+
+  async getDecodedAccessToken(): Promise<DecodedAccessToken | undefined> {
+    const token = await this.getToken();
+
+    if (token) {
+      return decode(token);
+    }
+
+    return undefined;
   }
 
   get authHeader(): Record<string, string> {

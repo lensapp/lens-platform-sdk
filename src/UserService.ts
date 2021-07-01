@@ -94,7 +94,8 @@ class UserService extends Base {
   }
 
   async getSelf(): Promise<UserWithEmail> {
-    const { decodedAccessToken } = this.lensPlatformClient;
+    const decodedAccessToken = await this.lensPlatformClient.getDecodedAccessToken();
+
     if (decodedAccessToken?.preferred_username) {
       const json = await this.getOne({ username: decodedAccessToken?.preferred_username });
 
