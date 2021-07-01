@@ -11,7 +11,7 @@ export class TestPlatform {
     private readonly accessToken: string
   ) {
     this.client = new LensPlatformClient({
-      getAccessToken: () => this.fakeToken ? this.fakeToken : this.accessToken,
+      getAccessToken: async () => Promise.resolve(this.fakeToken ? this.fakeToken : this.accessToken),
       keyCloakAddress: config.keyCloakAddress,
       keycloakRealm: config.keycloakRealm,
       apiEndpointAddress: config.apiEndpointAddress

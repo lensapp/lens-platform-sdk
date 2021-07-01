@@ -89,7 +89,7 @@ describe("LensPlatformClient", () => {
       const lensPlatformClient = new LensPlatformClient({
         ...minimumOptions,
         accessToken: "",
-        getAccessToken: () => ""
+        getAccessToken: async () => Promise.resolve("")
       });
 
       const spy = jest.spyOn(axios, "get");
