@@ -15,7 +15,8 @@ import {
   BadRequestException,
   CantRemoveOwnerFromSpaceException,
   UserNameNotFoundException,
-  NotFoundException
+  NotFoundException,
+  UnauthorizedException
 } from "./exceptions";
 import type { MapToEntity } from "./types/types";
 import type { Except } from "type-fest";
@@ -84,7 +85,11 @@ class SpaceService extends Base {
     const url = `${apiEndpointAddress}/spaces${queryString ? `/?${queryString}` : ""}`;
 
     const json = await throwExpected(
-      async () => fetch.get(url)
+      async () => fetch.get(url),
+      {
+        401: () => new UnauthorizedException(),
+        403: () => new ForbiddenException()
+      }
     );
 
     return (json as unknown) as Space[];
@@ -178,7 +183,9 @@ class SpaceService extends Base {
       {
         // TODO: differentiate between space, cluster, user and token not being found
         404: () => new SpaceNotFoundException(name),
-        400: () => new BadRequestException()
+        400: () => new BadRequestException(),
+        401: () => new UnauthorizedException(),
+        403: () => new ForbiddenException()
       }
     );
 
