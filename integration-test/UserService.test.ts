@@ -81,8 +81,8 @@ describe("UserService", () => {
         .rejects.toThrowError(UnauthorizedException);
     });
 
-    it("can get users", async () => {
-      const users = await bobPlatform.client.user.getMany(`filter=email||$eq||${userBob.username}@mirantis.com`);
+    it("can get 0 users", async () => {
+      const users = await bobPlatform.client.user.getMany("filter=username||$eq||missingfoobarusername");
       expect(users.length).toEqual(0);
     });
 

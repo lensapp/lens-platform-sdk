@@ -17,7 +17,7 @@ const axiosHttpAdapter = require("axios/lib/adapters/http");
 
 export interface LensPlatformClientOptions {
   accessToken?: string;
-  getAccessToken?: () => string;
+  getAccessToken?: () => Promise<string>;
   keyCloakAddress: string;
   keycloakRealm: string;
   apiEndpointAddress: string;
@@ -80,7 +80,6 @@ class LensPlatformClient {
   httpAdapter: LensPlatformClientOptions["httpAdapter"];
   logLevel: LensPlatformClientOptions["logLevel"];
   logger: pino.Logger;
-
   user: UserService;
   space: SpaceService;
   team: TeamService;
@@ -121,29 +120,20 @@ class LensPlatformClient {
     this.openIDConnect = new OpenIdConnect(this);
   }
 
-  get decodedAccessToken(): DecodedAccessToken | undefined {
-    const { accessToken, getAccessToken } = this;
-    const token = getAccessToken && typeof getAccessToken === "function" ? getAccessToken() : accessToken;
+  async getToken() {
+    const token = this.getAccessToken && typeof this.getAccessToken === "function" ? await this.getAccessToken() : this.accessToken;
+
+    return token;
+  }
+
+  async getDecodedAccessToken(): Promise<DecodedAccessToken | undefined> {
+    const token = await this.getToken();
 
     if (token) {
       return decode(token);
     }
 
     return undefined;
-  }
-
-  /**
-   * Retrieves an ID of a current user for whom
-   * the authentication token was issued
-   * @returns string
-   * @throws Error("Could not process access token to retrieve `userId`")
-   */
-  get currentUserId(): string {
-    if (!this.decodedAccessToken) {
-      throw new Error("Could not process access token to retrieve `userId`");
-    }
-
-    return this.decodedAccessToken.sub;
   }
 
   get authHeader(): Record<string, string> {
@@ -160,8 +150,7 @@ class LensPlatformClient {
    *
    */
   get fetch() {
-    const { accessToken, getAccessToken } = this;
-    const token = getAccessToken && typeof getAccessToken === "function" ? getAccessToken() : accessToken;
+    const getToken = this.getToken.bind(this);
     const defaultHeaders = this.defaultHeaders;
     const httpAdapter = this.httpAdapter;
     const logger = this.logger;
@@ -193,6 +182,8 @@ class LensPlatformClient {
 
               // Print HTTP request info in developer console
               logger.debug(`${key?.toUpperCase()} ${url}`);
+
+              const token = await getToken();
 
               const requestHeaders: RequestHeaders = {
                 ...(token ? { Authorization: `Bearer ${token}` } : {}),
