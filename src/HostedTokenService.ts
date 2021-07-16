@@ -2,6 +2,14 @@ import { Base } from "./Base";
 import { ForbiddenException, SpaceNotFoundException, throwExpected, UnprocessableEntityException } from "./exceptions";
 
 export class HostedTokenService extends Base {
+  /**
+   * Fetches a recurly's hosted page token
+   * required to access billing information controls.
+   * **IMPORTANT**: will fail with code `UnprocessableEntityException` when trying to fetch token for free spaces
+   * due to a non-existent subscription information
+   * @param spaceName - name of the space
+   * @returns hosted page token
+   */
   async getOne(spaceName: string): Promise<string> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${spaceName}/hosted-token`;
