@@ -5,6 +5,7 @@ import { TeamService } from "./TeamService";
 import { PermissionsService } from "./PermissionsService";
 import { InvitationService } from "./InvitationService";
 import { PlanService } from "./PlanService";
+import { HostedTokenService } from "./HostedTokenService";
 import axios, { AxiosRequestConfig } from "axios";
 import pino from "pino";
 import decode from "jwt-decode";
@@ -84,6 +85,7 @@ class LensPlatformClient {
   space: SpaceService;
   team: TeamService;
   plan: PlanService;
+  hostedToken: HostedTokenService;
   permission: PermissionsService;
   invitation: InvitationService;
   openIDConnect: OpenIdConnect;
@@ -117,6 +119,7 @@ class LensPlatformClient {
     this.plan = new PlanService(this);
     this.permission = new PermissionsService(this);
     this.invitation = new InvitationService(this);
+    this.hostedToken = new HostedTokenService(this);
     this.openIDConnect = new OpenIdConnect(this);
   }
 
