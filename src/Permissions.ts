@@ -22,7 +22,8 @@ export enum Actions {
   DeleteInvitationDomain,
   CreateTeam,
   DeleteTeam,
-  PatchTeam
+  PatchTeam,
+  ChangeSpacePlan
 }
 
 export enum K8sClusterActions {
@@ -51,6 +52,7 @@ export class Permissions {
     let canI = false;
 
     switch (action) {
+      case Actions.ChangeSpacePlan:
       case Actions.DeleteSpace:
         canI = this.getRole(forSpace, forUserId) === Roles.Owner;
         break;
