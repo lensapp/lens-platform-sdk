@@ -23,6 +23,7 @@ export enum Actions {
   CreateTeam,
   DeleteTeam,
   PatchTeam,
+  GetHostedToken,
   ChangeSpacePlan
 }
 
@@ -84,6 +85,7 @@ export class Permissions {
       case Actions.CreateTeam:
       case Actions.DeleteTeam:
       case Actions.AddInvitationDomain:
+      case Actions.GetHostedToken:
       case Actions.DeleteInvitationDomain:
       default:
         canI = [Roles.Owner, Roles.Admin].includes(this.getRole(forSpace, forUserId));
