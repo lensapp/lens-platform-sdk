@@ -107,7 +107,7 @@ describe("PermissionsService", () => {
       expect(client.permission.canSpace(Actions.AddInvitationDomain, mockSpace1, mockUser1.id!)).toBeTruthy();
       expect(client.permission.canSpace(Actions.DeleteInvitationDomain, mockSpace1, mockUser1.id!)).toBeTruthy();
       expect(client.permission.canSpace(Actions.ChangeSpacePlan, mockSpace1, mockUser1.id!)).toBeTruthy();
-      expect(client.permission.canSpace(Actions.GetHostedToken, mockSpace1, mockUser1.id!)).toBeTruthy();
+      expect(client.permission.canSpace(Actions.GetBillingPageToken, mockSpace1, mockUser1.id!)).toBeTruthy();
     });
 
     it("recognizes admin privileges", () => {
@@ -121,7 +121,7 @@ describe("PermissionsService", () => {
       expect(client.permission.canSpace(Actions.PatchSpace, mockSpace1, mockUser2.id!)).toBeTruthy();
       expect(client.permission.canSpace(Actions.AddInvitationDomain, mockSpace1, mockUser2.id!)).toBeTruthy();
       expect(client.permission.canSpace(Actions.DeleteInvitationDomain, mockSpace1, mockUser2.id!)).toBeTruthy();
-      expect(client.permission.canSpace(Actions.GetHostedToken, mockSpace1, mockUser2.id!)).toBeTruthy();
+      expect(client.permission.canSpace(Actions.GetBillingPageToken, mockSpace1, mockUser2.id!)).toBeTruthy();
       expect(client.permission.canSpace(Actions.ChangeSpacePlan, mockSpace1, mockUser2.id!)).toBeFalsy();
     });
 
@@ -141,7 +141,7 @@ describe("PermissionsService", () => {
       expect(client.permission.canSpace(Actions.PatchSpace, mockSpace1, mockUser3.id!)).toBeFalsy();
       expect(client.permission.canSpace(Actions.AddInvitationDomain, mockSpace1, mockUser3.id!)).toBeFalsy();
       expect(client.permission.canSpace(Actions.DeleteInvitationDomain, mockSpace1, mockUser3.id!)).toBeFalsy();
-      expect(client.permission.canSpace(Actions.GetHostedToken, mockSpace1, mockUser3.id!)).toBeFalsy();
+      expect(client.permission.canSpace(Actions.GetBillingPageToken, mockSpace1, mockUser3.id!)).toBeFalsy();
       expect(client.permission.canSpace(Actions.ChangeSpacePlan, mockSpace1, mockUser3.id!)).toBeFalsy();
     });
 
@@ -155,7 +155,7 @@ describe("PermissionsService", () => {
       expect(client.permission.canSpace(Actions.PatchSpace, mockSpace1, mockUser4.id!)).toBeFalsy();
       expect(client.permission.canSpace(Actions.AddInvitationDomain, mockSpace1, mockUser4.id!)).toBeFalsy();
       expect(client.permission.canSpace(Actions.DeleteInvitationDomain, mockSpace1, mockUser4.id!)).toBeFalsy();
-      expect(client.permission.canSpace(Actions.GetHostedToken, mockSpace1, mockUser4.id!)).toBeFalsy();
+      expect(client.permission.canSpace(Actions.GetBillingPageToken, mockSpace1, mockUser4.id!)).toBeFalsy();
       expect(client.permission.canSpace(Actions.ChangeSpacePlan, mockSpace1, mockUser4.id!)).toBeFalsy();
     });
   });

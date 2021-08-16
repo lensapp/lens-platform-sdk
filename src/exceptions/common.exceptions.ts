@@ -67,3 +67,10 @@ export class UnprocessableEntityException extends LensSDKException {
     Object.setPrototypeOf(this, UnprocessableEntityException.prototype);
   }
 }
+
+export class InternalServerException extends LensSDKException {
+  constructor(message = "Internal server error") {
+    super(500, message);
+    Object.setPrototypeOf(this, InternalServerException.prototype);
+  }
+}
