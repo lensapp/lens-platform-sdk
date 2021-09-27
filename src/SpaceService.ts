@@ -2,6 +2,7 @@ import { Base } from "./Base";
 import { User } from "./UserService";
 import type { Team, TeamEntity } from "./TeamService";
 import type { K8sCluster } from "./K8sCluster";
+import type { CatalogAPI, CatalogAPIEntity } from "./CatalogAPI";
 import type { Invitation, InvitationEntity } from "./InvitationService";
 import type { BillingPlan } from "./BillingPlan";
 import type { InvitationDomain, InvitationDomainEntity } from "./InvitationDomain";
@@ -21,6 +22,9 @@ import {
 import type { MapToEntity } from "./types/types";
 import type { Except } from "type-fest";
 
+export const spaceKinds = ["Personal", "Team"] as const;
+export type SpaceKind = typeof spaceKinds[number];
+
 /**
  *
  * @remarks
@@ -37,16 +41,19 @@ export interface Space {
   createdById?: string;
   createdAt?: string;
   updatedAt?: string;
+  kind?: SpaceKind;
   users?: User[];
   teams?: Team[];
   invitations?: Invitation[];
   invitationDomains?: InvitationDomain[];
+  catalogApi?: CatalogAPI;
 }
 
-export type SpaceEntity = Except<MapToEntity<Space>, "teams" | "invitations" | "invitationDomains"> & {
+export type SpaceEntity = Except<MapToEntity<Space>, "teams" | "invitations" | "invitationDomains" | "catalogApi"> & {
   teams?: TeamEntity[];
   invitations?: InvitationEntity[];
   invitationDomains?: InvitationDomainEntity[];
+  catalogApi?: CatalogAPIEntity;
 };
 
 /**
