@@ -1,16 +1,16 @@
 #
-#   This CI triggered on PRs.
+#   This CI triggered on Dependabot PRs.
 #
 #   1. Runs `npm test`, which includes lint, type-checking, and unit tests on node.js LTS 10,12,14
 #      and the current version (v15)
 #
 on:
-  - pull_request
+  - pull_request_target
 
 jobs:
-  test:
+  dependabot-test:
     runs-on: ubuntu-latest
-    if: ${{ github.actor != 'dependabot[bot]' }}
+    if: ${{ github.actor == 'dependabot[bot]' }}
     env:
       STAGING_USERNAME_1: ${{ secrets.STAGING_USERNAME_1 }}
       STAGING_PASSWORD_1: ${{ secrets.STAGING_PASSWORD_1 }}
