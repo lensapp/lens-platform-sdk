@@ -55,6 +55,7 @@ const mockSpace1: Space = {
   id: "ms1",
   name: "ms1",
   description: "ms1",
+  kind: "Team",
   users: [mockUser1, mockUser2, mockUser3, mockUser5],
   teams: [mockTeam1, mockTeam2, mockTeam3]
 };
@@ -97,6 +98,7 @@ describe("PermissionsService", () => {
   describe(".canSpace", () => {
     it("recognizes owner privileges", () => {
       expect(client.permission.canSpace(Actions.DeleteSpace, mockSpace1, mockUser1.id!)).toBeTruthy();
+      expect(client.permission.canSpace(Actions.RenameSpace, mockSpace1, mockUser1.id!)).toBeTruthy();
       expect(client.permission.canSpace(Actions.CreateTeam, mockSpace1, mockUser1.id!)).toBeTruthy();
       expect(client.permission.canSpace(Actions.DeleteTeam, mockSpace1, mockUser1.id!)).toBeTruthy();
       expect(client.permission.canSpace(Actions.PatchTeam, mockSpace1, mockUser1.id!)).toBeTruthy();
@@ -110,8 +112,23 @@ describe("PermissionsService", () => {
       expect(client.permission.canSpace(Actions.GetBillingPageToken, mockSpace1, mockUser1.id!)).toBeTruthy();
     });
 
+    it("can't delete Personal Space", () => {
+      expect(client.permission.canSpace(Actions.DeleteSpace, {
+        ...mockSpace1,
+        kind: "Personal"
+      }, mockUser1.id!)).toBeFalsy();
+    });
+
+    it("can't rename Personal Space", () => {
+      expect(client.permission.canSpace(Actions.RenameSpace, {
+        ...mockSpace1,
+        kind: "Personal"
+      }, mockUser1.id!)).toBeFalsy();
+    });
+
     it("recognizes admin privileges", () => {
       expect(client.permission.canSpace(Actions.DeleteSpace, mockSpace1, mockUser2.id!)).toBeFalsy();
+      expect(client.permission.canSpace(Actions.RenameSpace, mockSpace1, mockUser2.id!)).toBeTruthy();
       expect(client.permission.canSpace(Actions.CreateTeam, mockSpace1, mockUser2.id!)).toBeTruthy();
       expect(client.permission.canSpace(Actions.DeleteTeam, mockSpace1, mockUser2.id!)).toBeTruthy();
       expect(client.permission.canSpace(Actions.PatchTeam, mockSpace1, mockUser2.id!)).toBeTruthy();
@@ -131,6 +148,7 @@ describe("PermissionsService", () => {
       expect(client.permission.canSpace(Actions.CreateTeam, mockSpace1, mockUser3.id!)).toBeFalsy();
       expect(client.permission.canSpace(Actions.DeleteTeam, mockSpace1, mockUser3.id!)).toBeFalsy();
       expect(client.permission.canSpace(Actions.PatchTeam, mockSpace1, mockUser3.id!)).toBeFalsy();
+      expect(client.permission.canSpace(Actions.RenameSpace, mockSpace1, mockUser3.id!)).toBeFalsy();
       expect(client.permission.canSpace(Actions.PatchInvitation, mockSpace1, mockUser3.id!)).toBeFalsy();
       expect(client.permission.canSpace(Actions.RevokeInvitation, mockSpace1, mockUser3.id!)).toBeFalsy();
       expect(client.permission.canSpace(Actions.RevokeInvitation, mockSpace1, mockUser3.id!)).toBeFalsy();
@@ -153,6 +171,7 @@ describe("PermissionsService", () => {
       expect(client.permission.canSpace(Actions.PatchInvitation, mockSpace1, mockUser4.id!)).toBeFalsy();
       expect(client.permission.canSpace(Actions.CreateInvitation, mockSpace1, mockUser4.id!)).toBeFalsy();
       expect(client.permission.canSpace(Actions.PatchSpace, mockSpace1, mockUser4.id!)).toBeFalsy();
+      expect(client.permission.canSpace(Actions.RenameSpace, mockSpace1, mockUser4.id!)).toBeFalsy();
       expect(client.permission.canSpace(Actions.AddInvitationDomain, mockSpace1, mockUser4.id!)).toBeFalsy();
       expect(client.permission.canSpace(Actions.DeleteInvitationDomain, mockSpace1, mockUser4.id!)).toBeFalsy();
       expect(client.permission.canSpace(Actions.GetBillingPageToken, mockSpace1, mockUser4.id!)).toBeFalsy();

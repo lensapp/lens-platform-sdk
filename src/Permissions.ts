@@ -15,6 +15,7 @@ export enum Roles {
 export enum Actions {
   DeleteSpace,
   PatchSpace,
+  RenameSpace,
   CreateInvitation,
   PatchInvitation,
   RevokeInvitation,
@@ -55,7 +56,7 @@ export class Permissions {
     switch (action) {
       case Actions.ChangeSpacePlan:
       case Actions.DeleteSpace:
-        canI = this.getRole(forSpace, forUserId) === Roles.Owner;
+        canI = forSpace.kind !== "Personal" && this.getRole(forSpace, forUserId) === Roles.Owner;
         break;
       case Actions.PatchInvitation:
       case Actions.RevokeInvitation: {
@@ -76,6 +77,13 @@ export class Permissions {
           canI = true;
         }
 
+        break;
+      }
+
+      case Actions.RenameSpace: {
+        const canUpdate = [Roles.Owner, Roles.Admin].includes(this.getRole(forSpace, forUserId));
+
+        canI = forSpace.kind !== "Personal" && canUpdate;
         break;
       }
 
