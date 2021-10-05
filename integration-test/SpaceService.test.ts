@@ -256,6 +256,7 @@ describe("SpaceService", () => {
     let existingSpace: Space;
 
     beforeAll(async () => {
+      testPlatformBob.fakeToken = undefined;
       existingSpace = await testPlatformBob.client.space.createOne({
         name: `sdk-e2e-test-${rng()}`,
         description: "Test space for createCatalogApi function"
