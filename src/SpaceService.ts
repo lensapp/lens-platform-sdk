@@ -118,6 +118,24 @@ class SpaceService extends Base {
   }
 
   /**
+   * Create CatalogAPI for the Space if it's missing
+   */
+  async createCatalogApi(spaceName: string): Promise<CatalogAPI> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/spaces/${spaceName}/catalog-api`;
+
+    const json = await throwExpected(
+      async () => fetch.post(url),
+      {
+        403: () => new ForbiddenException(),
+        404: () => new SpaceNotFoundException(spaceName)
+      }
+    );
+
+    return (json as unknown) as CatalogAPI;
+  }
+
+  /**
    * Update one space
    */
   async updateOne(spaceName: string, space: Space): Promise<Space> {

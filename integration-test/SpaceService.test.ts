@@ -72,6 +72,30 @@ describe("SpaceService", () => {
     });
   });
 
+  describe("createCatalogApi", () => {
+    let existingSpace: Space;
+
+    beforeAll(async () => {
+      existingSpace = await testPlatformBob.client.space.createOne({
+        name: `sdk-e2e-test-${rng()}`,
+        description: "Test space for createCatalogApi function"
+      });
+    });
+
+    afterAll(async () => {
+      if (existingSpace) {
+        await testPlatformBob.client.space.deleteOne({ name: existingSpace.name });
+      }
+    });
+
+    it("rejects requests with invalid tokens", async () => {
+      testPlatformBob.fakeToken = "fake token";
+
+      return expect(testPlatformBob.client.space.createCatalogApi(existingSpace.name))
+        .rejects.toThrowError(UnauthorizedException);
+    });
+  });
+
   describe("getOne", () => {
     let bobSpace: Space;
     let aliceSpace: Space;
