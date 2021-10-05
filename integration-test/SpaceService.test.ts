@@ -39,7 +39,7 @@ describe("SpaceService", () => {
       space = await testPlatformBob.client.space.updateOne(name, { name, description: updatedDescription });
       expect(space.description).toEqual(updatedDescription);
     } finally {
-      await testPlatformBob.client.space.deleteOne({ name: name });
+      await testPlatformBob.client.space.deleteOne({ name });
     }
   });
 
@@ -66,34 +66,8 @@ describe("SpaceService", () => {
         .rejects.toThrowError(UnauthorizedException);
     });
 
-    it("rejects when space already exists", async () => {
-      return expect(testPlatformBob.client.space.createOne({ name: existingSpace.name }))
-        .rejects.toThrowError(SpaceNameReservedException);
-    });
-  });
-
-  describe("createCatalogApi", () => {
-    let existingSpace: Space;
-
-    beforeAll(async () => {
-      existingSpace = await testPlatformBob.client.space.createOne({
-        name: `sdk-e2e-test-${rng()}`,
-        description: "Test space for createCatalogApi function"
-      });
-    });
-
-    afterAll(async () => {
-      if (existingSpace) {
-        await testPlatformBob.client.space.deleteOne({ name: existingSpace.name });
-      }
-    });
-
-    it("rejects requests with invalid tokens", async () => {
-      testPlatformBob.fakeToken = "fake token";
-
-      return expect(testPlatformBob.client.space.createCatalogApi(existingSpace.name))
-        .rejects.toThrowError(UnauthorizedException);
-    });
+    it("rejects when space already exists", async () => expect(testPlatformBob.client.space.createOne({ name: existingSpace.name }))
+      .rejects.toThrowError(SpaceNameReservedException));
   });
 
   describe("getOne", () => {
@@ -135,10 +109,8 @@ describe("SpaceService", () => {
         .rejects.toThrowError(SpaceNotFoundException);
     });
 
-    it("reports Forbidden errors", async () => {
-      return expect(testPlatformBob.client.space.getOne({ name: aliceSpace.name }))
-        .rejects.toThrowError(ForbiddenException);
-    });
+    it("reports Forbidden errors", async () => expect(testPlatformBob.client.space.getOne({ name: aliceSpace.name }))
+      .rejects.toThrowError(ForbiddenException));
   });
 
   describe("invitationDomain", () => {
@@ -197,15 +169,11 @@ describe("SpaceService", () => {
       expect(await testPlatformBob.client.space.getInvitationDomains({ name: bobSpace.name })).toEqual([]);
     });
 
-    it("returns forbidden if fetching another user's Space's invitation domains", async () => {
-      return expect(testPlatformBob.client.space.getInvitationDomains({ name: aliceSpace.name }))
-        .rejects.toThrowError(ForbiddenException);
-    });
+    it("returns forbidden if fetching another user's Space's invitation domains", async () => expect(testPlatformBob.client.space.getInvitationDomains({ name: aliceSpace.name }))
+      .rejects.toThrowError(ForbiddenException));
 
-    it("returns not found if fetching not existing Space", async () => {
-      return expect(testPlatformBob.client.space.getInvitationDomains({ name: "missing-foobar-space" }))
-        .rejects.toThrowError(NotFoundException);
-    });
+    it("returns not found if fetching not existing Space", async () => expect(testPlatformBob.client.space.getInvitationDomains({ name: "missing-foobar-space" }))
+      .rejects.toThrowError(NotFoundException));
   });
 
   describe("getOneCluster", () => {
@@ -241,10 +209,8 @@ describe("SpaceService", () => {
       }
     });
 
-    it("reports Forbidden errors", async () => {
-      return expect(testPlatformBob.client.space.getOneCluster({ name: aliceSpace.name, clusterId: aliceCluster.id! }))
-        .rejects.toThrowError(ForbiddenException);
-    });
+    it("reports Forbidden errors", async () => expect(testPlatformBob.client.space.getOneCluster({ name: aliceSpace.name, clusterId: aliceCluster.id! }))
+      .rejects.toThrowError(ForbiddenException));
   });
 
   describe("updateOne", () => {
@@ -279,14 +245,34 @@ describe("SpaceService", () => {
         .rejects.toThrowError(UnauthorizedException);
     });
 
-    it("rejects when space already exists", async () => {
-      return expect(testPlatformBob.client.space.updateOne(bobSpace.name, { name: aliceSpace.name }))
-        .rejects.toThrowError(SpaceNameReservedException);
+    it("rejects when space already exists", async () => expect(testPlatformBob.client.space.updateOne(bobSpace.name, { name: aliceSpace.name }))
+      .rejects.toThrowError(SpaceNameReservedException));
+
+    it("rejects when trying to modify space without permissions", async () => expect(testPlatformBob.client.space.updateOne(aliceSpace.name, { name: aliceSpace.name, description: "Pwned by Bob" }))
+      .rejects.toThrowError(ForbiddenException));
+  });
+
+  describe("createCatalogApi", () => {
+    let existingSpace: Space;
+
+    beforeAll(async () => {
+      existingSpace = await testPlatformBob.client.space.createOne({
+        name: `sdk-e2e-test-${rng()}`,
+        description: "Test space for createCatalogApi function"
+      });
     });
 
-    it("rejects when trying to modify space without permissions", async () => {
-      return expect(testPlatformBob.client.space.updateOne(aliceSpace.name, { name: aliceSpace.name, description: "Pwned by Bob" }))
-        .rejects.toThrowError(ForbiddenException);
+    afterAll(async () => {
+      if (existingSpace) {
+        await testPlatformBob.client.space.deleteOne({ name: existingSpace.name });
+      }
+    });
+
+    it("rejects requests with invalid tokens", async () => {
+      testPlatformBob.fakeToken = "fake token";
+
+      return expect(testPlatformBob.client.space.createCatalogApi(existingSpace.name))
+        .rejects.toThrowError(UnauthorizedException);
     });
   });
 });
