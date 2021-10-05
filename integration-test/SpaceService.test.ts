@@ -265,6 +265,7 @@ describe("SpaceService", () => {
 
     afterAll(async () => {
       if (existingSpace) {
+        testPlatformBob.fakeToken = undefined;
         await testPlatformBob.client.space.deleteOne({ name: existingSpace.name });
       }
     });

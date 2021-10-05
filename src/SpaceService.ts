@@ -111,7 +111,9 @@ class SpaceService extends Base {
 
     const json = await throwExpected(
       async () => fetch.post(url, space),
-      { 422: () => new SpaceNameReservedException(space.name) }
+      {
+        422: () => new SpaceNameReservedException(space.name)
+      }
     );
 
     return (json as unknown) as Space;
