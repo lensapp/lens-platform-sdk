@@ -373,9 +373,9 @@ class SpaceService extends Base {
     await throwExpected(
       async () => fetch.delete(url),
       {
-        404: e => e?.body.message.includes(name) ?
-          new SpaceNotFoundException(name) :
-          new UserNameNotFoundException(username),
+        404: e => e?.body.message.includes(name)
+          ? new SpaceNotFoundException(name)
+          : new UserNameNotFoundException(username),
         403: () => new ForbiddenException(),
         422: () => new CantRemoveOwnerFromSpaceException(username)
       }
