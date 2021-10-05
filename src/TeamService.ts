@@ -113,9 +113,9 @@ class TeamService extends Base {
       async () => fetch.delete(url), {
         403: () => new ForbiddenException(),
         404: e =>
-          e?.body.message?.includes("Space not found") ?
-            new SpaceNotFoundException() :
-            new UserNameNotFoundException(username),
+          e?.body.message?.includes("Space not found")
+            ? new SpaceNotFoundException()
+            : new UserNameNotFoundException(username),
         422: () => new CantRemoveLastTeamUser()
       });
 

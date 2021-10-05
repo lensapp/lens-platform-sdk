@@ -111,10 +111,30 @@ class SpaceService extends Base {
 
     const json = await throwExpected(
       async () => fetch.post(url, space),
-      { 422: () => new SpaceNameReservedException(space.name) }
+      {
+        422: () => new SpaceNameReservedException(space.name)
+      }
     );
 
     return (json as unknown) as Space;
+  }
+
+  /**
+   * Create CatalogAPI for the Space if it's missing
+   */
+  async createCatalogApi(spaceName: string): Promise<CatalogAPI> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/spaces/${spaceName}/catalog-api`;
+
+    const json = await throwExpected(
+      async () => fetch.post(url),
+      {
+        403: () => new ForbiddenException(),
+        404: () => new SpaceNotFoundException(spaceName)
+      }
+    );
+
+    return (json as unknown) as CatalogAPI;
   }
 
   /**
@@ -355,9 +375,9 @@ class SpaceService extends Base {
     await throwExpected(
       async () => fetch.delete(url),
       {
-        404: e => e?.body.message.includes(name) ?
-          new SpaceNotFoundException(name) :
-          new UserNameNotFoundException(username),
+        404: e => e?.body.message.includes(name)
+          ? new SpaceNotFoundException(name)
+          : new UserNameNotFoundException(username),
         403: () => new ForbiddenException(),
         422: () => new CantRemoveOwnerFromSpaceException(username)
       }

@@ -154,9 +154,9 @@ class LensPlatformClient {
    */
   get fetch() {
     const getToken = this.getToken.bind(this);
-    const defaultHeaders = this.defaultHeaders;
-    const httpAdapter = this.httpAdapter;
-    const logger = this.logger;
+    const { defaultHeaders } = this;
+    const { httpAdapter } = this;
+    const { logger } = this;
     const proxy = new Proxy(axios, {
       get(target: RequestLibrary, key: KeyOfRequestLibrary) {
         const prop = target[key];
@@ -170,13 +170,13 @@ class LensPlatformClient {
               // "patch", "post", "put" has the options in the third parameter
               const hasBody = !["get", "head", "delete"].includes(key);
 
-              let options = hasBody ? arg[2] : arg[1];
+              const options = hasBody ? arg[2] : arg[1];
               const requestBody = hasBody ? arg[1] : null;
               const headers = options?.headers as RequestHeaders;
               let restOptions;
 
               if (headers) {
-                const clone = Object.assign({}, options);
+                const clone = { ...options };
                 delete clone.headers;
                 restOptions = clone;
               } else {
