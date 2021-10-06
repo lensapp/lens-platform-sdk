@@ -89,7 +89,7 @@ class LensPlatformClient {
   permission: PermissionsService;
   invitation: InvitationService;
   openIDConnect: OpenIdConnect;
-  defaultHeaders: RequestHeaders|undefined;
+  defaultHeaders: RequestHeaders | undefined;
 
   constructor(options: LensPlatformClientOptions) {
     if (!options) {
