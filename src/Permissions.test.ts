@@ -1,6 +1,7 @@
 import type { Space, Team, User, K8sCluster } from ".";
 import { LensPlatformClient, Roles, Actions, K8sClusterActions } from ".";
 import { minimumOptions } from "./LensPlatformClient.test";
+import { TeamActions } from "./Permissions";
 
 // Current user (Owner)
 const mockUser1: User = {
@@ -57,7 +58,8 @@ const mockSpace1: Space = {
   description: "ms1",
   kind: "Team",
   users: [mockUser1, mockUser2, mockUser3, mockUser5],
-  teams: [mockTeam1, mockTeam2, mockTeam3]
+  teams: [mockTeam1, mockTeam2, mockTeam3],
+  createdById: mockUser1.id
 };
 const mockK8sCluster1: K8sCluster = {
   id: "mk1",
@@ -176,6 +178,34 @@ describe("PermissionsService", () => {
       expect(client.permission.canSpace(Actions.DeleteInvitationDomain, mockSpace1, mockUser4.id!)).toBeFalsy();
       expect(client.permission.canSpace(Actions.GetBillingPageToken, mockSpace1, mockUser4.id!)).toBeFalsy();
       expect(client.permission.canSpace(Actions.ChangeSpacePlan, mockSpace1, mockUser4.id!)).toBeFalsy();
+    });
+  });
+
+  describe(".canTeam", () => {
+    describe("AddUser", () => {
+      it("can add user to team as Owner", () => {
+        expect(client.permission.canTeam(TeamActions.AddUser, mockSpace1, mockTeam1, mockUser2.id ?? "")).toBeTruthy();
+      });
+
+      it("can add user to Owner team of Personal Space", () => {
+        expect(client.permission.canTeam(TeamActions.AddUser, {
+          ...mockSpace1,
+          kind: "Personal"
+        }, mockTeam1, mockUser2.id ?? "")).toBeFalsy();
+      });
+    });
+
+    describe("RemoveUser", () => {
+      it("can remove user from team as Owner", () => {
+        expect(client.permission.canTeam(TeamActions.RemoveUser, mockSpace1, mockTeam1, mockUser1.id ?? "", mockUser1.id ?? "")).toBeTruthy();
+      });
+
+      it("can't remove itself from Owner team of Personal Space", () => {
+        expect(client.permission.canTeam(TeamActions.RemoveUser, {
+          ...mockSpace1,
+          kind: "Personal"
+        }, mockTeam1, mockUser1.id ?? "", mockUser1.id ?? "")).toBeFalsy();
+      });
     });
   });
 
