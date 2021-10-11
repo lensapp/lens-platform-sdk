@@ -1,5 +1,5 @@
 import LensPlatformClient from "./LensPlatformClient";
-import { Roles, Actions, K8sClusterActions, Permissions } from "./Permissions";
+import { Roles, Actions, TeamActions, K8sClusterActions, Permissions } from "./Permissions";
 import type { LensPlatformClientType, LensPlatformClientOptions } from "./LensPlatformClient";
 import type { User, UserAttributes } from "./UserService";
 import type { Space, SpaceEntity } from "./SpaceService";
@@ -15,5 +15,5 @@ export type {
   SpaceEntity, TeamEntity, K8sClusterEntity, InvitationEntity, InvitationDomainEntity
 };
 export type { LensPlatformClientType, LensPlatformClientOptions };
-export { LensPlatformClient, Roles, Actions, K8sClusterActions, Permissions };
+export { LensPlatformClient, Roles, Actions, K8sClusterActions, Permissions, TeamActions };
 export * from "./exceptions";
