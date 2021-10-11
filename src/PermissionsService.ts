@@ -1,7 +1,9 @@
+import { TeamEntity } from "./TeamService";
 import { Base } from "./Base";
 import type { LensPlatformClientType } from "./index";
+import type { Team } from "./TeamService";
 import type { K8sCluster, K8sClusterEntity } from "./K8sCluster";
-import { Actions, K8sClusterActions, Permissions } from "./Permissions";
+import { Actions, K8sClusterActions, Permissions, TeamActions } from "./Permissions";
 import type { Space, SpaceEntity } from "./SpaceService";
 
 export class PermissionsService extends Base {
@@ -26,6 +28,20 @@ export class PermissionsService extends Base {
     invitationIdsCreatedByUserId: string[];
   }) {
     return this.permissions.canSpace(action, forSpace, forUserId, forRevokeInvitation);
+  }
+
+  /**
+   * Clarifies whether a given user can execute the specified Team action
+   * @param action - 'TeamActions' enum value
+   * @param space - Space object that must contain `{ teams: Team[] }`
+   * @param team - Team object
+   * @param forUserId - User that is executing the action
+   * @param targetUserId - User that is the target of the exection, e.g. user to be removed
+   * @returns
+   */
+  // eslint-disable-next-line max-params
+  canTeam(action: TeamActions, space: Space | SpaceEntity, team: Team | TeamEntity, forUserId: string, targetUserId?: string) {
+    return this.permissions.canTeam(action, space, team, forUserId, targetUserId);
   }
 
   /**

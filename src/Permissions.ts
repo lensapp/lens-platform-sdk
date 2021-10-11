@@ -32,6 +32,11 @@ export enum K8sClusterActions {
   DeleteK8sCluster
 }
 
+export enum TeamActions {
+  AddUser,
+  RemoveUser
+}
+
 export class Permissions {
   /**
    * Clarifies whether a given user can perform an action in a given space.
@@ -101,6 +106,54 @@ export class Permissions {
     }
 
     return canI;
+  }
+
+  /**
+   * Clarifies whether a given user can execute the specified Team action
+   * @param action - 'TeamActions' enum value
+   * @param space - Space object that must contain `{ teams: Team[] }`
+   * @param team - Team object
+   * @param forUserId - User that is executing the action
+   * @param targetUserId - User that is the target of the exection, e.g. user to be removed
+   * @returns
+   */
+  // eslint-disable-next-line max-params
+  canTeam(action: TeamActions, space: Space | SpaceEntity, team: Team | TeamEntity, forUserId: string, targetUserId?: string) {
+    switch (action) {
+      case TeamActions.AddUser: {
+        if (!this.canSpace(Actions.PatchTeam, space, forUserId)) {
+          return false;
+        }
+
+        // Prevent adding any user to Owner team of a Personal Space
+        if (team.kind === "Owner" && space.kind === "Personal") {
+          return false;
+        }
+
+        return true;
+      }
+
+      case TeamActions.RemoveUser: {
+        if (!targetUserId) {
+          throw new Error("targetUserId missing");
+        }
+
+        if (!this.canSpace(Actions.PatchTeam, space, forUserId)) {
+          return false;
+        }
+
+        // Prevent removing creator of Personal Space from the Owner team
+        if (team.kind === "Owner" && space.kind === "Personal" && space.createdById === targetUserId) {
+          return false;
+        }
+
+        return true;
+      }
+
+      default: {
+        return false;
+      }
+    }
   }
 
   /**
