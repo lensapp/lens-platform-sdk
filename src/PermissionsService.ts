@@ -1,4 +1,4 @@
-import { TeamEntity } from "../dist/cjs";
+import { TeamEntity } from "./TeamService";
 import { Base } from "./Base";
 import type { LensPlatformClientType } from "./index";
 import type { Team } from "./TeamService";
