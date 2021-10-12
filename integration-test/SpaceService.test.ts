@@ -7,7 +7,8 @@ import {
   SpaceNameReservedException,
   SpaceNotFoundException,
   ForbiddenException,
-  NotFoundException
+  NotFoundException,
+  ClusterNotFoundException
 } from "../src/exceptions";
 
 const TEST_SPACE_NAME = "test-space";
@@ -211,6 +212,12 @@ describe("SpaceService", () => {
 
     it("reports Forbidden errors", async () => expect(testPlatformBob.client.space.getOneCluster({ name: aliceSpace.name, clusterId: aliceCluster.id! }))
       .rejects.toThrowError(ForbiddenException));
+
+    it("reports ClusterNotFound", async () => expect(testPlatformAlice.client.space.getOneCluster({ name: aliceSpace.name, clusterId: "896b77ef-1eac-4928-ab9e-6b6928cb3a30" }))
+      .rejects.toThrowError(ClusterNotFoundException));
+
+    it("reports SpaceNotFound", async () => expect(testPlatformAlice.client.space.getOneCluster({ name: `missing-${rng()}`, clusterId: aliceCluster.id! }))
+      .rejects.toThrowError(SpaceNotFoundException));
   });
 
   describe("updateOne", () => {
