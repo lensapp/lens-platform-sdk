@@ -233,11 +233,12 @@ class SpaceService extends Base {
     const json = await throwExpected(
       async () => fetch.get(url),
       {
-        // TODO: differentiate between space, cluster, user and token not being found
-        404: () => new SpaceNotFoundException(name),
         400: () => new BadRequestException(),
         401: () => new UnauthorizedException(),
-        403: () => new ForbiddenException()
+        403: () => new ForbiddenException(),
+        // TODO: differentiate between space, cluster, user and token not being found
+        404: error => error?.body.message.includes("Space name ")
+          ? new SpaceNotFoundException(name) : new ClusterNotFoundException(clusterId)
       }
     );
 

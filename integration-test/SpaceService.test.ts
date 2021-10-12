@@ -220,6 +220,49 @@ describe("SpaceService", () => {
       .rejects.toThrowError(SpaceNotFoundException));
   });
 
+  describe("getClusterToken", () => {
+    let aliceSpace: Space;
+    let aliceCluster: K8sCluster;
+    const spaceName = `sdk-e2e-${rng()}`;
+
+    beforeAll(async () => {
+      aliceSpace = await testPlatformAlice.client.space.createOne({
+        name: spaceName,
+        description: "Test space for getOne function"
+      });
+      aliceCluster = await testPlatformAlice.client.space.createOneCluster({
+        name: spaceName,
+        cluster: {
+          name: `${spaceName}-cluster`,
+          description: "Integration Test Cluster Description",
+          kind: "K8sCluster",
+          region: "eu"
+        }
+      });
+    });
+
+    afterAll(async () => {
+      if (aliceCluster) {
+        await testPlatformAlice.client.space.deleteOneCluster({
+          name: aliceSpace.name, clusterId: aliceCluster.id!
+        });
+      }
+
+      if (aliceSpace) {
+        await testPlatformAlice.client.space.deleteOne({ name: aliceSpace.name });
+      }
+    });
+
+    it("reports Forbidden errors", async () => expect(testPlatformBob.client.space.getClusterToken({ name: aliceSpace.name, clusterId: aliceCluster.id! }))
+      .rejects.toThrowError(ForbiddenException));
+
+    it("reports ClusterNotFound", async () => expect(testPlatformAlice.client.space.getClusterToken({ name: aliceSpace.name, clusterId: "896b77ef-1eac-4928-ab9e-6b6928cb3a30" }))
+      .rejects.toThrowError(ClusterNotFoundException));
+
+    it("reports SpaceNotFound", async () => expect(testPlatformAlice.client.space.getClusterToken({ name: `missing-${rng()}`, clusterId: aliceCluster.id! }))
+      .rejects.toThrowError(SpaceNotFoundException));
+  });
+
   describe("updateOne", () => {
     let bobSpace: Space;
     let aliceSpace: Space;
