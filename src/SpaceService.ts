@@ -347,7 +347,7 @@ class SpaceService extends Base {
       async () => fetch.get(url),
       {
         403: () => new ForbiddenException(),
-        404: error => error?.body.message.includes("Space name ")
+        404: error => error?.body.message.includes("Space ")
           ? new SpaceNotFoundException(name) : new ClusterNotFoundException(clusterId)
       }
     );
