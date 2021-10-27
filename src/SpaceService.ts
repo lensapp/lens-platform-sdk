@@ -163,6 +163,26 @@ class SpaceService extends Base {
   }
 
   /**
+   * Remove feature from users' Personal Spaces.
+   * @param feature - Feature remove add
+   * @param users - Array of usernames or email addresses
+   */
+  async removeSpaceFeature(feature: SpaceFeature, users: string[]): Promise<Record<string, unknown>> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/spaces/features`;
+
+    const json = await throwExpected(
+      async () => fetch.delete(url, { data: { feature, users } }),
+      {
+        403: () => new ForbiddenException(),
+        404: () => new NotFoundException()
+      }
+    );
+
+    return (json as unknown) as Record<string, unknown>;
+  }
+
+  /**
    * Update one space
    */
   async updateOne(spaceName: string, space: Space): Promise<Space> {
