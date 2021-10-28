@@ -169,7 +169,7 @@ class SpaceService extends Base {
    */
   async removeSpaceFeature(feature: SpaceFeature, users: string[]): Promise<Record<string, unknown>> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/spaces/features`;
+    const url = `${apiEndpointAddress}/spaces/features/remove`;
 
     const json = await throwExpected(
       async () => fetch.delete(url, { data: { feature, users } }),
