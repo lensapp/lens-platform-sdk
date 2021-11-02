@@ -382,25 +382,6 @@ class SpaceService extends Base {
     const url = `${apiEndpointAddress}/spaces/${cluster.space?.name}/k8sclusters/${cluster.id}`;
 
     const json = await throwExpected(
-      async () => fetch.patch(url, cluster),
-      {
-        // TODO: differentiate between space and cluster not being found
-        404: () => new SpaceNotFoundException(cluster.space?.name ?? "undefined"),
-        400: () => new BadRequestException("Property 'kind' of cluster object is invalid")
-      }
-    );
-
-    return (json as unknown) as K8sCluster;
-  }
-
-  /**
-   * Replace a cluster
-   */
-  async replaceOneCluster({ cluster }: { cluster: K8sCluster }): Promise<K8sCluster> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/spaces/${cluster.space?.name}/k8sclusters/${cluster.id}`;
-
-    const json = await throwExpected(
       async () => fetch.put(url, cluster),
       {
         // TODO: differentiate between space and cluster not being found
