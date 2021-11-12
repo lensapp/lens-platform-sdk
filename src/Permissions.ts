@@ -1,6 +1,7 @@
 import type { Space, SpaceEntity } from "./SpaceService";
 import type { Team, TeamEntity } from "./TeamService";
 import type { K8sCluster, K8sClusterEntity } from "./K8sCluster";
+import { User } from "./UserService";
 
 export enum Roles {
   Admin = "Admin",
@@ -56,40 +57,39 @@ export class Permissions {
       invitationIdsCreatedByUserId: string[];
     }
   ) {
-    let canI = false;
+    const role = this.getRole(forSpace, forUserId);
 
     switch (action) {
       case Actions.ChangeSpacePlan:
+        return role === Roles.Owner;
       case Actions.DeleteSpace:
-        canI = forSpace.kind !== "Personal" && this.getRole(forSpace, forUserId) === Roles.Owner;
-        break;
+        return forSpace.kind !== "Personal" && role === Roles.Owner;
       case Actions.PatchInvitation:
       case Actions.RevokeInvitation: {
-        if ([Roles.Owner, Roles.Admin].includes(this.getRole(forSpace, forUserId))) {
-          canI = true;
+        if ([Roles.Owner, Roles.Admin].includes(role)) {
+          return true;
         }
 
         if (
           // If there is an invitationId to be revoked
-          forRevokeInvitation?.invitationId
+          forRevokeInvitation?.invitationId &&
           // If this user has created more than one invitation
-          && forRevokeInvitation?.invitationIdsCreatedByUserId?.length > 0
+          forRevokeInvitation?.invitationIdsCreatedByUserId?.length > 0 &&
           // If invitation to revoke was created by userId
-          && forRevokeInvitation?.invitationIdsCreatedByUserId.find(
+          forRevokeInvitation?.invitationIdsCreatedByUserId.find(
             invitationIdCreatedByUserId => invitationIdCreatedByUserId === forRevokeInvitation?.invitationId
           )
         ) {
-          canI = true;
+          return true;
         }
 
-        break;
+        return false;
       }
 
       case Actions.RenameSpace: {
-        const canUpdate = [Roles.Owner, Roles.Admin].includes(this.getRole(forSpace, forUserId));
+        const canUpdate = [Roles.Owner, Roles.Admin].includes(role);
 
-        canI = forSpace.kind !== "Personal" && canUpdate;
-        break;
+        return forSpace.kind !== "Personal" && canUpdate;
       }
 
       case Actions.CreateInvitation:
@@ -101,11 +101,8 @@ export class Permissions {
       case Actions.GetBillingPageToken:
       case Actions.DeleteInvitationDomain:
       default:
-        canI = [Roles.Owner, Roles.Admin].includes(this.getRole(forSpace, forUserId));
-        break;
+        return [Roles.Owner, Roles.Admin].includes(role);
     }
-
-    return canI;
   }
 
   /**
@@ -204,7 +201,7 @@ export class Permissions {
    * @returns Role enum value
    * @throws "Could not get role for space with no teams" exception
    */
-  getRole(space: Space | SpaceEntity, forUserId: string) {
+  getRole(space: Space | SpaceEntity, forUserId: string): Roles.Owner | Roles.Admin | Roles.Member | Roles.None {
     if (!space.teams) {
       throw new Error("Could not get role for space with no teams");
     }
@@ -217,7 +214,7 @@ export class Permissions {
       return Roles.Admin;
     }
 
-    if (space.users?.map(user => user.id).includes(forUserId)) {
+    if (space.users?.map((user: User) => user.id).includes(forUserId)) {
       return Roles.Member;
     }
 
@@ -247,6 +244,6 @@ export class Permissions {
       return false;
     }
 
-    return Boolean(team.users.find(u => u.id === userId));
+    return Boolean(team.users.find((u: User) => u.id === userId));
   };
 }
