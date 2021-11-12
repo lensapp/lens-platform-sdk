@@ -69,10 +69,10 @@ export class Permissions {
         return forSpace.kind !== "Personal" && role === Roles.Owner;
 
       case Actions.PatchInvitation:
-        return this.canPatchOrRevoceInvitation(forRevokeInvitation, role);
+        return this.canPatchOrRevokeInvitation(forRevokeInvitation, role);
 
       case Actions.RevokeInvitation:
-        return this.canPatchOrRevoceInvitation(forRevokeInvitation, role);
+        return this.canPatchOrRevokeInvitation(forRevokeInvitation, role);
 
       case Actions.RenameSpace:
         return forSpace.kind !== "Personal" && isAdminOrOwner;
@@ -248,7 +248,7 @@ export class Permissions {
     return Boolean(team.users.find(u => u.id === userId));
   };
 
-  protected canPatchOrRevoceInvitation = (forRevokeInvitation: RevokeInvitation | undefined, role: Roles) => {
+  protected canPatchOrRevokeInvitation = (forRevokeInvitation: RevokeInvitation | undefined, role: Roles) => {
     const isAdminOrOwner = [Roles.Owner, Roles.Admin].includes(role);
     if (isAdminOrOwner) {
       return true;
