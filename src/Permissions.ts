@@ -37,6 +37,11 @@ export enum TeamActions {
   RemoveUser
 }
 
+type RevokeInvitation = {
+  invitationId: string;
+  invitationIdsCreatedByUserId: string[];
+};
+
 export class Permissions {
   /**
    * Clarifies whether a given user can perform an action in a given space.
@@ -51,34 +56,10 @@ export class Permissions {
     action: Actions,
     forSpace: Space | SpaceEntity,
     forUserId: string,
-    forRevokeInvitation?: {
-      invitationId: string;
-      invitationIdsCreatedByUserId: string[];
-    }
+    forRevokeInvitation?: RevokeInvitation
   ) {
     const role = this.getRole(forSpace, forUserId);
     const isAdminOrOwner = [Roles.Owner, Roles.Admin].includes(role);
-
-    const canPatchOrRevoceInvitation = () => {
-      if (isAdminOrOwner) {
-        return true;
-      }
-
-      if (
-        // If there is an invitationId to be revoked
-        forRevokeInvitation?.invitationId
-        // If this user has created more than one invitation
-        && forRevokeInvitation?.invitationIdsCreatedByUserId?.length > 0
-        // If invitation to revoke was created by userId
-        && forRevokeInvitation?.invitationIdsCreatedByUserId.find(
-          invitationIdCreatedByUserId => invitationIdCreatedByUserId === forRevokeInvitation?.invitationId
-        )
-      ) {
-        return true;
-      }
-
-      return false;
-    };
 
     switch (action) {
       case Actions.ChangeSpacePlan:
@@ -88,10 +69,10 @@ export class Permissions {
         return forSpace.kind !== "Personal" && role === Roles.Owner;
 
       case Actions.PatchInvitation:
-        return canPatchOrRevoceInvitation();
+        return this.canPatchOrRevoceInvitation(forRevokeInvitation, role);
 
       case Actions.RevokeInvitation:
-        return canPatchOrRevoceInvitation();
+        return this.canPatchOrRevoceInvitation(forRevokeInvitation, role);
 
       case Actions.RenameSpace:
         return forSpace.kind !== "Personal" && isAdminOrOwner;
@@ -121,7 +102,7 @@ export class Permissions {
         return isAdminOrOwner;
 
       default:
-        return isAdminOrOwner;
+        return false;
     }
   }
 
@@ -265,5 +246,27 @@ export class Permissions {
     }
 
     return Boolean(team.users.find(u => u.id === userId));
+  };
+
+  protected canPatchOrRevoceInvitation = (forRevokeInvitation: RevokeInvitation | undefined, role: Roles) => {
+    const isAdminOrOwner = [Roles.Owner, Roles.Admin].includes(role);
+    if (isAdminOrOwner) {
+      return true;
+    }
+
+    if (
+      // If there is an invitationId to be revoked
+      forRevokeInvitation?.invitationId
+      // If this user has created more than one invitation
+      && forRevokeInvitation?.invitationIdsCreatedByUserId?.length > 0
+      // If invitation to revoke was created by userId
+      && forRevokeInvitation?.invitationIdsCreatedByUserId.find(
+        invitationIdCreatedByUserId => invitationIdCreatedByUserId === forRevokeInvitation?.invitationId
+      )
+    ) {
+      return true;
+    }
+
+    return false;
   };
 }
