@@ -16,7 +16,7 @@ export interface BillingPlan {
   maxClusters: number;
   maxTeams: number;
   invoicePreview?: {
-    nextBillingDate: Date | null | undefined;
+    nextBillingDate: string;
     total: number;
     users?: {
       subtotal: number;
