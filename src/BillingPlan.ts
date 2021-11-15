@@ -15,4 +15,18 @@ export interface BillingPlan {
   maxCatalogItems: number;
   maxClusters: number;
   maxTeams: number;
+  invoicePreview?: {
+    nextBillingDate: string;
+    total: number;
+    users: {
+      subtotal: number;
+      quantity: number;
+    },
+    devClusters: {
+      standard: {
+        subtotal: number;
+        quantity: number;
+      }
+    }
+  }
 }
