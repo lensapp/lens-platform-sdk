@@ -16,14 +16,14 @@ export interface BillingPlan {
   maxClusters: number;
   maxTeams: number;
   invoicePreview?: {
-    nextBillingDate: string;
+    nextBillingDate: Date | null | undefined;
     total: number;
-    users: {
+    users?: {
       subtotal: number;
       quantity: number;
     };
-    devClusters: {
-      standard: {
+    devClusters?: {
+      standard?: {
         subtotal: number;
         quantity: number;
       };
