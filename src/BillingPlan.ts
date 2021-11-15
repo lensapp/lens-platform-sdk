@@ -21,12 +21,12 @@ export interface BillingPlan {
     users: {
       subtotal: number;
       quantity: number;
-    },
+    };
     devClusters: {
       standard: {
         subtotal: number;
         quantity: number;
-      }
-    }
-  }
+      };
+    };
+  };
 }
