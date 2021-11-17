@@ -18,6 +18,7 @@ export interface BillingPlan {
   invoicePreview?: {
     nextBillingDate: string;
     total: number;
+    couponCredits: number;
     users?: {
       subtotal: number;
       quantity: number;
