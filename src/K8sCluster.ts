@@ -2,6 +2,19 @@ import type { Space, SpaceEntity } from "./SpaceService";
 import type { MapToEntity } from "./types/types";
 import type { Except } from "type-fest";
 
+// State of the DevCluster CRD
+export type DevClusterCrdState = "Provisioning" | "Starting" | "Running" | "Stopping" | "Stopped" | "Terminating" | "Terminated";
+
+// Possible status.phase of the K8sCluster in the backend
+// This can be any CrdState and the others listed here.
+// UI can in addition show "deleting", "connecting", "connected", "disconnected" as per typing in Lens.
+export type Phase =
+   DevClusterCrdState |
+   "Initializing" |
+   "Available" |
+   "Failed" |
+   "Tunneling";
+
 /**
  *
  * @remarks
