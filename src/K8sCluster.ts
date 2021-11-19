@@ -9,11 +9,11 @@ export type DevClusterCrdState = "Provisioning" | "Starting" | "Running" | "Stop
 // This can be any CrdState and the others listed here.
 // UI can in addition show "deleting", "connecting", "connected", "disconnected" as per typing in Lens.
 export type Phase =
-   DevClusterCrdState |
-   "Initializing" |
-   "Available" |
-   "Failed" |
-   "Tunneling";
+  Lowercase<DevClusterCrdState> |
+  "initializing" |
+  "available" |
+  "failed" |
+  "tunneling";
 
 /**
  *
@@ -36,7 +36,7 @@ export interface K8sCluster {
   createdAt?: string;
   updatedAt?: string;
   status?: {
-    phase?: string;
+    phase?: Phase;
     reason?: string;
     message?: string;
   };
