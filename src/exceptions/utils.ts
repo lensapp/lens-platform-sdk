@@ -1,4 +1,4 @@
-import { LensSDKException } from "./common.exceptions";
+import { LensSDKException, ForbiddenException, UnauthorizedException } from "./common.exceptions";
 import axios, { AxiosError, AxiosResponse } from "axios";
 
 const parseHTTPErrorCode = (exception: AxiosError) => {
@@ -81,10 +81,10 @@ export const throwExpected = async <T = any>(fn: () => Promise<T>, exceptionsMap
         throw mappedExceptionFn(
           await toPlatformErrorResponse(error?.response)
         );
-      } else if (
-        httpStatusCode === 401 || httpStatusCode === 403
-      ) {
-        throw new LensSDKException(httpStatusCode, error.response?.data?.message, error);
+      } else if (httpStatusCode === 401) {
+        throw new UnauthorizedException(error.response?.data?.message, error);
+      } else if (httpStatusCode === 403) {
+        throw new ForbiddenException(error.response?.data?.message, error);
       }
     }
 
