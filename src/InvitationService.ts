@@ -65,7 +65,6 @@ class InvitationService extends Base {
     const json = await throwExpected(
       async () => fetch.get(url),
       {
-        403: () => new ForbiddenException(),
         404: () => new NotFoundException()
       }
     );
@@ -129,8 +128,7 @@ class InvitationService extends Base {
 
           return new PastExpiryException();
         },
-        400: () => new BadRequestException("Invalid invitation kind"),
-        403: () => new ForbiddenException()
+        400: () => new BadRequestException("Invalid invitation kind")
       }
     );
 
@@ -152,7 +150,7 @@ class InvitationService extends Base {
             return new InvalidEmailDomainException(error?.body?.message);
           }
 
-          return new ForbiddenException();
+          return new ForbiddenException(error?.body?.message);
         }
       }
     );

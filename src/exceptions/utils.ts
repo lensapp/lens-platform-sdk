@@ -1,39 +1,29 @@
-import type { HTTPErrorCode } from "./HTTPErrrorCodes";
-import { HTTPErrorCodes } from "./HTTPErrrorCodes";
-import { LensSDKException, UnauthorizedException } from "./common.exceptions";
-import { AxiosResponse } from "axios";
+import { LensSDKException } from "./common.exceptions";
+import axios, { AxiosError, AxiosResponse } from "axios";
 
-// Use 'Bad Request' as a fallback exception
-const FALLBACK_HTTP_ERROR_CODE: HTTPErrorCode = 400;
-
-const parseHTTPErrorCode = (exception: unknown): HTTPErrorCode | null => {
-  const e = exception as any;
-
-  if (e.name && e.message && e.message.length) {
-    const execArr = /code\s([\d]{3})/g.exec(e.message) ?? [];
+const parseHTTPErrorCode = (exception: AxiosError) => {
+  if (exception?.name && exception?.message && exception?.message?.length) {
+    const execArr = /code\s([\d]{3})/g.exec(exception.message) ?? [];
 
     if (execArr?.length >= 2) {
-      return parseInt(execArr[1], 10) as any;
+      return parseInt(execArr[1], 10);
     }
   }
 
   return null;
 };
 
-type PlatformErrorResponse = AxiosResponse & { status: HTTPErrorCode; body: any };
+type PlatformErrorResponse = AxiosResponse & { body: any };
 
 /**
- * Converts a possible response object of unknown type
- * to a typed response object if possible
- * @param e - unknown error
+ * Transforms an axios error response (with .data key) into a response with .body key
+ * (for backwards compatibility)
  */
-const toPlatformErrorResponse = async (response: undefined | unknown): Promise<PlatformErrorResponse | undefined> => {
-  const obj = response as any;
-
-  if (obj?.data) {
+const toPlatformErrorResponse = async (response: AxiosError["response"]) => {
+  if (response?.data) {
     return {
-      ...obj,
-      body: obj?.data
+      ...response,
+      body: response?.data
     };
   }
 
@@ -50,11 +40,7 @@ const toPlatformErrorResponse = async (response: undefined | unknown): Promise<P
  * };
  * ```
  */
-export type HTTPErrCodeExceptionMap<T = LensSDKException> = Partial<Record<HTTPErrorCode, (e?: PlatformErrorResponse) => T>>;
-
-const DEFAULT_MAP: HTTPErrCodeExceptionMap = {
-  401: e => new UnauthorizedException(e?.body?.message)
-};
+export type HTTPErrCodeExceptionMap<T = LensSDKException> = Partial<Record<number, (e?: PlatformErrorResponse) => T>>;
 
 /**
  * Executes a given function, catching all exceptions. When an exception is caught
@@ -76,23 +62,34 @@ const DEFAULT_MAP: HTTPErrCodeExceptionMap = {
  * );
  * ```
  */
-export const throwExpected = async <T = any>(fn: () => Promise<T>, exceptionsMap: HTTPErrCodeExceptionMap = {}): Promise<T> => {
+export const throwExpected = async <T = any>(fn: () => Promise<T>, exceptionsMap: HTTPErrCodeExceptionMap = {}) => {
   try {
     const result = await fn();
 
     return result;
-  } catch (e: unknown) {
-    const response = await toPlatformErrorResponse((e as any)?.response);
-    const errCode = response?.status! ?? parseHTTPErrorCode(e) ?? FALLBACK_HTTP_ERROR_CODE;
-    const mappedExceptionFn = exceptionsMap[errCode] ?? DEFAULT_MAP[errCode];
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const httpStatusCode = error.response?.status ?? parseHTTPErrorCode(error);
 
-    if (mappedExceptionFn) {
-      // Throw expected exception
-      throw mappedExceptionFn(response);
-    } else {
-      // Throw strongly-typed unexpected exception
-      throw new LensSDKException(errCode, `Unexpected exception [Lens Platform SDK]: ${HTTPErrorCodes[errCode]}`, e);
+      if (!httpStatusCode) {
+        throw new LensSDKException(httpStatusCode, "Unexpected exception [Lens Platform SDK]", error);
+      }
+
+      const mappedExceptionFn = exceptionsMap[httpStatusCode];
+
+      if (mappedExceptionFn) {
+        throw mappedExceptionFn(
+          await toPlatformErrorResponse(error?.response)
+        );
+      } else if (
+        httpStatusCode === 401 || httpStatusCode === 403
+      ) {
+        throw new LensSDKException(httpStatusCode, error.response?.data?.message, error);
+      }
     }
+
+    // If axios.isAxiosError(error) returns falsy
+    throw new LensSDKException("Unknown", "Unexpected exception [Lens Platform SDK]", error);
   }
 };
 
