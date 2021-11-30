@@ -1,7 +1,5 @@
-import type { HTTPErrorCode } from "./HTTPErrrorCodes";
-
 interface LensPlatformExceptionData {
-  errorCode: HTTPErrorCode;
+  errorCode: number | string | null;
   message: string;
 }
 /**
@@ -9,7 +7,7 @@ interface LensPlatformExceptionData {
  */
 export class LensSDKException extends Error implements LensPlatformExceptionData {
   constructor(
-    public errorCode: HTTPErrorCode,
+    public errorCode: number | string | null,
     public message: string,
     public rawException?: unknown
   ) {
