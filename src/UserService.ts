@@ -127,7 +127,6 @@ class UserService extends Base {
             error
           );
         },
-        403: error => new ForbiddenException(error?.body.message),
         404: () => new UserNameNotFoundException(username),
         422: error => new UnprocessableEntityException(error?.body.message)
       }

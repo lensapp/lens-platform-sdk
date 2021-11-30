@@ -81,8 +81,7 @@ class SpaceService extends Base {
     const json = await throwExpected(
       async () => fetch.get(url),
       {
-        404: () => new SpaceNotFoundException(name),
-        403: () => new ForbiddenException()
+        404: () => new SpaceNotFoundException(name)
       }
     );
 
@@ -97,11 +96,7 @@ class SpaceService extends Base {
     const url = `${apiEndpointAddress}/spaces${queryString ? `/?${queryString}` : ""}`;
 
     const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        401: () => new UnauthorizedException(),
-        403: () => new ForbiddenException()
-      }
+      async () => fetch.get(url)
     );
 
     return (json as unknown) as Space[];
@@ -134,7 +129,6 @@ class SpaceService extends Base {
     const json = await throwExpected(
       async () => fetch.post(url),
       {
-        403: () => new ForbiddenException(),
         404: () => new SpaceNotFoundException(spaceName)
       }
     );
@@ -154,7 +148,6 @@ class SpaceService extends Base {
     const json = await throwExpected(
       async () => fetch.post(url, { feature, users }),
       {
-        403: () => new ForbiddenException(),
         404: () => new NotFoundException()
       }
     );
@@ -174,7 +167,6 @@ class SpaceService extends Base {
     const json = await throwExpected(
       async () => fetch.delete(url, { data: { feature, users } }),
       {
-        403: () => new ForbiddenException(),
         404: () => new NotFoundException()
       }
     );
@@ -193,7 +185,6 @@ class SpaceService extends Base {
       async () => fetch.patch(url, space),
       {
         500: () => new TokenNotFoundException(),
-        403: () => new ForbiddenException(),
         422: () => new SpaceNameReservedException(space.name)
       }
     );
@@ -212,7 +203,6 @@ class SpaceService extends Base {
       async () => fetch.delete(url),
       {
         500: () => new TokenNotFoundException(),
-        403: () => new ForbiddenException(),
         404: () => new SpaceNotFoundException(name)
       }
     );
@@ -254,8 +244,6 @@ class SpaceService extends Base {
       async () => fetch.get(url),
       {
         400: () => new BadRequestException(),
-        401: () => new UnauthorizedException(),
-        403: () => new ForbiddenException(),
         // TODO: differentiate between space, cluster, user and token not being found
         404: error => error?.body.message.includes("Space ")
           ? new SpaceNotFoundException(name) : new ClusterNotFoundException(clusterId)
@@ -290,7 +278,6 @@ class SpaceService extends Base {
     const json = await throwExpected(
       async () => fetch.get(url),
       {
-        403: () => new ForbiddenException(),
         404: () => new SpaceNotFoundException(name)
       }
     );
@@ -311,7 +298,6 @@ class SpaceService extends Base {
       }),
       {
         400: () => new BadRequestException(),
-        403: () => new ForbiddenException(),
         404: () => new SpaceNotFoundException(name)
       }
     );
@@ -329,7 +315,6 @@ class SpaceService extends Base {
     await throwExpected(
       async () => fetch.delete(url),
       {
-        403: () => new ForbiddenException(),
         // Space or InvitationDomain missing
         404: () => new NotFoundException()
       }
@@ -346,7 +331,6 @@ class SpaceService extends Base {
     const json = await throwExpected(
       async () => fetch.get(url),
       {
-        403: () => new ForbiddenException(),
         404: error => error?.body.message.includes("Space ")
           ? new SpaceNotFoundException(name) : new ClusterNotFoundException(clusterId)
       }
@@ -440,10 +424,9 @@ class SpaceService extends Base {
     await throwExpected(
       async () => fetch.delete(url),
       {
-        404: e => e?.body.message.includes(name)
+        404: error => error?.body.message.includes(name)
           ? new SpaceNotFoundException(name)
           : new UserNameNotFoundException(username),
-        403: () => new ForbiddenException(),
         422: () => new CantRemoveOwnerFromSpaceException(username)
       }
     );
