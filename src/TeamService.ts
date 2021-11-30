@@ -112,9 +112,9 @@ class TeamService extends Base {
     const json = await throwExpected(
       async () => fetch.delete(url), {
         404: error =>
-          error?.body.message?.includes("Space not found") ?
-            new SpaceNotFoundException() :
-            new UserNameNotFoundException(username),
+          error?.body.message?.includes("Space not found")
+            ? new SpaceNotFoundException()
+            : new UserNameNotFoundException(username),
         422: () => new CantRemoveLastTeamUser()
       });
 

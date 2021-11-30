@@ -245,8 +245,8 @@ class SpaceService extends Base {
       {
         400: () => new BadRequestException(),
         // TODO: differentiate between space, cluster, user and token not being found
-        404: error => error?.body.message.includes("Space ") ?
-          new SpaceNotFoundException(name) : new ClusterNotFoundException(clusterId)
+        404: error => error?.body.message.includes("Space ")
+          ? new SpaceNotFoundException(name) : new ClusterNotFoundException(clusterId)
       }
     );
 
@@ -331,8 +331,8 @@ class SpaceService extends Base {
     const json = await throwExpected(
       async () => fetch.get(url),
       {
-        404: error => error?.body.message.includes("Space ") ?
-          new SpaceNotFoundException(name) : new ClusterNotFoundException(clusterId)
+        404: error => error?.body.message.includes("Space ")
+          ? new SpaceNotFoundException(name) : new ClusterNotFoundException(clusterId)
       }
     );
 
@@ -424,9 +424,9 @@ class SpaceService extends Base {
     await throwExpected(
       async () => fetch.delete(url),
       {
-        404: error => error?.body.message.includes(name) ?
-          new SpaceNotFoundException(name) :
-          new UserNameNotFoundException(username),
+        404: error => error?.body.message.includes(name)
+          ? new SpaceNotFoundException(name)
+          : new UserNameNotFoundException(username),
         422: () => new CantRemoveOwnerFromSpaceException(username)
       }
     );

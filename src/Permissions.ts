@@ -256,11 +256,11 @@ export class Permissions {
 
     if (
       // If there is an invitationId to be revoked
-      forRevokeInvitation?.invitationId &&
+      forRevokeInvitation?.invitationId
       // If this user has created more than one invitation
-      forRevokeInvitation?.invitationIdsCreatedByUserId?.length > 0 &&
+      && forRevokeInvitation?.invitationIdsCreatedByUserId?.length > 0
       // If invitation to revoke was created by userId
-      forRevokeInvitation?.invitationIdsCreatedByUserId.find(
+      && forRevokeInvitation?.invitationIdsCreatedByUserId.find(
         invitationIdCreatedByUserId => invitationIdCreatedByUserId === forRevokeInvitation?.invitationId
       )
     ) {
