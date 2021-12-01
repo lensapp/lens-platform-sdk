@@ -72,6 +72,8 @@ const isRequestLibraryFunction = (
 (RequestLibrary)["delete"] =>
   typeof func === "function" && requestLibraryMethods.includes(key);
 
+export const accessTokenNotValidMessage = "Access token is undefined or an empty string.";
+
 class LensPlatformClient {
   accessToken: LensPlatformClientOptions["accessToken"];
   getAccessToken: LensPlatformClientOptions["getAccessToken"];
@@ -139,12 +141,6 @@ class LensPlatformClient {
     return undefined;
   }
 
-  get authHeader(): Record<string, string> {
-    return {
-      Authorization: `Bearer ${this.accessToken}`,
-    };
-  }
-
   /**
    * A proxied version of request library that
    *
@@ -187,6 +183,10 @@ class LensPlatformClient {
               logger.debug(`${key?.toUpperCase()} ${url}`);
 
               const token = await getToken();
+
+              if (!token || token?.length === 0) {
+                throw new Error(accessTokenNotValidMessage);
+              }
 
               const requestHeaders: RequestHeaders = {
                 ...(token ? { Authorization: `Bearer ${token}` } : {}),
