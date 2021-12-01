@@ -1,7 +1,7 @@
 import type { Except } from "type-fest";
 import { Base } from "./Base";
 import {
-  CantRemoveLastTeamUser, ForbiddenException, SpaceNotFoundException, throwExpected, UserNameNotFoundException
+  CantRemoveLastTeamUser, SpaceNotFoundException, throwExpected, UserNameNotFoundException,
 } from "./exceptions";
 import type { Space, SpaceEntity } from "./SpaceService";
 import type { MapToEntity } from "./types/types";
@@ -111,11 +111,15 @@ class TeamService extends Base {
 
     const json = await throwExpected(
       async () => fetch.delete(url), {
-        404: error =>
-          error?.body.message?.includes("Space not found")
-            ? new SpaceNotFoundException()
-            : new UserNameNotFoundException(username),
-        422: () => new CantRemoveLastTeamUser()
+        404: error => {
+          const message = error?.body.message;
+          if (typeof message === "string" && message.includes("Space not found")) {
+            return new SpaceNotFoundException();
+          }
+
+          return new UserNameNotFoundException(username);
+        },
+        422: () => new CantRemoveLastTeamUser(),
       });
 
     return (json as unknown) as Team;

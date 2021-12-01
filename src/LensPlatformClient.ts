@@ -13,7 +13,7 @@ import decode from "jwt-decode";
 // Axios defaults to xhr adapter if XMLHttpRequest is available.
 // LensPlatformClient supports using the http adapter if httpAdapter
 // option is set to true
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
 const axiosHttpAdapter = require("axios/lib/adapters/http");
 
 export interface LensPlatformClientOptions {
@@ -63,7 +63,7 @@ const requestLibraryMethods: KeyOfRequestLibrary[] = ["get", "post", "put", "pat
  * Function to determine if func is a function of the request library for making a request
  */
 const isRequestLibraryFunction = (
-  func: any, key: KeyOfRequestLibrary
+  func: any, key: KeyOfRequestLibrary,
 ): func is (RequestLibrary)["get"] |
 (RequestLibrary)["post"] |
 (RequestLibrary)["put"] |
@@ -141,7 +141,7 @@ class LensPlatformClient {
 
   get authHeader(): Record<string, string> {
     return {
-      Authorization: `Bearer ${this.accessToken}`
+      Authorization: `Bearer ${this.accessToken}`,
     };
   }
 
@@ -191,21 +191,21 @@ class LensPlatformClient {
               const requestHeaders: RequestHeaders = {
                 ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 ...headers,
-                ...defaultHeaders
+                ...defaultHeaders,
               };
 
               const requestOptions = {
                 headers: requestHeaders,
                 ...(httpAdapter ? { adapter: axiosHttpAdapter } : {}),
                 // Merge options
-                ...restOptions
+                ...restOptions,
               };
 
               logger.debug(`request arguments ${JSON.stringify(requestOptions)}`);
               const response = await (hasBody ? prop(url, requestBody, requestOptions) : prop(url, requestOptions));
 
               // Body as JavaScript plain object
-              const body = response.data;
+              const body: unknown = response.data;
 
               // Print HTTP response info in developer console
               logger.debug(`${key?.toUpperCase()} ${(response)?.status} ${(response)?.statusText} ${url} `);
@@ -222,7 +222,7 @@ class LensPlatformClient {
         }
 
         return prop;
-      }
+      },
     });
 
     return proxy;

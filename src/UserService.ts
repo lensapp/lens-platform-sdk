@@ -8,7 +8,7 @@ import {
   UnprocessableEntityException,
   UserNameNotFoundException,
   LensSDKException,
-  TokenNotFoundException
+  TokenNotFoundException,
 } from "./exceptions";
 
 /**
@@ -56,7 +56,7 @@ class UserService extends Base {
     const url = `${apiEndpointAddress}/users/${username}${queryString ? `?${queryString}` : ""}`;
     const json = await throwExpected(
       async () => fetch.get(url),
-      { 404: () => new NotFoundException(`User ${username} not found`) }
+      { 404: () => new NotFoundException(`User ${username} not found`) },
     );
 
     return (json as unknown) as UserWithEmail;
@@ -68,8 +68,8 @@ class UserService extends Base {
     const json = await throwExpected(
       async () => fetch.get(url),
       {
-        400: e => new BadRequestException(e?.body?.message)
-      }
+        400: e => new BadRequestException(e?.body?.message),
+      },
     );
 
     return (json as unknown) as User[];
@@ -86,8 +86,8 @@ class UserService extends Base {
       {
         404: () => new NotFoundException(`User ${username} not found`),
         403: () => new ForbiddenException(`Modification of user ${username} is forbidden`),
-        409: () => new UsernameAlreadyExistsException()
-      }
+        409: () => new UsernameAlreadyExistsException(),
+      },
     );
 
     return (json as unknown) as User;
@@ -113,23 +113,27 @@ class UserService extends Base {
       async () => fetch.delete(url),
       {
         500: error => {
-          if (error?.body.message.includes("Token")) {
-            return new TokenNotFoundException();
-          }
+          const message = error?.body.message;
 
-          if (error?.body.message.includes("User")) {
-            return new UserNameNotFoundException(username);
+          if (typeof message === "string") {
+            if (message.includes("Token")) {
+              return new TokenNotFoundException();
+            }
+
+            if (message.includes("User")) {
+              return new UserNameNotFoundException(username);
+            }
           }
 
           return new LensSDKException(
             500,
-            `Unexpected exception [Lens Platform SDK]: ${error?.body.message ?? "Internal server error"}`,
-            error
+            `Unexpected exception [Lens Platform SDK]: ${error?.body.message}`,
+            error,
           );
         },
         404: () => new UserNameNotFoundException(username),
-        422: error => new UnprocessableEntityException(error?.body.message)
-      }
+        422: error => new UnprocessableEntityException(error?.body.message),
+      },
     );
   }
 }

@@ -10,15 +10,13 @@ import {
   throwExpected,
   SpaceNotFoundException,
   SpaceNameReservedException,
-  ForbiddenException,
   TokenNotFoundException,
   SpaceHasTooManyClustersException,
   BadRequestException,
   CantRemoveOwnerFromSpaceException,
   UserNameNotFoundException,
   NotFoundException,
-  UnauthorizedException,
-  ClusterNotFoundException
+  ClusterNotFoundException,
 } from "./exceptions";
 import type { MapToEntity } from "./types/types";
 import type { Except } from "type-fest";
@@ -81,8 +79,8 @@ class SpaceService extends Base {
     const json = await throwExpected(
       async () => fetch.get(url),
       {
-        404: () => new SpaceNotFoundException(name)
-      }
+        404: () => new SpaceNotFoundException(name),
+      },
     );
 
     return (json as unknown) as Space;
@@ -96,7 +94,7 @@ class SpaceService extends Base {
     const url = `${apiEndpointAddress}/spaces${queryString ? `/?${queryString}` : ""}`;
 
     const json = await throwExpected(
-      async () => fetch.get(url)
+      async () => fetch.get(url),
     );
 
     return (json as unknown) as Space[];
@@ -112,8 +110,8 @@ class SpaceService extends Base {
     const json = await throwExpected(
       async () => fetch.post(url, space),
       {
-        422: () => new SpaceNameReservedException(space.name)
-      }
+        422: () => new SpaceNameReservedException(space.name),
+      },
     );
 
     return (json as unknown) as Space;
@@ -129,8 +127,8 @@ class SpaceService extends Base {
     const json = await throwExpected(
       async () => fetch.post(url),
       {
-        404: () => new SpaceNotFoundException(spaceName)
-      }
+        404: () => new SpaceNotFoundException(spaceName),
+      },
     );
 
     return (json as unknown) as CatalogAPI;
@@ -148,8 +146,8 @@ class SpaceService extends Base {
     const json = await throwExpected(
       async () => fetch.post(url, { feature, users }),
       {
-        404: () => new NotFoundException()
-      }
+        404: () => new NotFoundException(),
+      },
     );
 
     return (json as unknown) as Record<string, unknown>;
@@ -167,8 +165,8 @@ class SpaceService extends Base {
     const json = await throwExpected(
       async () => fetch.delete(url, { data: { feature, users } }),
       {
-        404: () => new NotFoundException()
-      }
+        404: () => new NotFoundException(),
+      },
     );
 
     return (json as unknown) as Record<string, unknown>;
@@ -185,8 +183,8 @@ class SpaceService extends Base {
       async () => fetch.patch(url, space),
       {
         500: () => new TokenNotFoundException(),
-        422: () => new SpaceNameReservedException(space.name)
-      }
+        422: () => new SpaceNameReservedException(space.name),
+      },
     );
 
     return (json as unknown) as Space;
@@ -203,8 +201,8 @@ class SpaceService extends Base {
       async () => fetch.delete(url),
       {
         500: () => new TokenNotFoundException(),
-        404: () => new SpaceNotFoundException(name)
-      }
+        404: () => new SpaceNotFoundException(name),
+      },
     );
   }
 
@@ -213,7 +211,7 @@ class SpaceService extends Base {
    */
   async getBoredSecret({
     name,
-    clusterId
+    clusterId,
   }: { name: string; clusterId: string }): Promise<{ token: string }> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters/${clusterId}/bored-secret`;
@@ -223,8 +221,8 @@ class SpaceService extends Base {
       {
         // TODO: differentiate between space cluster and secret not being found
         404: () => new SpaceNotFoundException(name),
-        400: () => new BadRequestException("Invalid cluster")
-      }
+        400: () => new BadRequestException("Invalid cluster"),
+      },
     );
 
     return (json as unknown) as { token: string };
@@ -235,7 +233,7 @@ class SpaceService extends Base {
    */
   async getClusterToken({
     name,
-    clusterId
+    clusterId,
   }: { name: string; clusterId: string }): Promise<{ token: string }> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters/${clusterId}/token`;
@@ -245,9 +243,15 @@ class SpaceService extends Base {
       {
         400: () => new BadRequestException(),
         // TODO: differentiate between space, cluster, user and token not being found
-        404: error => error?.body.message.includes("Space ")
-          ? new SpaceNotFoundException(name) : new ClusterNotFoundException(clusterId)
-      }
+        404: error => {
+          const message = error?.body.message;
+          if (typeof message === "string" && message.includes("Space ")) {
+            return new SpaceNotFoundException(name);
+          }
+
+          return new ClusterNotFoundException(clusterId);
+        },
+      },
     );
 
     return (json as unknown) as { token: string };
@@ -262,7 +266,7 @@ class SpaceService extends Base {
 
     const json = await throwExpected(
       async () => fetch.get(url),
-      { 404: () => new SpaceNotFoundException(name) }
+      { 404: () => new SpaceNotFoundException(name) },
     );
 
     return (json as unknown) as K8sCluster[];
@@ -278,8 +282,8 @@ class SpaceService extends Base {
     const json = await throwExpected(
       async () => fetch.get(url),
       {
-        404: () => new SpaceNotFoundException(name)
-      }
+        404: () => new SpaceNotFoundException(name),
+      },
     );
 
     return (json as unknown) as InvitationDomain[];
@@ -294,12 +298,12 @@ class SpaceService extends Base {
 
     const json = await throwExpected(
       async () => fetch.post(url, {
-        domain
+        domain,
       }),
       {
         400: () => new BadRequestException(),
-        404: () => new SpaceNotFoundException(name)
-      }
+        404: () => new SpaceNotFoundException(name),
+      },
     );
 
     return (json as unknown) as InvitationDomain;
@@ -316,8 +320,8 @@ class SpaceService extends Base {
       async () => fetch.delete(url),
       {
         // Space or InvitationDomain missing
-        404: () => new NotFoundException()
-      }
+        404: () => new NotFoundException(),
+      },
     );
   }
 
@@ -331,9 +335,15 @@ class SpaceService extends Base {
     const json = await throwExpected(
       async () => fetch.get(url),
       {
-        404: error => error?.body.message.includes("Space ")
-          ? new SpaceNotFoundException(name) : new ClusterNotFoundException(clusterId)
-      }
+        404: error => {
+          const message = error?.body.message;
+          if (typeof message === "string" && message.includes("Space ")) {
+            return new SpaceNotFoundException(name);
+          }
+
+          return new ClusterNotFoundException(clusterId);
+        },
+      },
     );
 
     return (json as unknown) as K8sCluster;
@@ -351,8 +361,8 @@ class SpaceService extends Base {
       {
         404: () => new SpaceNotFoundException(name),
         422: () => new SpaceHasTooManyClustersException(name),
-        400: () => new BadRequestException("Property 'kind' of cluster object is invalid")
-      }
+        400: () => new BadRequestException("Property 'kind' of cluster object is invalid"),
+      },
     );
 
     return (json as unknown) as K8sCluster;
@@ -370,8 +380,8 @@ class SpaceService extends Base {
       {
         // TODO: differentiate between space and cluster not being found
         404: () => new SpaceNotFoundException(cluster.space?.name ?? "undefined"),
-        400: () => new BadRequestException("Property 'kind' of cluster object is invalid")
-      }
+        400: () => new BadRequestException("Property 'kind' of cluster object is invalid"),
+      },
     );
 
     return (json as unknown) as K8sCluster;
@@ -389,8 +399,8 @@ class SpaceService extends Base {
       {
         // TODO: differentiate between space and cluster not being found
         404: () => new SpaceNotFoundException(cluster.space?.name ?? "undefined"),
-        400: () => new BadRequestException("Property 'kind' of cluster object is invalid")
-      }
+        400: () => new BadRequestException("Property 'kind' of cluster object is invalid"),
+      },
     );
 
     return (json as unknown) as K8sCluster;
@@ -408,8 +418,8 @@ class SpaceService extends Base {
       {
         // TODO: differentiate between space and cluster not being found,
         // improve error handling here overall
-        404: () => new SpaceNotFoundException(name)
-      }
+        404: () => new SpaceNotFoundException(name),
+      },
     );
   }
 
@@ -424,11 +434,16 @@ class SpaceService extends Base {
     await throwExpected(
       async () => fetch.delete(url),
       {
-        404: error => error?.body.message.includes(name)
-          ? new SpaceNotFoundException(name)
-          : new UserNameNotFoundException(username),
-        422: () => new CantRemoveOwnerFromSpaceException(username)
-      }
+        404: error => {
+          const message = error?.body?.message;
+          if (typeof message === "string" && message.includes(name)) {
+            return new SpaceNotFoundException(name);
+          }
+
+          return new UserNameNotFoundException(username);
+        },
+        422: () => new CantRemoveOwnerFromSpaceException(username),
+      },
     );
   }
 
@@ -440,7 +455,7 @@ class SpaceService extends Base {
     const url = `${apiEndpointAddress}/spaces/${name}/plan`;
 
     const json = await throwExpected(
-      async () => fetch.get(url)
+      async () => fetch.get(url),
     );
 
     return (json as unknown) as BillingPlan;
