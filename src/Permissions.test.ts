@@ -1,6 +1,6 @@
 import type { Space, Team, User, K8sCluster } from ".";
 import { LensPlatformClient, Roles, Actions, K8sClusterActions } from ".";
-import { minimumOptions } from "./LensPlatformClient.test";
+import { minimumOptions } from "./helpers/testConfig";
 import { TeamActions } from "./Permissions";
 
 // Current user (Owner)

@@ -1,5 +1,5 @@
 import { Base } from "./Base";
-import { ForbiddenException, SpaceNotFoundException, throwExpected, InternalServerException } from "./exceptions";
+import { ForbiddenException, SpaceNotFoundException, InternalServerException } from "./exceptions";
 
 export class BillingPageTokenService extends Base {
   /**
@@ -11,7 +11,7 @@ export class BillingPageTokenService extends Base {
    * @returns billing page token
    */
   async getOne(spaceName: string): Promise<string> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${spaceName}/billing-page-token`;
 
     const token = await throwExpected(

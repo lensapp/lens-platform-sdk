@@ -42,56 +42,33 @@ const toPlatformErrorResponse = async (response: AxiosError["response"]) => {
  */
 export type HTTPErrCodeExceptionMap<T = LensSDKException> = Partial<Record<number, (e?: PlatformErrorResponse) => T>>;
 
-/**
- * Executes a given function, catching all exceptions. When an exception is caught
- * it is converted to strongly-typed `LensPlatformExtension` and thrown again.
- * @param fn - a function
- * @param exceptionsMap - map of HTTP error codes onto expected exception creators
- * @returns the ressult of `fn`
- * @throws extected exceptions or `LensPlatformException` with code 400 if it caught something unexpected
- * @example
- * ```
- * const json = throwExpected(
- *  () => fetch.get(url),
- *    {
- *      404: e => e.url.includes("/user") ?
- *        new NotFoundException(`User ${username} not found`) :
- *        new NotFoundException(`Something else not found`),
- *      500: () => new TokenNotFoundException()
- *    }
- * );
- * ```
- */
-export const throwExpected = async <T = any>(fn: () => Promise<T>, exceptionsMap: HTTPErrCodeExceptionMap = {}) => {
-  try {
-    const result = await fn();
+export const handleException = async (
+  error: unknown,
+  exceptionsMap: HTTPErrCodeExceptionMap,
+) => {
+  if (axios.isAxiosError(error)) {
+    const httpStatusCode = error.response?.status ?? parseHTTPErrorCode(error);
 
-    return result;
-  } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      const httpStatusCode = error.response?.status ?? parseHTTPErrorCode(error);
-
-      if (!httpStatusCode) {
-        throw new LensSDKException(httpStatusCode, "Unexpected exception [Lens Platform SDK]", error);
-      }
-
-      const mappedExceptionFn = exceptionsMap[httpStatusCode];
-
-      if (mappedExceptionFn) {
-        throw mappedExceptionFn(
-          await toPlatformErrorResponse(error?.response),
-        );
-      } else if (httpStatusCode === 400) {
-        throw new BadRequestException(error.response?.data?.message, error);
-      } else if (httpStatusCode === 401) {
-        throw new UnauthorizedException(error.response?.data?.message, error);
-      } else if (httpStatusCode === 403) {
-        throw new ForbiddenException(error.response?.data?.message, error);
-      }
+    if (!httpStatusCode) {
+      throw new LensSDKException(httpStatusCode, "Unexpected exception [Lens Platform SDK]", error);
     }
 
-    // If axios.isAxiosError(error) returns falsy
-    throw new LensSDKException((error as any)?.response?.status, "Unexpected exception [Lens Platform SDK]", error);
+    const mappedExceptionFn = exceptionsMap[httpStatusCode];
+
+    if (mappedExceptionFn) {
+      throw mappedExceptionFn(
+        await toPlatformErrorResponse(error?.response),
+      );
+    } else if (httpStatusCode === 400) {
+      throw new BadRequestException(error.response?.data?.message, error);
+    } else if (httpStatusCode === 401) {
+      throw new UnauthorizedException(error.response?.data?.message, error);
+    } else if (httpStatusCode === 403) {
+      throw new ForbiddenException(error.response?.data?.message, error);
+    }
   }
+
+  // If axios.isAxiosError(error) returns falsy
+  throw new LensSDKException((error as any)?.response?.status, "Unexpected exception [Lens Platform SDK]", error);
 };
 

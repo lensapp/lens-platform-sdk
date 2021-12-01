@@ -1,6 +1,5 @@
 import { Base } from "./Base";
 import {
-  throwExpected,
   NotFoundException,
   ForbiddenException,
   UsernameAlreadyExistsException,
@@ -51,7 +50,7 @@ export interface UserAttributes {
  */
 class UserService extends Base {
   async getOne({ username }: { username: string }, queryString?: string): Promise<UserWithEmail> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}${queryString ? `?${queryString}` : ""}`;
     const json = await throwExpected(
       async () => fetch.get(url),
@@ -62,7 +61,7 @@ class UserService extends Base {
   }
 
   async getMany(queryString?: string): Promise<User[]> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users${queryString ? `?${queryString}` : ""}`;
     const json = await throwExpected(
       async () => fetch.get(url),
@@ -75,7 +74,7 @@ class UserService extends Base {
    * Update user
    */
   async updateOne(username: string, user: User & { attributes?: UserAttributes } & { password?: string } & { email?: string }): Promise<User> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}`;
     const json = await throwExpected(
       async () => fetch.patch(url, user),
@@ -102,7 +101,7 @@ class UserService extends Base {
   }
 
   async deleteOne(username: string): Promise<void> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}`;
 
     await throwExpected(

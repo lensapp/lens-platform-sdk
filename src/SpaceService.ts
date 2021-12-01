@@ -7,7 +7,6 @@ import type { Invitation, InvitationEntity } from "./InvitationService";
 import type { BillingPlan } from "./BillingPlan";
 import type { InvitationDomain, InvitationDomainEntity } from "./InvitationDomain";
 import {
-  throwExpected,
   SpaceNotFoundException,
   SpaceNameReservedException,
   TokenNotFoundException,
@@ -72,7 +71,7 @@ class SpaceService extends Base {
    * Get one space by space name
    */
   async getOne({ name, queryString }: { name: string; queryString?: string }): Promise<Space> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}${queryString ? `/?${queryString}` : ""}`;
 
     const json = await throwExpected(
@@ -89,7 +88,7 @@ class SpaceService extends Base {
    * Get spaces
    */
   async getMany(queryString?: string): Promise<Space[]> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces${queryString ? `/?${queryString}` : ""}`;
 
     const json = await throwExpected(
@@ -103,7 +102,7 @@ class SpaceService extends Base {
    * Create one space
    */
   async createOne(space: Space): Promise<Space> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces`;
 
     const json = await throwExpected(
@@ -120,7 +119,7 @@ class SpaceService extends Base {
    * Create CatalogAPI for the Space if it's missing
    */
   async createCatalogApi(spaceName: string): Promise<CatalogAPI> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${spaceName}/catalog-api`;
 
     const json = await throwExpected(
@@ -139,7 +138,7 @@ class SpaceService extends Base {
    * @param users - Array of usernames or email addresses
    */
   async addSpaceFeature(feature: SpaceFeature, users: string[]): Promise<Record<string, unknown>> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/features`;
 
     const json = await throwExpected(
@@ -158,7 +157,7 @@ class SpaceService extends Base {
    * @param users - Array of usernames or email addresses
    */
   async removeSpaceFeature(feature: SpaceFeature, users: string[]): Promise<Record<string, unknown>> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/features/remove`;
 
     const json = await throwExpected(
@@ -175,7 +174,7 @@ class SpaceService extends Base {
    * Update one space
    */
   async updateOne(spaceName: string, space: Space): Promise<Space> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${spaceName}`;
 
     const json = await throwExpected(
@@ -193,7 +192,7 @@ class SpaceService extends Base {
    * Delete one space by space name
    */
   async deleteOne({ name }: { name: string }): Promise<void> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}`;
 
     await throwExpected(
@@ -212,7 +211,7 @@ class SpaceService extends Base {
     name,
     clusterId,
   }: { name: string; clusterId: string }): Promise<{ token: string }> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters/${clusterId}/bored-secret`;
 
     const json = await throwExpected(
@@ -233,7 +232,7 @@ class SpaceService extends Base {
     name,
     clusterId,
   }: { name: string; clusterId: string }): Promise<{ token: string }> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters/${clusterId}/token`;
 
     const json = await throwExpected(
@@ -258,7 +257,7 @@ class SpaceService extends Base {
    * Get all clusters in one space by space name
    */
   async getClusters({ name }: { name: string }): Promise<K8sCluster[]> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters`;
 
     const json = await throwExpected(
@@ -273,7 +272,7 @@ class SpaceService extends Base {
    * Get all invitation domains in one space by space name
    */
   async getInvitationDomains({ name }: { name: string }): Promise<InvitationDomain[]> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/security/invitation-domains`;
 
     const json = await throwExpected(
@@ -290,7 +289,7 @@ class SpaceService extends Base {
    * Add one invitation domain in a Space by space name
    */
   async addInvitationDomain({ name, domain }: { name: Space["name"]; domain: InvitationDomain["domain"] }): Promise<InvitationDomain> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/security/invitation-domains`;
 
     const json = await throwExpected(
@@ -309,7 +308,7 @@ class SpaceService extends Base {
    * Delete one invitation domain in a Space by space name and invitation domain id
    */
   async deleteInvitationDomain({ name, invitationDomainId }: { name: Space["name"]; invitationDomainId: InvitationDomain["id"] }): Promise<void> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/security/invitation-domains/${invitationDomainId}`;
 
     await throwExpected(
@@ -325,7 +324,7 @@ class SpaceService extends Base {
    * Get one cluster by cluster id in one space by space name
    */
   async getOneCluster({ clusterId, name }: { clusterId: string; name: string }): Promise<K8sCluster> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters/${clusterId}`;
 
     const json = await throwExpected(
@@ -349,7 +348,7 @@ class SpaceService extends Base {
    * Create a cluster in one space by space name
    */
   async createOneCluster({ cluster, name }: { cluster: K8sCluster; name: string }): Promise<K8sCluster> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters`;
 
     const json = await throwExpected(
@@ -367,7 +366,7 @@ class SpaceService extends Base {
    * Update a cluster
    */
   async updateOneCluster({ cluster }: { cluster: K8sCluster }): Promise<K8sCluster> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${cluster.space?.name}/k8sclusters/${cluster.id}`;
 
     const json = await throwExpected(
@@ -385,7 +384,7 @@ class SpaceService extends Base {
    * Replace a cluster
    */
   async replaceOneCluster({ cluster }: { cluster: K8sCluster }): Promise<K8sCluster> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${cluster.space?.name}/k8sclusters/${cluster.id}`;
 
     const json = await throwExpected(
@@ -403,7 +402,7 @@ class SpaceService extends Base {
    * Delete a cluster by cluster id in one space by space name
    */
   async deleteOneCluster({ clusterId, name }: { clusterId: string; name: string }): Promise<void> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters/${clusterId}`;
 
     await throwExpected(
@@ -421,7 +420,7 @@ class SpaceService extends Base {
    * @throws SpaceNotFoundException, UserNameNotFoundException, ForbiddenException, CantRemoveOwnerFromSpaceException
    */
   async removeOneUser({ username, name }: { username: string; name: string }): Promise<void> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/users/${username}`;
 
     await throwExpected(
@@ -444,7 +443,7 @@ class SpaceService extends Base {
    * Get billing plan of space by space name
    */
   async getBillingPlan({ name }: { name: string }) {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/plan`;
 
     const json = await throwExpected(
@@ -458,10 +457,12 @@ class SpaceService extends Base {
    * Downgrades the billing plan of space by space name
    */
   async downgradeBillingPlan({ name }: { name: string }) {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/plan`;
 
-    const json = await fetch.delete(url);
+    const json = await throwExpected(
+      async () => fetch.delete(url),
+    );
 
     return (json as unknown) as BillingPlan;
   }
