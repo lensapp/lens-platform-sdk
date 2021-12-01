@@ -60,7 +60,9 @@
         "always"
       ],
       "tsdoc/syntax": "error",
-      "@typescript-eslint/naming-convention": "off"
+      "@typescript-eslint/naming-convention": "off",
+      "@typescript-eslint/ban-ts-comment": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off"
     }
   },
   "jest": {
