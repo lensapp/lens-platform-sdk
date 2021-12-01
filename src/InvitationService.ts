@@ -1,7 +1,6 @@
 import { Base } from "./Base";
 import type { User } from "./UserService";
 import {
-  throwExpected,
   SpaceNotFoundException,
   PastExpiryException,
   UserAlreadyExistsException,
@@ -58,7 +57,7 @@ class InvitationService extends Base {
    * Get invitation by id
    */
   async getOne({ id, queryString }: { id: string; queryString?: string }): Promise<Invitation> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/invitations/${id}${queryString ? `?${queryString}` : ""}`;
 
     const json = await throwExpected(
@@ -75,7 +74,7 @@ class InvitationService extends Base {
    * Get invitation by key
    */
   async getOneByKey({ key }: { key: string }): Promise<Invitation> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/invitations/by-key/${key}`;
 
     const json = await throwExpected(
@@ -92,9 +91,11 @@ class InvitationService extends Base {
    * Get invitations
    */
   async getMany(): Promise<Invitation[]> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/invitations`;
-    const json = await fetch.get(url);
+    const json = await throwExpected(
+      async () => fetch.get(url),
+    );
 
     return (json as unknown) as Invitation[];
   }
@@ -103,7 +104,7 @@ class InvitationService extends Base {
    * Create one invitation
    */
   async createOne(invitation: Invitation) {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/invitations`;
 
     const json = await throwExpected(
@@ -137,7 +138,7 @@ class InvitationService extends Base {
    * Update one invitation
    */
   async updateOne(invitation: Except<Invitation, "id"> & { id: string }): Promise<Invitation> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/invitations/${invitation.id}`;
 
     const json = await throwExpected(

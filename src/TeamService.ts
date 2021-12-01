@@ -1,7 +1,7 @@
 import type { Except } from "type-fest";
 import { Base } from "./Base";
 import {
-  CantRemoveLastTeamUser, SpaceNotFoundException, throwExpected, UserNameNotFoundException,
+  CantRemoveLastTeamUser, SpaceNotFoundException, UserNameNotFoundException,
 } from "./exceptions";
 import type { Space, SpaceEntity } from "./SpaceService";
 import type { MapToEntity } from "./types/types";
@@ -48,10 +48,12 @@ class TeamService extends Base {
    * Get one team by team id
    */
   async getOne({ id }: { id: string }): Promise<Team> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/teams/${id}`;
 
-    const json = await fetch.get(url);
+    const json = await throwExpected(
+      async () => fetch.get(url),
+    );
 
     return (json as unknown) as Team;
   }
@@ -60,10 +62,12 @@ class TeamService extends Base {
    * Get all teams
    */
   async getMany(): Promise<Team[]> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/teams`;
 
-    const json = await fetch.get(url);
+    const json = await throwExpected(
+      async () => fetch.get(url),
+    );
 
     return (json as unknown) as Team[];
   }
@@ -72,10 +76,12 @@ class TeamService extends Base {
    * Create one team
    */
   async createOne({ team }: { team: Team }) {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/teams`;
 
-    const json = await fetch.post(url, team);
+    const json = await throwExpected(
+      async () => fetch.post(url, team),
+    );
 
     return (json as unknown) as Team;
   }
@@ -84,20 +90,24 @@ class TeamService extends Base {
    * Delete one team by team id
    */
   async deleteOne({ id }: { id: string }): Promise<void> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/teams/${id}`;
 
-    await fetch.delete(url);
+    await throwExpected(
+      async () => fetch.delete(url),
+    );
   }
 
   /**
    * Add a user by username to a team by team id
    */
   async addUser({ username, id }: { username: string; id: string }): Promise<Team> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/teams/${id}/users`;
 
-    const json = await fetch.post(url, { username });
+    const json = await throwExpected(
+      async () => fetch.post(url, { username }),
+    );
 
     return (json as unknown) as Team;
   }
@@ -106,7 +116,7 @@ class TeamService extends Base {
    * Remove a user by username from a team by team id
    */
   async removeUser({ username, id }: { username: string; id: string }): Promise<Team> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const { apiEndpointAddress, fetch, throwExpected } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/teams/${id}/users/${username}`;
 
     const json = await throwExpected(

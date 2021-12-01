@@ -9,6 +9,10 @@ import { BillingPageTokenService } from "./BillingPageTokenService";
 import axios, { AxiosRequestConfig } from "axios";
 import pino from "pino";
 import decode from "jwt-decode";
+import type { HTTPErrCodeExceptionMap } from "./exceptions/utils";
+import { handleException } from "./exceptions/utils";
+import retry from "async-retry";
+import { timeout } from "./helpers/timeout";
 
 // Axios defaults to xhr adapter if XMLHttpRequest is available.
 // LensPlatformClient supports using the http adapter if httpAdapter
@@ -23,9 +27,15 @@ export interface LensPlatformClientOptions {
   keycloakRealm: string;
   apiEndpointAddress: string;
   defaultHeaders?: RequestHeaders;
-  // If true, Node.JS http adapter is used by axios for HTTP(S) requests
+  /** If true, Node.JS http adapter is used by axios for HTTP(S) requests */
   httpAdapter?: boolean;
   logLevel?: "error" | "silent" | "debug";
+  /** If true, autoRetry on GET && NetworkError, default is true */
+  autoRetry?: boolean;
+  /** Retry interval in milliseconds, default is 1000ms */
+  retryIntervalMs?: number;
+  /** Retry attempts, default is 3 */
+  retryMaxAttempts?: number;
 }
 
 type RequestHeaders = Record<string, string>;
@@ -72,6 +82,9 @@ const isRequestLibraryFunction = (
 (RequestLibrary)["delete"] =>
   typeof func === "function" && requestLibraryMethods.includes(key);
 
+export const defaultRetries = 3;
+export const defaultRetryIntervalMS = 1000;
+
 class LensPlatformClient {
   accessToken: LensPlatformClientOptions["accessToken"];
   getAccessToken: LensPlatformClientOptions["getAccessToken"];
@@ -90,13 +103,23 @@ class LensPlatformClient {
   invitation: InvitationService;
   openIDConnect: OpenIdConnect;
   defaultHeaders: RequestHeaders | undefined;
+  autoRetry = true;
+  retryIntervalMs = defaultRetryIntervalMS;
+  retryMaxAttempts = defaultRetries;
 
   constructor(options: LensPlatformClientOptions) {
     if (!options) {
       throw new Error(`Options can not be ${options}`);
     }
 
-    const { accessToken, getAccessToken, httpAdapter } = options;
+    const {
+      accessToken,
+      getAccessToken,
+      httpAdapter,
+      autoRetry,
+      retryIntervalMs,
+      retryMaxAttempts,
+    } = options;
 
     if (!accessToken && !getAccessToken) {
       throw new Error(`Both accessToken ${accessToken} or getAccessToken are ${getAccessToken}`);
@@ -107,6 +130,18 @@ class LensPlatformClient {
 
     this.accessToken = accessToken;
     this.httpAdapter = httpAdapter;
+    if (typeof autoRetry === "boolean") {
+      this.autoRetry = autoRetry;
+    }
+
+    if (typeof retryIntervalMs === "number") {
+      this.retryIntervalMs = retryIntervalMs;
+    }
+
+    if (typeof retryMaxAttempts === "number") {
+      this.retryMaxAttempts = retryMaxAttempts;
+    }
+
     this.getAccessToken = getAccessToken;
     this.keyCloakAddress = options.keyCloakAddress;
     this.keycloakRealm = options.keycloakRealm;
@@ -143,6 +178,79 @@ class LensPlatformClient {
     return {
       Authorization: `Bearer ${this.accessToken}`,
     };
+  }
+
+  /**
+   * Get throwExpected function
+   */
+  get throwExpected() {
+    /**
+     * Executes a given function, catching all exceptions. When an exception is caught
+     * it is converted to strongly-typed `LensPlatformExtension` and thrown again.
+     * @param fn - a function
+     * @param exceptionsMap - map of HTTP error codes onto expected exception creators
+     * @param retryInterval - time between retries
+     * @param retries - How many times to retry
+     * @returns the result of `fn`
+     * @throws expected exceptions or `LensPlatformException` with code 400 if it caught something unexpected
+     * @example
+     * ```
+     * const json = throwExpected(
+     *  () => fetch.get(url),
+     *    {
+     *      404: e => e.url.includes("/user") ?
+     *        new NotFoundException(`User ${username} not found`) :
+     *        new NotFoundException(`Something else not found`),
+     *      500: () => new TokenNotFoundException()
+     *    }
+     * );
+     * ```
+     */
+    const throwExpected = async <T = any>(
+      fn: () => Promise<T>,
+      exceptionsMap: HTTPErrCodeExceptionMap = {},
+    ) => {
+      try {
+        // First try
+        const result = await fn();
+
+        return result;
+      } catch (error: unknown) {
+        // Retry if the error is a Network error and GET
+        if (
+          axios.isAxiosError(error)
+          // If it's an axios error but there is no response => a network error
+          // See https://github.com/axios/axios#handling-errors
+          && !error.response
+          // ONLY retry for GET requests
+          && error.config?.method === "get"
+        ) {
+          if (this.autoRetry) {
+            await timeout(this.retryIntervalMs);
+            try {
+              const retriedResult = await retry<T>(
+                async () =>
+                // Second try
+                  fn()
+                , {
+                  minTimeout: this.retryIntervalMs,
+                  retries: this.retryMaxAttempts - 1 - 1, // Two `-1` because we already did two tries
+                },
+
+              );
+              return retriedResult;
+            } catch (error: unknown) {
+              await handleException(error, exceptionsMap);
+              return undefined;
+            }
+          }
+        }
+
+        await handleException(error, exceptionsMap);
+      }
+    };
+
+    return throwExpected;
   }
 
   /**
