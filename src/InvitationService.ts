@@ -7,7 +7,6 @@ import {
   UserAlreadyExistsException,
   PendingInvitationException,
   EmailMissingException,
-  BadRequestException,
   ForbiddenException,
   InvalidEmailDomainException,
   NotFoundException,
@@ -128,7 +127,6 @@ class InvitationService extends Base {
 
           return new PastExpiryException();
         },
-        400: () => new BadRequestException("Invalid invitation kind"),
       },
     );
 

@@ -3,7 +3,6 @@ import {
   throwExpected,
   NotFoundException,
   ForbiddenException,
-  BadRequestException,
   UsernameAlreadyExistsException,
   UnprocessableEntityException,
   UserNameNotFoundException,
@@ -67,9 +66,6 @@ class UserService extends Base {
     const url = `${apiEndpointAddress}/users${queryString ? `?${queryString}` : ""}`;
     const json = await throwExpected(
       async () => fetch.get(url),
-      {
-        400: e => new BadRequestException(e?.body?.message),
-      },
     );
 
     return (json as unknown) as User[];

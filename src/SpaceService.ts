@@ -12,7 +12,6 @@ import {
   SpaceNameReservedException,
   TokenNotFoundException,
   SpaceHasTooManyClustersException,
-  BadRequestException,
   CantRemoveOwnerFromSpaceException,
   UserNameNotFoundException,
   NotFoundException,
@@ -221,7 +220,6 @@ class SpaceService extends Base {
       {
         // TODO: differentiate between space cluster and secret not being found
         404: () => new SpaceNotFoundException(name),
-        400: () => new BadRequestException("Invalid cluster"),
       },
     );
 
@@ -241,7 +239,6 @@ class SpaceService extends Base {
     const json = await throwExpected(
       async () => fetch.get(url),
       {
-        400: () => new BadRequestException(),
         // TODO: differentiate between space, cluster, user and token not being found
         404: error => {
           const message = error?.body.message;
@@ -301,7 +298,6 @@ class SpaceService extends Base {
         domain,
       }),
       {
-        400: () => new BadRequestException(),
         404: () => new SpaceNotFoundException(name),
       },
     );
@@ -361,7 +357,6 @@ class SpaceService extends Base {
       {
         404: () => new SpaceNotFoundException(name),
         422: () => new SpaceHasTooManyClustersException(name),
-        400: () => new BadRequestException("Property 'kind' of cluster object is invalid"),
       },
     );
 
@@ -380,7 +375,6 @@ class SpaceService extends Base {
       {
         // TODO: differentiate between space and cluster not being found
         404: () => new SpaceNotFoundException(cluster.space?.name ?? "undefined"),
-        400: () => new BadRequestException("Property 'kind' of cluster object is invalid"),
       },
     );
 
@@ -399,7 +393,6 @@ class SpaceService extends Base {
       {
         // TODO: differentiate between space and cluster not being found
         404: () => new SpaceNotFoundException(cluster.space?.name ?? "undefined"),
-        400: () => new BadRequestException("Property 'kind' of cluster object is invalid"),
       },
     );
 
