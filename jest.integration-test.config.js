@@ -8,9 +8,9 @@ module.exports = {
     "json",
     "ts"
   ],
-	testPathIgnorePatterns: [
-		"dist",
-	],
+  testPathIgnorePatterns: [
+    "dist",
+  ],
   testRegex: ".*\\.test\\.ts$",
   transform: {
     "^.+\\.(t|j)sx?$": ["@swc/jest", swcConfig],
