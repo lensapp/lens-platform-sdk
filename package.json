@@ -63,7 +63,11 @@
       "@typescript-eslint/naming-convention": "off",
       "@typescript-eslint/ban-ts-comment": "off",
       "@typescript-eslint/no-unsafe-assignment": "off",
-      "no-warning-comments": "off"
+      "no-warning-comments": "off",
+      "max-nested-callbacks": [
+        "warn",
+        { "max": 10 }
+      ]
     }
   },
   "jest": {
