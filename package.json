@@ -18,7 +18,7 @@
   "scripts": {
     "test": "npm run lint && npm run check:type && npm run test:unit && npm run test:e2e",
     "test:unit": "jest",
-    "test:e2e": "jest --runInBand --config ./integration-test/integration-test.json",
+    "test:e2e": "jest --runInBand --config ./jest.integration-test.config.js",
     "lint": "eslint \"{src,test}/**/*.ts\"",
     "lint:fix": "npm run lint -- --fix",
     "check:type": "tsc -p tsconfig.json --noEmit",
@@ -66,39 +66,12 @@
       "no-warning-comments": "off"
     }
   },
-  "jest": {
-    "testPathIgnorePatterns": [
-      "dist",
-      "integration-test"
-    ],
-    "transform": {
-      "\\.[jt]sx?$": [
-        "babel-jest",
-        {
-          "presets": [
-            "@babel/preset-env",
-            "@babel/preset-react",
-            "@babel/preset-typescript"
-          ],
-          "plugins": [
-            "@babel/plugin-transform-runtime",
-            "@babel/plugin-proposal-class-properties"
-          ]
-        }
-      ]
-    }
-  },
   "devDependencies": {
-    "@babel/plugin-transform-runtime": "^7.13.15",
-    "@babel/preset-env": "^7.13.15",
-    "@babel/preset-react": "^7.13.13",
-    "@babel/preset-typescript": "^7.13.0",
     "@types/jest": "^27.0.3",
     "@types/nock": "^11.1.0",
     "@types/simple-oauth2": "^4.1.0",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
-    "babel-plugin-transform-class-properties": "^6.24.1",
     "dotenv": "^10.0.0",
     "eslint": "^8.3.0",
     "eslint-config-xo": "^0.39.0",
@@ -112,6 +85,7 @@
     "typescript": "^4.5.2"
   },
   "dependencies": {
+    "@swc/jest": "^0.2.11",
     "axios": "^0.24.0",
     "jwt-decode": "^3.1.2",
     "pino": "^7.5.0"
