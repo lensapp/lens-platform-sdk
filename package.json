@@ -67,6 +67,7 @@
     }
   },
   "devDependencies": {
+    "@swc/core": "^1.2.115",
     "@types/jest": "^27.0.3",
     "@types/nock": "^11.1.0",
     "@types/simple-oauth2": "^4.1.0",
