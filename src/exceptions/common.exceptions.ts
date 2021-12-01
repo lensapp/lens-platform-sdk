@@ -9,7 +9,7 @@ export class LensSDKException extends Error implements LensPlatformExceptionData
   constructor(
     public errorCode: number | string | null,
     public message: string,
-    public rawException?: unknown
+    public rawException?: unknown,
   ) {
     super(message);
     Object.setPrototypeOf(this, LensSDKException.prototype);

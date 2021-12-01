@@ -1,7 +1,7 @@
 import type { Except } from "type-fest";
 import { Base } from "./Base";
 import {
-  CantRemoveLastTeamUser, ForbiddenException, SpaceNotFoundException, throwExpected, UserNameNotFoundException
+  CantRemoveLastTeamUser, ForbiddenException, SpaceNotFoundException, throwExpected, UserNameNotFoundException,
 } from "./exceptions";
 import type { Space, SpaceEntity } from "./SpaceService";
 import type { MapToEntity } from "./types/types";
@@ -115,7 +115,7 @@ class TeamService extends Base {
           error?.body.message?.includes("Space not found")
             ? new SpaceNotFoundException()
             : new UserNameNotFoundException(username),
-        422: () => new CantRemoveLastTeamUser()
+        422: () => new CantRemoveLastTeamUser(),
       });
 
     return (json as unknown) as Team;

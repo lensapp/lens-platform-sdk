@@ -5,7 +5,7 @@ import { minimumOptions as options, apiEndpointAddress } from "./LensPlatformCli
 describe(".space.*", () => {
   const spaceName = "spaceName";
   const response = {
-    name: spaceName
+    name: spaceName,
   };
   nock(apiEndpointAddress).get(/spaces/).twice().reply(200, response);
   nock(apiEndpointAddress).post("/spaces").reply(200, response);
@@ -19,7 +19,7 @@ describe(".space.*", () => {
     "getOne",
     "getMany",
     "updateOne",
-    "deleteOne"
+    "deleteOne",
   ].forEach(method => {
     it(`${method}()`, async () => {
       if (method === "deleteOne") {

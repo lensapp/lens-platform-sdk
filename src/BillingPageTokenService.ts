@@ -19,8 +19,8 @@ export class BillingPageTokenService extends Base {
       {
         404: () => new SpaceNotFoundException(spaceName),
         403: () => new ForbiddenException("Token can only be acquired by space owners and admins"),
-        500: response => new InternalServerException(response?.body?.message ?? "Could not retrieve token")
-      }
+        500: response => new InternalServerException(response?.body?.message ?? "Could not retrieve token"),
+      },
     );
 
     return (token as unknown) as string;

@@ -5,27 +5,27 @@ import { TeamActions } from "./Permissions";
 
 // Current user (Owner)
 const mockUser1: User = {
-  id: "1234567890"
+  id: "1234567890",
 };
 
 // Admin user
 const mockUser2: User = {
-  id: "1"
+  id: "1",
 };
 
 // Member user
 const mockUser3: User = {
-  id: "2"
+  id: "2",
 };
 
 // Random user
 const mockUser4: User = {
-  id: "3"
+  id: "3",
 };
 
 // Member of Space, but not team
 const mockUser5: User = {
-  id: "4"
+  id: "4",
 };
 
 const mockTeam1: Team = {
@@ -34,7 +34,7 @@ const mockTeam1: Team = {
   name: "mt1",
   description: "mt1",
   users: [mockUser1],
-  spaceId: "ms1"
+  spaceId: "ms1",
 };
 const mockTeam2: Team = {
   kind: "Admin",
@@ -42,7 +42,7 @@ const mockTeam2: Team = {
   name: "mt2",
   description: "mt2",
   users: [mockUser2],
-  spaceId: "ms1"
+  spaceId: "ms1",
 };
 const mockTeam3: Team = {
   kind: "Normal",
@@ -50,7 +50,7 @@ const mockTeam3: Team = {
   name: "mt3",
   description: "mt3",
   users: [mockUser3],
-  spaceId: "ms1"
+  spaceId: "ms1",
 };
 const mockSpace1: Space = {
   id: "ms1",
@@ -59,13 +59,13 @@ const mockSpace1: Space = {
   kind: "Team",
   users: [mockUser1, mockUser2, mockUser3, mockUser5],
   teams: [mockTeam1, mockTeam2, mockTeam3],
-  createdById: mockUser1.id
+  createdById: mockUser1.id,
 };
 const mockK8sCluster1: K8sCluster = {
   id: "mk1",
   createdById: mockUser3.id,
   name: "",
-  kind: "K8sCluster"
+  kind: "K8sCluster",
 };
 
 const invitationToBeRevokedByMockUser3 = "invitation_id_to_be_revoked_by_user_3";
@@ -117,14 +117,14 @@ describe("PermissionsService", () => {
     it("can't delete Personal Space", () => {
       expect(client.permission.canSpace(Actions.DeleteSpace, {
         ...mockSpace1,
-        kind: "Personal"
+        kind: "Personal",
       }, mockUser1.id!)).toBeFalsy();
     });
 
     it("can't rename Personal Space", () => {
       expect(client.permission.canSpace(Actions.RenameSpace, {
         ...mockSpace1,
-        kind: "Personal"
+        kind: "Personal",
       }, mockUser1.id!)).toBeFalsy();
     });
 
@@ -156,7 +156,7 @@ describe("PermissionsService", () => {
       expect(client.permission.canSpace(Actions.RevokeInvitation, mockSpace1, mockUser3.id!)).toBeFalsy();
       expect(client.permission.canSpace(Actions.RevokeInvitation, mockSpace1, mockUser3.id!, {
         invitationId: invitationToBeRevokedByMockUser3,
-        invitationIdsCreatedByUserId: invitationIdsCreatedByMockUser3
+        invitationIdsCreatedByUserId: invitationIdsCreatedByMockUser3,
       })).toBeTruthy();
       expect(client.permission.canSpace(Actions.PatchSpace, mockSpace1, mockUser3.id!)).toBeFalsy();
       expect(client.permission.canSpace(Actions.AddInvitationDomain, mockSpace1, mockUser3.id!)).toBeFalsy();
@@ -190,7 +190,7 @@ describe("PermissionsService", () => {
       it("can add user to Owner team of Personal Space", () => {
         expect(client.permission.canTeam(TeamActions.AddUser, {
           ...mockSpace1,
-          kind: "Personal"
+          kind: "Personal",
         }, mockTeam1, mockUser2.id ?? "")).toBeFalsy();
       });
     });
@@ -203,7 +203,7 @@ describe("PermissionsService", () => {
       it("can't remove itself from Owner team of Personal Space", () => {
         expect(client.permission.canTeam(TeamActions.RemoveUser, {
           ...mockSpace1,
-          kind: "Personal"
+          kind: "Personal",
         }, mockTeam1, mockUser1.id ?? "", mockUser1.id ?? "")).toBeFalsy();
       });
     });
@@ -212,25 +212,25 @@ describe("PermissionsService", () => {
   describe(".canK8sCluster", () => {
     it("user can delete cluster created by the user", () => {
       expect(client.permission.canK8sCluster(
-        K8sClusterActions.DeleteK8sCluster, mockSpace1, mockK8sCluster1, mockUser3.id!)
+        K8sClusterActions.DeleteK8sCluster, mockSpace1, mockK8sCluster1, mockUser3.id!),
       ).toBeTruthy();
     });
 
     it("Admin can delete", () => {
       expect(client.permission.canK8sCluster(
-        K8sClusterActions.DeleteK8sCluster, mockSpace1, mockK8sCluster1, mockUser2.id!)
+        K8sClusterActions.DeleteK8sCluster, mockSpace1, mockK8sCluster1, mockUser2.id!),
       ).toBeTruthy();
     });
 
     it("Owner can delete", () => {
       expect(client.permission.canK8sCluster(
-        K8sClusterActions.DeleteK8sCluster, mockSpace1, mockK8sCluster1, mockUser1.id!)
+        K8sClusterActions.DeleteK8sCluster, mockSpace1, mockK8sCluster1, mockUser1.id!),
       ).toBeTruthy();
     });
 
     it("non-owner user can't delete", () => {
       expect(client.permission.canK8sCluster(
-        K8sClusterActions.DeleteK8sCluster, mockSpace1, mockK8sCluster1, mockUser4.id!)
+        K8sClusterActions.DeleteK8sCluster, mockSpace1, mockK8sCluster1, mockUser4.id!),
       ).toBeFalsy();
     });
   });

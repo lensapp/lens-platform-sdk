@@ -7,6 +7,7 @@ import type { MapToEntity } from "./types/types";
  *
  * @alpha
  */
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export interface CatalogAPI {
   id?: string;
   url?: string;
@@ -16,4 +17,5 @@ export interface CatalogAPI {
   updatedAt?: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export type CatalogAPIEntity = MapToEntity<CatalogAPI>;

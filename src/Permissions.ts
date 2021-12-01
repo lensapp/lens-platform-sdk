@@ -6,7 +6,7 @@ export enum Roles {
   Admin = "Admin",
   Owner = "Owner",
   Member = "Member",
-  None = "None"
+  None = "None",
 }
 
 /**
@@ -25,16 +25,16 @@ export enum Actions {
   DeleteTeam,
   PatchTeam,
   GetBillingPageToken,
-  ChangeSpacePlan
+  ChangeSpacePlan,
 }
 
 export enum K8sClusterActions {
-  DeleteK8sCluster
+  DeleteK8sCluster,
 }
 
 export enum TeamActions {
   AddUser,
-  RemoveUser
+  RemoveUser,
 }
 
 type RevokeInvitation = {
@@ -56,7 +56,7 @@ export class Permissions {
     action: Actions,
     forSpace: Space | SpaceEntity,
     forUserId: string,
-    forRevokeInvitation?: RevokeInvitation
+    forRevokeInvitation?: RevokeInvitation,
   ) {
     const role = this.getRole(forSpace, forUserId);
     const isAdminOrOwner = [Roles.Owner, Roles.Admin].includes(role);
@@ -261,7 +261,7 @@ export class Permissions {
       && forRevokeInvitation?.invitationIdsCreatedByUserId?.length > 0
       // If invitation to revoke was created by userId
       && forRevokeInvitation?.invitationIdsCreatedByUserId.find(
-        invitationIdCreatedByUserId => invitationIdCreatedByUserId === forRevokeInvitation?.invitationId
+        invitationIdCreatedByUserId => invitationIdCreatedByUserId === forRevokeInvitation?.invitationId,
       )
     ) {
       return true;

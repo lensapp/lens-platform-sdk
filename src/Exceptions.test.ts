@@ -5,12 +5,12 @@ import { NotFoundException, LensSDKException } from "./exceptions";
 
 export const plaform404response = {
   name: "HTTPError",
-  message: "Response code 404 (Not Found)"
+  message: "Response code 404 (Not Found)",
 };
 
 export const plaform500response = {
   name: "HTTPError",
-  message: "Response code 500 (Internal Server Error)"
+  message: "Response code 500 (Internal Server Error)",
 };
 
 describe(".users.*", () => {

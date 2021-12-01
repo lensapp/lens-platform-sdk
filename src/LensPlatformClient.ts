@@ -63,7 +63,7 @@ const requestLibraryMethods: KeyOfRequestLibrary[] = ["get", "post", "put", "pat
  * Function to determine if func is a function of the request library for making a request
  */
 const isRequestLibraryFunction = (
-  func: any, key: KeyOfRequestLibrary
+  func: any, key: KeyOfRequestLibrary,
 ): func is (RequestLibrary)["get"] |
 (RequestLibrary)["post"] |
 (RequestLibrary)["put"] |
@@ -141,7 +141,7 @@ class LensPlatformClient {
 
   get authHeader(): Record<string, string> {
     return {
-      Authorization: `Bearer ${this.accessToken}`
+      Authorization: `Bearer ${this.accessToken}`,
     };
   }
 
@@ -191,14 +191,14 @@ class LensPlatformClient {
               const requestHeaders: RequestHeaders = {
                 ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 ...headers,
-                ...defaultHeaders
+                ...defaultHeaders,
               };
 
               const requestOptions = {
                 headers: requestHeaders,
                 ...(httpAdapter ? { adapter: axiosHttpAdapter } : {}),
                 // Merge options
-                ...restOptions
+                ...restOptions,
               };
 
               logger.debug(`request arguments ${JSON.stringify(requestOptions)}`);
@@ -222,7 +222,7 @@ class LensPlatformClient {
         }
 
         return prop;
-      }
+      },
     });
 
     return proxy;

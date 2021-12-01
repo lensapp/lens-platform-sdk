@@ -10,7 +10,7 @@ import {
   BadRequestException,
   ForbiddenException,
   InvalidEmailDomainException,
-  NotFoundException
+  NotFoundException,
 } from "./exceptions";
 import { Except } from "type-fest";
 import type { MapToEntity } from "./types/types";
@@ -65,8 +65,8 @@ class InvitationService extends Base {
     const json = await throwExpected(
       async () => fetch.get(url),
       {
-        404: () => new NotFoundException()
-      }
+        404: () => new NotFoundException(),
+      },
     );
 
     return (json as unknown) as Invitation;
@@ -82,8 +82,8 @@ class InvitationService extends Base {
     const json = await throwExpected(
       async () => fetch.get(url),
       {
-        404: () => new NotFoundException()
-      }
+        404: () => new NotFoundException(),
+      },
     );
 
     return (json as unknown) as Invitation;
@@ -128,8 +128,8 @@ class InvitationService extends Base {
 
           return new PastExpiryException();
         },
-        400: () => new BadRequestException("Invalid invitation kind")
-      }
+        400: () => new BadRequestException("Invalid invitation kind"),
+      },
     );
 
     return json as Invitation & { weblink?: string };
@@ -151,8 +151,8 @@ class InvitationService extends Base {
           }
 
           return new ForbiddenException(error?.body?.message);
-        }
-      }
+        },
+      },
     );
 
     return (json as unknown) as Invitation;

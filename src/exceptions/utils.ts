@@ -23,7 +23,7 @@ const toPlatformErrorResponse = async (response: AxiosError["response"]) => {
   if (response?.data) {
     return {
       ...response,
-      body: response?.data
+      body: response?.data,
     };
   }
 
@@ -79,7 +79,7 @@ export const throwExpected = async <T = any>(fn: () => Promise<T>, exceptionsMap
 
       if (mappedExceptionFn) {
         throw mappedExceptionFn(
-          await toPlatformErrorResponse(error?.response)
+          await toPlatformErrorResponse(error?.response),
         );
       } else if (httpStatusCode === 401) {
         throw new UnauthorizedException(error.response?.data?.message, error);

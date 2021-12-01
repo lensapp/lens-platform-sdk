@@ -7,20 +7,20 @@ describe(".user.*", () => {
   nock(apiEndpointAddress).get("/users").reply(200, [{
     id: "test-id",
     username,
-    fullname: "test fullname"
+    fullname: "test fullname",
   }]);
   nock(apiEndpointAddress).get(`/users/${username}`).reply(200, {
     id: "test-id",
     username,
     fullname: "test fullname",
-    email: "test@example.com"
+    email: "test@example.com",
   });
   nock(apiEndpointAddress).delete(`/users/${username}`).reply(200);
   nock(apiEndpointAddress).patch(`/users/${username}`).twice().reply(200, {
     id: "test-id",
     username,
     fullname: "test fullname",
-    email: "test@example.com"
+    email: "test@example.com",
   });
 
   const lensPlatformClient = new LensPlatformClient(options);
@@ -37,7 +37,7 @@ describe(".user.*", () => {
 
   it("can call updateOne with email", async () => {
     await lensPlatformClient.user.updateOne(username, {
-      email: "new@example.com"
+      email: "new@example.com",
     });
   });
 
