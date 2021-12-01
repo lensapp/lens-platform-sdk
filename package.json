@@ -59,7 +59,8 @@
         "error",
         "always"
       ],
-      "tsdoc/syntax": "error"
+      "tsdoc/syntax": "error",
+      "@typescript-eslint/naming-convention": "off"
     }
   },
   "jest": {
