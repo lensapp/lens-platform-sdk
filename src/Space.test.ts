@@ -28,6 +28,7 @@ describe(".space.*", () => {
         expect(await lensPlatformClient.space[method](spaceName, { name: spaceName })).toEqual(response);
       } else {
         // @ts-expect-error
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         expect(await lensPlatformClient.space[method]({ name: spaceName })).toEqual(response);
       }
     });

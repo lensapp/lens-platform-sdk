@@ -1,4 +1,4 @@
-import { UnprocessableEntityException, ForbiddenException } from "./common.exceptions";
+import { UnprocessableEntityException } from "./common.exceptions";
 
 export class CantRemoveLastTeamUser extends UnprocessableEntityException {
   constructor(msg = "Can't remove last user from team") {

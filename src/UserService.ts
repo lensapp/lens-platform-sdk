@@ -113,17 +113,21 @@ class UserService extends Base {
       async () => fetch.delete(url),
       {
         500: error => {
-          if (error?.body.message.includes("Token")) {
-            return new TokenNotFoundException();
-          }
+          const message = error?.body.message;
 
-          if (error?.body.message.includes("User")) {
-            return new UserNameNotFoundException(username);
+          if (typeof message === "string") {
+            if (message.includes("Token")) {
+              return new TokenNotFoundException();
+            }
+
+            if (message.includes("User")) {
+              return new UserNameNotFoundException(username);
+            }
           }
 
           return new LensSDKException(
             500,
-            `Unexpected exception [Lens Platform SDK]: ${error?.body.message ?? "Internal server error"}`,
+            `Unexpected exception [Lens Platform SDK]: ${error?.body.message}`,
             error,
           );
         },

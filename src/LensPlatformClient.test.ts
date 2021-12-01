@@ -16,7 +16,7 @@ describe("LensPlatformClient", () => {
 
   it("is a class", () => {
     // @ts-expect-error
-    // eslint-disable-next-line new-cap
+    // eslint-disable-next-line new-cap, @typescript-eslint/no-unsafe-return
     expect(() => LensPlatformClient()).toThrow("Cannot call a class as a function");
   });
 
@@ -64,7 +64,7 @@ describe("LensPlatformClient", () => {
           _fetch.head(apiEndpointAddress),
           _fetch.delete(apiEndpointAddress),
         ]);
-      } catch (e: unknown) {
+      } catch {
         // Do not handle exceptions
       } finally {
         spies.forEach(spy => {
@@ -86,7 +86,7 @@ describe("LensPlatformClient", () => {
 
       try {
         await _fetch.get(apiEndpointAddress);
-      } catch (e: unknown) {
+      } catch {
         // Do not handle exceptions
       } finally {
         expect(spy).toBeCalledWith(apiEndpointAddress, { headers: {} });
@@ -114,7 +114,7 @@ describe("LensPlatformClient", () => {
           _fetch.put(apiEndpointAddress),
           _fetch.patch(apiEndpointAddress),
         ]);
-      } catch (e: unknown) {
+      } catch {
         // Do not handle exceptions
       } finally {
         spies.forEach(spy => {
@@ -144,7 +144,7 @@ describe("LensPlatformClient", () => {
           _fetch.head(apiEndpointAddress, extraOptions),
           _fetch.delete(apiEndpointAddress, extraOptions),
         ]);
-      } catch (e: unknown) {
+      } catch {
         // Do not handle exceptions
       } finally {
         spies.forEach(spy => {
@@ -174,7 +174,7 @@ describe("LensPlatformClient", () => {
           _fetch.put(apiEndpointAddress, undefined, extraOptions),
           _fetch.patch(apiEndpointAddress, undefined, extraOptions),
         ]);
-      } catch (e: unknown) {
+      } catch {
         // Do not handle exceptions
       } finally {
         spies.forEach(spy => {
@@ -209,7 +209,7 @@ describe("LensPlatformClient", () => {
           _fetch.head(apiEndpointAddress, { headers: extraHeader }),
           _fetch.delete(apiEndpointAddress, { headers: extraHeader }),
         ]);
-      } catch (e: unknown) {
+      } catch {
         // Do not handle exceptions
       } finally {
         spies.forEach(spy => {
@@ -244,7 +244,7 @@ describe("LensPlatformClient", () => {
           _fetch.put(apiEndpointAddress, {}, { headers: extraHeader }),
           _fetch.patch(apiEndpointAddress, {}, { headers: extraHeader }),
         ]);
-      } catch (e: unknown) {
+      } catch {
         // Do not handle exceptions
       } finally {
         spies.forEach(spy => {
@@ -275,7 +275,7 @@ describe("LensPlatformClient", () => {
           _fetch.head(apiEndpointAddress, { ...extraOption, headers: extraHeader }),
           _fetch.delete(apiEndpointAddress, { ...extraOption, headers: extraHeader }),
         ]);
-      } catch (e: unknown) {
+      } catch {
         // Do not handle exceptions
       } finally {
         spies.forEach(spy => {
@@ -312,7 +312,7 @@ describe("LensPlatformClient", () => {
           _fetch.put(apiEndpointAddress, { a: 1 }, { ...extraOption, headers: extraHeader }),
           _fetch.patch(apiEndpointAddress, { a: 1 }, { ...extraOption, headers: extraHeader }),
         ]);
-      } catch (e: unknown) {
+      } catch {
         // Do not handle exceptions
       } finally {
         spies.forEach(spy => {

@@ -13,7 +13,7 @@ import decode from "jwt-decode";
 // Axios defaults to xhr adapter if XMLHttpRequest is available.
 // LensPlatformClient supports using the http adapter if httpAdapter
 // option is set to true
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
 const axiosHttpAdapter = require("axios/lib/adapters/http");
 
 export interface LensPlatformClientOptions {
@@ -205,7 +205,7 @@ class LensPlatformClient {
               const response = await (hasBody ? prop(url, requestBody, requestOptions) : prop(url, requestOptions));
 
               // Body as JavaScript plain object
-              const body = response.data;
+              const body: unknown = response.data;
 
               // Print HTTP response info in developer console
               logger.debug(`${key?.toUpperCase()} ${(response)?.status} ${(response)?.statusText} ${url} `);
