@@ -1,5 +1,7 @@
 import { LensSDKException, ForbiddenException, UnauthorizedException, BadRequestException } from "./common.exceptions";
 import axios, { AxiosError, AxiosResponse } from "axios";
+import retry from "async-retry";
+import { timeout } from "../helpers/timeout";
 
 const parseHTTPErrorCode = (exception: AxiosError) => {
   if (exception?.name && exception?.message && exception?.message?.length) {
@@ -42,13 +44,47 @@ const toPlatformErrorResponse = async (response: AxiosError["response"]) => {
  */
 export type HTTPErrCodeExceptionMap<T = LensSDKException> = Partial<Record<number, (e?: PlatformErrorResponse) => T>>;
 
+export const handleException = async (
+  error: unknown,
+  exceptionsMap: HTTPErrCodeExceptionMap,
+) => {
+  if (axios.isAxiosError(error)) {
+    const httpStatusCode = error.response?.status ?? parseHTTPErrorCode(error);
+
+    if (!httpStatusCode) {
+      throw new LensSDKException(httpStatusCode, "Unexpected exception [Lens Platform SDK]", error);
+    }
+
+    const mappedExceptionFn = exceptionsMap[httpStatusCode];
+
+    if (mappedExceptionFn) {
+      throw mappedExceptionFn(
+        await toPlatformErrorResponse(error?.response),
+      );
+    } else if (httpStatusCode === 400) {
+      throw new BadRequestException(error.response?.data?.message, error);
+    } else if (httpStatusCode === 401) {
+      throw new UnauthorizedException(error.response?.data?.message, error);
+    } else if (httpStatusCode === 403) {
+      throw new ForbiddenException(error.response?.data?.message, error);
+    }
+  }
+
+  // If axios.isAxiosError(error) returns falsy
+  throw new LensSDKException((error as any)?.response?.status, "Unexpected exception [Lens Platform SDK]", error);
+};
+
+export const defaultRetries = 3;
+export const defaultRetryIntervalMS = 1000;
 /**
  * Executes a given function, catching all exceptions. When an exception is caught
  * it is converted to strongly-typed `LensPlatformExtension` and thrown again.
  * @param fn - a function
  * @param exceptionsMap - map of HTTP error codes onto expected exception creators
- * @returns the ressult of `fn`
- * @throws extected exceptions or `LensPlatformException` with code 400 if it caught something unexpected
+ * @param retryInterval - time between retries
+ * @param retries - How many times to retry
+ * @returns the result of `fn`
+ * @throws expected exceptions or `LensPlatformException` with code 400 if it caught something unexpected
  * @example
  * ```
  * const json = throwExpected(
@@ -62,36 +98,48 @@ export type HTTPErrCodeExceptionMap<T = LensSDKException> = Partial<Record<numbe
  * );
  * ```
  */
-export const throwExpected = async <T = any>(fn: () => Promise<T>, exceptionsMap: HTTPErrCodeExceptionMap = {}) => {
+export const throwExpected = async <T = any>(
+  fn: () => Promise<T>,
+  exceptionsMap: HTTPErrCodeExceptionMap = {},
+  retryInterval = defaultRetryIntervalMS,
+  retries = defaultRetries,
+) => {
   try {
+    // First try
     const result = await fn();
 
     return result;
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      const httpStatusCode = error.response?.status ?? parseHTTPErrorCode(error);
+    // Retry if the error is a Network error and GET
+    if (
+      axios.isAxiosError(error)
+      // If it's an axios error but there is no response => a network error
+      // See https://github.com/axios/axios#handling-errors
+      && !error.response
+      // ONLY retry for GET requests
+      && error.config?.method === "get"
+    ) {
+      await timeout(retryInterval);
+      try {
+        const retriedResult = await retry<T>(
+          async () =>
+            // Second try
+            fn()
+          ,
+          {
+            minTimeout: retryInterval,
+            retries: retries - 1 - 1, // Two `-1` because we already did two tries
+          },
 
-      if (!httpStatusCode) {
-        throw new LensSDKException(httpStatusCode, "Unexpected exception [Lens Platform SDK]", error);
-      }
-
-      const mappedExceptionFn = exceptionsMap[httpStatusCode];
-
-      if (mappedExceptionFn) {
-        throw mappedExceptionFn(
-          await toPlatformErrorResponse(error?.response),
         );
-      } else if (httpStatusCode === 400) {
-        throw new BadRequestException(error.response?.data?.message, error);
-      } else if (httpStatusCode === 401) {
-        throw new UnauthorizedException(error.response?.data?.message, error);
-      } else if (httpStatusCode === 403) {
-        throw new ForbiddenException(error.response?.data?.message, error);
+        return retriedResult;
+      } catch (error: unknown) {
+        await handleException(error, exceptionsMap);
+        return undefined;
       }
     }
 
-    // If axios.isAxiosError(error) returns falsy
-    throw new LensSDKException((error as any)?.response?.status, "Unexpected exception [Lens Platform SDK]", error);
+    await handleException(error, exceptionsMap);
   }
 };
 

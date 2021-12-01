@@ -1,18 +1,19 @@
 import LensPlatformClient from "./LensPlatformClient";
 import axios from "axios";
+import { minimumOptions, accessToken, apiEndpointAddress } from "./helpers/testConfig";
+import { defaultRetries, defaultRetryIntervalMS } from "./exceptions/utils"
 
-// A random jwt from https://www.jsonwebtoken.io/
-export const accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImp0aSI6ImI4Y2RmMmRjLTA3ZmUtNDc5Ny1iOWZkLThmYjlmYTMyZGMyZiIsImlhdCI6MTYxODQ4Mjc3OCwiZXhwIjoxNjE4NDg2Mzc4fQ.h9jJveiwYLPDIX3ZIqB-06QH6CLTDVKToSfWJnwRAgg";
-export const apiEndpointAddress = "http://api.endpoint";
-export const minimumOptions = {
-  accessToken, // The access token for apis
-  keyCloakAddress: "", // Keycloak address, e.g. "https://keycloak.k8slens.dev"
-  keycloakRealm: "", // The realm name, e.g. "lensCloud"
-  apiEndpointAddress, // Api endpoint address, e.g. "https://api.k8slens.dev"
-};
-
+jest.setTimeout(defaultRetries * defaultRetryIntervalMS);
 describe("LensPlatformClient", () => {
-  jest.mock("axios");
+  beforeEach(() => {
+    // Resets all the mocks usage data, but keeps the behaviour (e.g. return value) of the mocks
+    jest.clearAllMocks();
+    // Same as “clearMocks”: true but also resets the behaviour of the mocks
+    jest.resetAllMocks();
+    // Restores methods that were spied using jest.spyOn(..) to its original method.
+    // This flag is independent of the clearMocks / resetMocks flags.
+    jest.restoreAllMocks();
+  });
 
   it("is a class", () => {
     // @ts-expect-error
@@ -325,6 +326,124 @@ describe("LensPlatformClient", () => {
           });
           spy.mockRestore();
         });
+      }
+    });
+
+    it((`should retry ${defaultRetries} times if GET get Network error`), async () => {
+      const lensPlatformClient = new LensPlatformClient({
+        ...minimumOptions,
+      });
+      jest.spyOn(axios, "isAxiosError").mockReturnValue(true);
+
+      const fakeAxiosGetError = new Error("fakeAxiosGetError");
+      // @ts-expect-error
+      fakeAxiosGetError.config = {};
+      // @ts-expect-error
+      fakeAxiosGetError.config.method = "get";
+
+      const spyOnGet = jest.spyOn(axios, "get")
+        .mockImplementationOnce(async () => {
+          throw fakeAxiosGetError;
+        })
+        .mockImplementationOnce(async () => {
+          throw fakeAxiosGetError;
+        })
+        .mockImplementationOnce(async () => {
+          throw fakeAxiosGetError;
+        });
+
+      try {
+        await lensPlatformClient.space.getOne({ name: "any" });
+      } catch {
+        // Do not handle exceptions
+      } finally {
+        expect(spyOnGet).toBeCalledTimes(defaultRetries);
+      }
+    });
+
+    it(("shouldn't retry if request is not idempotent (POST)"), async () => {
+      const lensPlatformClient = new LensPlatformClient({
+        ...minimumOptions,
+      });
+      jest.spyOn(axios, "isAxiosError").mockReturnValue(true);
+
+      const fakeAxiosPostError = new Error("fakeAxiosPostError");
+      // @ts-expect-error
+      fakeAxiosPostError.config = {};
+      // @ts-expect-error
+      fakeAxiosPostError.config.method = "post";
+
+      const spyOnGet = jest.spyOn(axios, "post")
+        .mockImplementationOnce(async () => {
+          throw fakeAxiosPostError;
+        })
+        .mockImplementationOnce(async () => {
+          throw fakeAxiosPostError;
+        })
+        .mockImplementationOnce(async () => {
+          throw fakeAxiosPostError;
+        });
+
+      try {
+        await lensPlatformClient.space.createOne({ name: "any" });
+      } catch {
+        // Do not handle exceptions
+      } finally {
+        expect(spyOnGet).toBeCalledTimes(1);
+      }
+    });
+
+    it(("shouldn't retry if error is not AxiosError"), async () => {
+      const lensPlatformClient = new LensPlatformClient({
+        ...minimumOptions,
+      });
+      jest.spyOn(axios, "isAxiosError").mockReturnValue(false);
+
+      const fakeAxiosGetError = new Error("fakeAxiosGetError");
+      // @ts-expect-error
+      fakeAxiosGetError.config = {};
+      // @ts-expect-error
+      fakeAxiosGetError.config.method = "get";
+
+      const spyOnGet = jest.spyOn(axios, "get")
+        .mockImplementation(async () => {
+          throw fakeAxiosGetError;
+        });
+
+      try {
+        await lensPlatformClient.space.getOne({ name: "any" });
+      } catch {
+        // Do not handle exceptions
+      } finally {
+        expect(spyOnGet).toBeCalledTimes(1);
+      }
+    });
+
+    it(("shouldn't retry if there is response (not a Network error)"), async () => {
+      const lensPlatformClient = new LensPlatformClient({
+        ...minimumOptions,
+      });
+      jest.spyOn(axios, "isAxiosError").mockReturnValue(true);
+
+      const fakeAxiosGetError = new Error("fakeAxiosGetError");
+      // @ts-expect-error
+      fakeAxiosGetError.config = {};
+      // @ts-expect-error
+      fakeAxiosGetError.config.method = "get";
+      // @ts-expect-error
+      fakeAxiosGetError.response = { status: 503 };
+
+      const spyOnGet = jest.spyOn(axios, "get")
+        .mockImplementation(async () => {
+          throw fakeAxiosGetError;
+        });
+
+      try {
+        await lensPlatformClient.space.getOne({ name: "any" });
+      } catch {
+        // Do not handle exceptions
+      } finally {
+        expect(spyOnGet).toBeCalledTimes(1);
       }
     });
   });
