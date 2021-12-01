@@ -1,6 +1,6 @@
 import nock from "nock";
 import LensPlatformClient from "./LensPlatformClient";
-import { minimumOptions as options, apiEndpointAddress } from "./LensPlatformClient.test";
+import { minimumOptions as options, apiEndpointAddress } from "./helpers/testConfig";
 import { NotFoundException, LensSDKException } from "./exceptions";
 
 export const plaform404response = {
