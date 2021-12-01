@@ -54,7 +54,7 @@ describe(".users.*", () => {
 
       if (e instanceof LensSDKException) {
         expect(e.errorCode).toEqual(500);
-        expect(e.message).toMatch(/Unexpected exception \[Lens Platform SDK\]/);
+        expect(e.message).toMatch("Request failed with status code 500");
       }
     }
   });

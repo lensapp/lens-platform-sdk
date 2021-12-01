@@ -91,7 +91,11 @@ export const throwExpected = async <T = any>(fn: () => Promise<T>, exceptionsMap
     }
 
     // If axios.isAxiosError(error) returns falsy
-    throw new LensSDKException((error as any)?.response?.status, "Unexpected exception [Lens Platform SDK]", error);
+    throw new LensSDKException(
+      (error as any)?.response?.status,
+      (error as any)?.message ?? "Unexpected exception [Lens Platform SDK]",
+      error,
+    );
   }
 };
 
