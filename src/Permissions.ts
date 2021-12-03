@@ -117,6 +117,8 @@ export class Permissions {
    */
   // eslint-disable-next-line max-params
   canTeam(action: TeamActions, space: Space | SpaceEntity, team: Team | TeamEntity, forUserId: string, targetUserId?: string) {
+    const role = this.getRole(space, forUserId);
+    const isAdminOrOwner = [Roles.Owner, Roles.Admin].includes(role);
     switch (action) {
       case TeamActions.AddUser: {
         if (!this.canSpace(Actions.PatchTeam, space, forUserId)) {
@@ -128,14 +130,22 @@ export class Permissions {
           return false;
         }
 
-        return true;
+        if (team.kind === "Owner") {
+          return role === Roles.Owner;
+        }
+
+        if (team.kind === "Admin") {
+          return isAdminOrOwner;
+        }
+
+        if (team.kind === "Normal") {
+          return isAdminOrOwner;
+        }
+
+        return false;
       }
 
       case TeamActions.RemoveUser: {
-        if (!targetUserId) {
-          throw new Error("targetUserId missing");
-        }
-
         if (!this.canSpace(Actions.PatchTeam, space, forUserId)) {
           return false;
         }
@@ -145,7 +155,19 @@ export class Permissions {
           return false;
         }
 
-        return true;
+        if (team.kind === "Owner") {
+          return role === Roles.Owner;
+        }
+
+        if (team.kind === "Admin") {
+          return isAdminOrOwner;
+        }
+
+        if (team.kind === "Normal") {
+          return isAdminOrOwner;
+        }
+
+        return false;
       }
 
       default: {
