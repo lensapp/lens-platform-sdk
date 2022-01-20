@@ -328,7 +328,7 @@ describe("PermissionsService", () => {
       ).toBeFalsy();
     });
 
-    it("member can't access another user's devCluste 2", () => {
+    it("member can't access another user's devCluster 2", () => {
       expect(client.permission.canK8sCluster(
         K8sClusterActions.AccessK8sCluster, mockSpace1, mockDevCluster2, memberUser.id!),
       ).toBeFalsy();
