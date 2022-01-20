@@ -67,6 +67,28 @@ const mockK8sCluster1: K8sCluster = {
   name: "",
   kind: "K8sCluster",
 };
+const mockDevCluster1: K8sCluster = {
+  id: "mk1",
+  createdById: memberUser.id,
+  name: "",
+  kind: "K8sCluster",
+  metadata: {
+    labels: {
+      devCluster: "true",
+    },
+  },
+};
+const mockDevCluster2: K8sCluster = {
+  id: "mk1",
+  createdById: mockUser5.id,
+  name: "",
+  kind: "K8sCluster",
+  metadata: {
+    labels: {
+      devCluster: "true",
+    },
+  },
+};
 
 const invitationToBeRevokedByMockUser3 = "invitation_id_to_be_revoked_by_user_3";
 const invitationIdsCreatedByMockUser3 = [invitationToBeRevokedByMockUser3, "another_invitation_id"];
@@ -280,6 +302,60 @@ describe("PermissionsService", () => {
       expect(client.permission.canK8sCluster(
         K8sClusterActions.DeleteK8sCluster, mockSpace1, mockK8sCluster1, mockUser4.id!),
       ).toBeFalsy();
+    });
+
+    it("user can access non-devCluster", () => {
+      expect(client.permission.canK8sCluster(
+        K8sClusterActions.AccessK8sCluster, mockSpace1, mockK8sCluster1, memberUser.id!),
+      ).toBeTruthy();
+    });
+
+    it("user can access own devCluster", () => {
+      expect(client.permission.canK8sCluster(
+        K8sClusterActions.AccessK8sCluster, mockSpace1, mockDevCluster1, memberUser.id!),
+      ).toBeTruthy();
+    });
+
+    it("user can access own devCluster 2", () => {
+      expect(client.permission.canK8sCluster(
+        K8sClusterActions.AccessK8sCluster, mockSpace1, mockDevCluster2, mockUser5.id!),
+      ).toBeTruthy();
+    });
+
+    it("member can't access another user's devCluster", () => {
+      expect(client.permission.canK8sCluster(
+        K8sClusterActions.AccessK8sCluster, mockSpace1, mockDevCluster1, mockUser5.id!),
+      ).toBeFalsy();
+    });
+
+    it("member can't access another user's devCluste 2", () => {
+      expect(client.permission.canK8sCluster(
+        K8sClusterActions.AccessK8sCluster, mockSpace1, mockDevCluster2, memberUser.id!),
+      ).toBeFalsy();
+    });
+
+    it("admin can access own devCluster", () => {
+      expect(client.permission.canK8sCluster(
+        K8sClusterActions.AccessK8sCluster, mockSpace1, mockDevCluster1, adminUser.id!),
+      ).toBeTruthy();
+    });
+
+    it("admin can access another user's devCluster", () => {
+      expect(client.permission.canK8sCluster(
+        K8sClusterActions.AccessK8sCluster, mockSpace1, mockDevCluster2, adminUser.id!),
+      ).toBeTruthy();
+    });
+
+    it("owner can access own devCluster", () => {
+      expect(client.permission.canK8sCluster(
+        K8sClusterActions.AccessK8sCluster, mockSpace1, mockDevCluster1, ownerUser.id!),
+      ).toBeTruthy();
+    });
+
+    it("owner can access another user's devCluster", () => {
+      expect(client.permission.canK8sCluster(
+        K8sClusterActions.AccessK8sCluster, mockSpace1, mockDevCluster2, ownerUser.id!),
+      ).toBeTruthy();
     });
   });
 });

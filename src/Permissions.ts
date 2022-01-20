@@ -1,6 +1,6 @@
 import type { Space, SpaceEntity } from "./SpaceService";
 import type { Team, TeamEntity } from "./TeamService";
-import type { K8sCluster, K8sClusterEntity } from "./K8sCluster";
+import { isDevCluster, K8sCluster, K8sClusterEntity } from "./K8sCluster";
 
 export enum Roles {
   Admin = "Admin",
@@ -29,6 +29,9 @@ export enum Actions {
 }
 
 export enum K8sClusterActions {
+  // Check if user can access the K8sCluster assuming the Space is accessible
+  AccessK8sCluster,
+
   DeleteK8sCluster,
 }
 
@@ -187,11 +190,16 @@ export class Permissions {
    */
   canK8sCluster(action: K8sClusterActions, forSpace: Space | SpaceEntity, forK8sCluster: K8sCluster | K8sClusterEntity, forUserId: string) {
     let canI = false;
+    const isOwnerAdmin = [Roles.Owner, Roles.Admin].includes(this.getRole(forSpace, forUserId));
 
     switch (action) {
+      // Check if user can access the K8sCluster assuming the Space is accessible
+      // DevCluster K8sClusters can only be accessed by the creator or Admin/Owner
+      case K8sClusterActions.AccessK8sCluster:
+        canI = !isDevCluster(forK8sCluster) || isOwnerAdmin || forK8sCluster.createdById === forUserId;
+        break;
       // Admin, Owner or K8sCluster creator can delete it
       case K8sClusterActions.DeleteK8sCluster: {
-        const isOwnerAdmin = [Roles.Owner, Roles.Admin].includes(this.getRole(forSpace, forUserId));
         canI = isOwnerAdmin || forK8sCluster.createdById === forUserId;
         break;
       }
