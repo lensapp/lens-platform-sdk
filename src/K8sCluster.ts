@@ -48,3 +48,5 @@ export type K8sClusterEntity = Except<MapToEntity<K8sCluster>, "space"> & {
   space?: SpaceEntity;
 };
 
+export const isDevCluster = (k8sCluster: K8sCluster | K8sClusterEntity) =>
+  k8sCluster.kind === "K8sCluster" && k8sCluster.metadata?.labels?.devCluster === "true";
