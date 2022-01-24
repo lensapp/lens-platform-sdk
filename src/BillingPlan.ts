@@ -31,4 +31,9 @@ export interface BillingPlan {
     };
   };
   billingEnabled: boolean;
+  trial?: {
+    startedAt: string;
+    endsAt: string;
+    warningSentAt: string;
+  };
 }
