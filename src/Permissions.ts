@@ -32,6 +32,7 @@ export enum K8sClusterActions {
   // Check if user can access the K8sCluster assuming the Space is accessible
   AccessK8sCluster,
 
+  PatchK8sCluster,
   DeleteK8sCluster,
 }
 
@@ -196,6 +197,11 @@ export class Permissions {
       // Check if user can access the K8sCluster assuming the Space is accessible
       // DevCluster K8sClusters can only be accessed by the creator or Admin/Owner
       case K8sClusterActions.AccessK8sCluster:
+        canI = !isDevCluster(forK8sCluster) || isOwnerAdmin || forK8sCluster.createdById === forUserId;
+        break;
+      // Check if user can patch the K8sCluster assuming the Space is accessible
+      // DevCluster K8sClusters can only be patched by the creator or Admin/Owner
+      case K8sClusterActions.PatchK8sCluster:
         canI = !isDevCluster(forK8sCluster) || isOwnerAdmin || forK8sCluster.createdById === forUserId;
         break;
       // Admin, Owner or K8sCluster creator can delete it
