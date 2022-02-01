@@ -216,6 +216,7 @@ class LensPlatformClient {
               logger.error(`error message: ${error?.message}`);
               // @ts-expect-error
               logger.error(`error response body: ${error?.response?.body}`);
+              // eslint-disable-next-line @typescript-eslint/no-throw-literal
               throw error;
             }
           };
