@@ -34,7 +34,7 @@ class UserRolesService extends Base {
     const teamRole = rolesToTeamEntityKindMap[targetRole];
 
     const json = await throwExpected(
-      async () => fetch.post(url, { role: teamRole }),
+      async () => fetch.patch(url, { role: teamRole }),
     );
 
     const result = (json as unknown) as UserSpaceTeamEntity;
