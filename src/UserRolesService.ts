@@ -25,6 +25,23 @@ const teamEntityKindToRolesMap = {
 };
 
 class UserRolesService extends Base {
+  async getUserSpaceRole(spaceName: string, userName: string) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+
+    const url = `${apiEndpointAddress}/spaces/${spaceName}/users/${userName}/role`;
+
+    const json = await throwExpected(
+      async () => fetch.get(url),
+    );
+
+    const result = (json as unknown) as UserSpaceTeamEntity;
+
+    // TeamEntityKind on client are Roles. Map TeamEntityKind ro Roles.
+    return {
+      role: teamEntityKindToRolesMap[result.role],
+    };
+  }
+
   async changeUserSpaceRole(spaceName: string, userName: string, targetRole: Roles): Promise<UserSpaceRole> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
 
