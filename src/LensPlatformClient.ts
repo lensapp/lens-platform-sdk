@@ -9,6 +9,7 @@ import { BillingPageTokenService } from "./BillingPageTokenService";
 import axios, { AxiosRequestConfig } from "axios";
 import pino from "pino";
 import decode from "jwt-decode";
+import { UserRolesService } from "./UserRolesService";
 
 // Axios defaults to xhr adapter if XMLHttpRequest is available.
 // LensPlatformClient supports using the http adapter if httpAdapter
@@ -83,6 +84,7 @@ class LensPlatformClient {
   logger: pino.Logger;
   user: UserService;
   space: SpaceService;
+  roles: UserRolesService;
   team: TeamService;
   plan: PlanService;
   billingPageToken: BillingPageTokenService;
@@ -115,6 +117,7 @@ class LensPlatformClient {
 
     this.user = new UserService(this);
     this.space = new SpaceService(this);
+    this.roles = new UserRolesService(this);
     this.team = new TeamService(this);
     this.plan = new PlanService(this);
     this.permission = new PermissionsService(this);
