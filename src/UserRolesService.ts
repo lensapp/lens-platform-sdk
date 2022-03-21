@@ -9,8 +9,10 @@ import {
 import { TeamEntityKind } from "./TeamService";
 import { Roles } from "./Permissions";
 
+type Role = Roles.Owner | Roles.Admin | Roles.Member;
+
 interface UserSpaceRole {
-  role: Roles;
+  role: Role;
 }
 
 interface UserSpaceTeamEntity {
@@ -21,13 +23,12 @@ const rolesToTeamEntityKindMap = {
   [Roles.Owner]: "Owner",
   [Roles.Admin]: "Admin",
   [Roles.Member]: "Normal",
-  [Roles.None]: "Normal",
 };
 
 const teamEntityKindToRolesMap = {
-  ["Owner" as TeamEntityKind]: Roles.Owner,
-  ["Admin" as TeamEntityKind]: Roles.Admin,
-  ["Normal" as TeamEntityKind]: Roles.Member,
+  ["Owner" as TeamEntityKind]: Roles.Owner as Role,
+  ["Admin" as TeamEntityKind]: Roles.Admin as Role,
+  ["Normal" as TeamEntityKind]: Roles.Member as Role,
 };
 
 const getNotFoundException = (error: PlatformErrorResponse | undefined, userName: string) => {
@@ -64,7 +65,7 @@ class UserRolesService extends Base {
     };
   }
 
-  async setUserRole(spaceName: string, userName: string, role: Roles): Promise<UserSpaceRole> {
+  async setUserRole(spaceName: string, userName: string, role: Role): Promise<UserSpaceRole> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
 
     const url = `${apiEndpointAddress}/spaces/${spaceName}/users/${userName}/role`;
