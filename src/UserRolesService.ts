@@ -1,6 +1,6 @@
 import { Base } from "./Base";
 import {
-  InternalServerException, InvalidRoleException, RoleAlreadyAssignedException,
+  InternalServerException, InvalidRoleException, NotFoundException, PlatformErrorResponse, RoleAlreadyAssignedException,
   SpaceNotFoundException,
   throwExpected,
   UnprocessableEntityException,
@@ -30,6 +30,19 @@ const teamEntityKindToRolesMap = {
   ["Normal" as TeamEntityKind]: Roles.Member,
 };
 
+const getNotFoundException = (error: PlatformErrorResponse | undefined, userName: string) => {
+  if (!error) {
+    return new NotFoundException();
+  }
+
+  const message = error?.body.message;
+  if (typeof message === "string" && message.includes("Space not found")) {
+    return new SpaceNotFoundException();
+  }
+
+  return new UserNameNotFoundException(userName);
+};
+
 class UserRolesService extends Base {
   async getUserSpaceRole(spaceName: string, userName: string) {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
@@ -39,14 +52,7 @@ class UserRolesService extends Base {
     const json = await throwExpected(
       async () => fetch.get(url),
       {
-        404: error => {
-          const message = error?.body.message;
-          if (typeof message === "string" && message.includes("Space not found")) {
-            return new SpaceNotFoundException();
-          }
-
-          return new UserNameNotFoundException(userName);
-        },
+        404: error => getNotFoundException(error, userName),
       },
     );
 
@@ -69,14 +75,7 @@ class UserRolesService extends Base {
     const json = await throwExpected(
       async () => fetch.patch(url, { role: teamRole }),
       {
-        404: error => {
-          const message = error?.body.message;
-          if (typeof message === "string" && message.includes("Space not found")) {
-            return new SpaceNotFoundException();
-          }
-
-          return new UserNameNotFoundException(userName);
-        },
+        404: error => getNotFoundException(error, userName),
         422: error => {
           const message = error?.body.message;
           if (typeof message === "string" && message.includes("Role should be")) {
