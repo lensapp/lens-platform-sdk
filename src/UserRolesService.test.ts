@@ -14,7 +14,7 @@ describe(".user role.*", () => {
         role: "Admin",
       });
 
-      const role = await lensPlatformClient.roles.changeUserSpaceRole(spaceName, username, Roles.Admin);
+      const role = await lensPlatformClient.roles.setUserRole(spaceName, username, Roles.Admin);
 
       expect(role).toEqual({ role: Roles.Admin });
     });
@@ -24,7 +24,7 @@ describe(".user role.*", () => {
         role: "Owner",
       });
 
-      const role = await lensPlatformClient.roles.changeUserSpaceRole(spaceName, username, Roles.Owner);
+      const role = await lensPlatformClient.roles.setUserRole(spaceName, username, Roles.Owner);
 
       expect(role).toEqual({ role: Roles.Owner });
     });
@@ -34,7 +34,7 @@ describe(".user role.*", () => {
         role: "Normal",
       });
 
-      const role = await lensPlatformClient.roles.changeUserSpaceRole(spaceName, username, Roles.Admin);
+      const role = await lensPlatformClient.roles.setUserRole(spaceName, username, Roles.Admin);
 
       expect(role).toEqual({ role: Roles.Member });
     });
@@ -44,7 +44,7 @@ describe(".user role.*", () => {
         role: "Normal",
       });
 
-      const role = await lensPlatformClient.roles.changeUserSpaceRole(spaceName, username, Roles.Owner);
+      const role = await lensPlatformClient.roles.setUserRole(spaceName, username, Roles.Owner);
 
       expect(role).toEqual({ role: Roles.Member });
     });
@@ -54,7 +54,7 @@ describe(".user role.*", () => {
         role: "Admin",
       });
 
-      const role = await lensPlatformClient.roles.changeUserSpaceRole(spaceName, username, Roles.Admin);
+      const role = await lensPlatformClient.roles.setUserRole(spaceName, username, Roles.Admin);
 
       expect(role).toEqual({ role: Roles.Admin });
     });
