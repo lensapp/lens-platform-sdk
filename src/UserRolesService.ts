@@ -1,6 +1,6 @@
 import { Base } from "./Base";
 import {
-  InternalServerException,
+  InternalServerException, InvalidRoleException, RoleAlreadyAssignedException,
   SpaceNotFoundException,
   throwExpected,
   UnprocessableEntityException,
@@ -8,11 +8,6 @@ import {
 } from "./exceptions";
 import { TeamEntityKind } from "./TeamService";
 import { Roles } from "./Permissions";
-import {
-  InvalidRoleException,
-  NotAllowedToAccessRoleException,
-  RoleAlreadyAssignedException,
-} from "./exceptions/roles.exceprions";
 
 interface UserSpaceRole {
   role: Roles;
@@ -94,7 +89,6 @@ class UserRolesService extends Base {
 
           return new UnprocessableEntityException();
         },
-        403: () => new NotAllowedToAccessRoleException(role, userName),
         500: () => new InternalServerException(),
       },
     );

@@ -14,10 +14,3 @@ export class InvalidRoleException extends LensSDKException {
     Object.setPrototypeOf(this, InvalidRoleException.prototype);
   }
 }
-
-export class NotAllowedToAccessRoleException extends LensSDKException {
-  constructor(role: string, userName: string) {
-    super(403, `You are not allowed to set ${role} to the user ${userName}`);
-    Object.setPrototypeOf(this, NotAllowedToAccessRoleException.prototype);
-  }
-}
