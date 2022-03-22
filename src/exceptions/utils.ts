@@ -13,7 +13,7 @@ const parseHTTPErrorCode = (exception: AxiosError) => {
   return null;
 };
 
-type PlatformErrorResponse = AxiosResponse & { body: any };
+export type PlatformErrorResponse = AxiosResponse & { body: any };
 
 /**
  * Transforms an axios error response (with .data key) into a response with .body key
