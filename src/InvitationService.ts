@@ -13,6 +13,7 @@ import {
 } from "./exceptions";
 import { Except } from "type-fest";
 import type { MapToEntity } from "./types/types";
+import { TeamEntityKind } from "./TeamService";
 
 export const invitationEntityKinds = ["directInvite", "emailInvite", "weblinkInvite"] as const;
 export type InvitationEntityKind = typeof invitationEntityKinds[number];
@@ -40,6 +41,7 @@ export interface Invitation {
   invitedUser?: User;
   state?: "pending" | "accepted" | "rejected" | "revoked";
   expiryTime?: Date | string;
+  role?: TeamEntityKind;
 }
 
 export type InvitationEntity = MapToEntity<Invitation>;
