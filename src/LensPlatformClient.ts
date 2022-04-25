@@ -19,7 +19,7 @@ const axiosHttpAdapter = require("axios/lib/adapters/http");
 
 export interface LensPlatformClientOptions {
   accessToken?: string;
-  getAccessToken?: () => Promise<string>;
+  getAccessToken?: (url?: string) => Promise<string>;
   keyCloakAddress: string;
   keycloakRealm: string;
   apiEndpointAddress: string;
@@ -126,8 +126,8 @@ class LensPlatformClient {
     this.openIDConnect = new OpenIdConnect(this);
   }
 
-  async getToken() {
-    const token = this.getAccessToken && typeof this.getAccessToken === "function" ? await this.getAccessToken() : this.accessToken;
+  async getToken(url?: string) {
+    const token = this.getAccessToken && typeof this.getAccessToken === "function" ? await this.getAccessToken(url) : this.accessToken;
 
     return token;
   }
@@ -189,7 +189,7 @@ class LensPlatformClient {
               // Print HTTP request info in developer console
               logger.debug(`${key?.toUpperCase()} ${url}`);
 
-              const token = await getToken();
+              const token = await getToken(url);
 
               const requestHeaders: RequestHeaders = {
                 ...(token ? { Authorization: `Bearer ${token}` } : {}),
