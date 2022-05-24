@@ -20,3 +20,10 @@ export class UsernameAlreadyExistsException extends ConflictException {
     Object.setPrototypeOf(this, UsernameAlreadyExistsException.prototype);
   }
 }
+
+export class SubsctiptionAlreadyExistsException extends ConflictException {
+  constructor() {
+    super();
+    Object.setPrototypeOf(this, SubsctiptionAlreadyExistsException.prototype);
+  }
+}
