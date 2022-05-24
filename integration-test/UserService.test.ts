@@ -6,7 +6,8 @@ import {
   ForbiddenException,
   NotFoundException,
   UnauthorizedException,
-  UsernameAlreadyExistsException
+  UsernameAlreadyExistsException,
+  ConflictException,
 } from "../src/exceptions";
 
 describe("UserService", () => {
@@ -102,6 +103,72 @@ describe("UserService", () => {
     it("can get self", async () => {
       const user = await bobPlatform.client.user.getSelf();
       expect(user.username).toEqual(userBob.username);
+    });
+  });
+
+  describe("activateSubscription", () => {
+    beforeEach(async () => {
+      try {
+        // Make sure the subscription isn't yet active
+        await bobPlatform.client.user.deactivateSubscription({ username: userBob.username, license: { subscriptionId: userBob.subscriptionId! } })
+      } catch (_: unknown) {}
+    });
+    it("rejects requests with invalid username", async () => {
+      bobPlatform.fakeToken = undefined;
+      return expect(bobPlatform.client.user.activateSubscription({ username: "FAKE_USER", license: { subscriptionId: userBob.subscriptionId! } }))
+        .rejects.toThrowError(ForbiddenException);
+    });
+    it("rejects requests with invalid subscriptionId", async () => {
+      bobPlatform.fakeToken = undefined;
+      return expect(bobPlatform.client.user.activateSubscription({ username: userBob.username, license: { subscriptionId: "FAKE_SUBSCRIPTION" } }))
+        .rejects.toThrowError(NotFoundException);
+    });
+    it("rejects requests for already existing subscriptions", async () => {
+      bobPlatform.fakeToken = undefined;
+
+      await bobPlatform.client.user.activateSubscription({ username: userBob.username, license: { subscriptionId: userBob.subscriptionId! } });
+      return expect(bobPlatform.client.user.activateSubscription({ username: userBob.username, license: { subscriptionId: "FAKE_SUBSCRIPTION" } }))
+        .rejects.toThrowError(ConflictException);
+    });
+    it("returns the activated license", async () => {
+      bobPlatform.fakeToken = undefined;
+
+      const license = await bobPlatform.client.user.activateSubscription({ username: userBob.username, license: { subscriptionId: userBob.subscriptionId! } });
+      expect(license).toEqual({ subscriptionId: userBob.subscriptionId });
+    });
+  });
+
+  describe("deactivateSubscription", () => {
+    beforeEach(async () => {
+      // Make sure the subscription is active
+      try {
+        await bobPlatform.client.user.deactivateSubscription({ username: userBob.username, license: { subscriptionId: userBob.subscriptionId! } });
+        await bobPlatform.client.user.activateSubscription({ username: userBob.username, license: { subscriptionId: userBob.subscriptionId! } });
+      } catch (_: unknown) {}
+    });
+
+    it("rejects requests with invalid username", async () => {
+      bobPlatform.fakeToken = undefined;
+
+      return expect(bobPlatform.client.user.deactivateSubscription({ username: "FAKE_USER", license: { subscriptionId: userBob.subscriptionId! } }))
+        .rejects.toThrowError(ForbiddenException);
+    });
+    it("rejects requests with invalid subscriptionId", async () => {
+      bobPlatform.fakeToken = undefined;
+      return expect(bobPlatform.client.user.deactivateSubscription({ username: userBob.username, license: { subscriptionId: "FAKE_SUBSCRIPTION" } }))
+        .rejects.toThrowError(NotFoundException);
+    });
+    it("returns the activated license", async () => {
+      bobPlatform.fakeToken = undefined;
+
+      // Active the license
+      try {
+        await bobPlatform.client.user.deactivateSubscription({ username: userBob.username, license: { subscriptionId: userBob.subscriptionId! } });
+        await bobPlatform.client.user.activateSubscription({ username: userBob.username, license: { subscriptionId: userBob.subscriptionId! } });
+      } catch (_: unknown) {}
+
+      return expect(bobPlatform.client.user.deactivateSubscription({ username: userBob.username, license: { subscriptionId: userBob.subscriptionId! } }))
+        .resolves.toBeUndefined();
     });
   });
 });
