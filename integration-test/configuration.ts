@@ -10,7 +10,8 @@ export const config = {
   users: [
     {
       username: getEnvironmentalVariable("STAGING_USERNAME_1"),
-      password: getEnvironmentalVariable("STAGING_PASSWORD_1")
+      password: getEnvironmentalVariable("STAGING_PASSWORD_1"),
+      subscriptionId: getEnvironmentalVariable("STAGING_SUBSCRIPTION_ID_1"),
     },
     {
       username: getEnvironmentalVariable("STAGING_USERNAME_2"),
