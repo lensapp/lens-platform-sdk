@@ -8,7 +8,7 @@ import {
   UserNameNotFoundException,
   LensSDKException,
   TokenNotFoundException,
-  SubsctiptionAlreadyExistsException,
+  SubscriptionAlreadyExistsException,
 } from "./exceptions";
 
 /**
@@ -161,7 +161,7 @@ class UserService extends Base {
             error,
           );
         },
-        409: () => new SubsctiptionAlreadyExistsException(),
+        409: () => new SubscriptionAlreadyExistsException(),
         403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
         422: error => new UnprocessableEntityException(error?.body.message),
       },
@@ -170,7 +170,7 @@ class UserService extends Base {
     return (json as unknown) as License;
   }
 
-  async deActivateSubscription({ username, license }: { username: string; license: License }): Promise<void> {
+  async deactivateSubscription({ username, license }: { username: string; license: License }): Promise<void> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/licenses/${license.subscriptionId}`;
     await throwExpected(
