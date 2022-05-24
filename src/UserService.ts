@@ -193,7 +193,6 @@ class UserService extends Base {
             error,
           );
         },
-        409: () => new SubsctiptionAlreadyExistsException(),
         403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
         422: error => new UnprocessableEntityException(error?.body.message),
       },
