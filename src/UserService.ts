@@ -10,6 +10,7 @@ import {
   TokenNotFoundException,
   SubscriptionAlreadyExistsException,
 } from "./exceptions";
+import { License } from "./types/types";
 
 /**
  *
@@ -31,10 +32,6 @@ export interface User {
 }
 
 type UserWithEmail = User & { email: string };
-
-type License = {
-  subscriptionId: string;
-};
 
 export interface UserAttributes {
   fullname?: string;
@@ -170,7 +167,7 @@ class UserService extends Base {
     return (json as unknown) as License;
   }
 
-  async deactivateSubscription({ username, license }: { username: string; license: License }): Promise<void> {
+  async deactivateSubscription({ username, license }: { username: string; license: Pick<License, "subscriptionId"> }): Promise<void> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/licenses/${license.subscriptionId}`;
     await throwExpected(
