@@ -136,20 +136,6 @@ describe("PermissionsService", () => {
       expect(client.permission.canSpace(Actions.GetBillingPageToken, mockSpace1, ownerUser.id!)).toBeTruthy();
     });
 
-    it("can't delete Personal Space", () => {
-      expect(client.permission.canSpace(Actions.DeleteSpace, {
-        ...mockSpace1,
-        kind: "Personal",
-      }, ownerUser.id!)).toBeFalsy();
-    });
-
-    it("can't rename Personal Space", () => {
-      expect(client.permission.canSpace(Actions.RenameSpace, {
-        ...mockSpace1,
-        kind: "Personal",
-      }, ownerUser.id!)).toBeFalsy();
-    });
-
     it("recognizes admin privileges", () => {
       expect(client.permission.canSpace(Actions.DeleteSpace, mockSpace1, adminUser.id!)).toBeFalsy();
       expect(client.permission.canSpace(Actions.RenameSpace, mockSpace1, adminUser.id!)).toBeTruthy();
@@ -209,13 +195,6 @@ describe("PermissionsService", () => {
         expect(client.permission.canTeam(TeamActions.AddUser, mockSpace1, ownerTeam, ownerUser.id ?? "")).toBeTruthy();
       });
 
-      it("can add user to Owner team of Personal Space", () => {
-        expect(client.permission.canTeam(TeamActions.AddUser, {
-          ...mockSpace1,
-          kind: "Personal",
-        }, ownerTeam, adminUser.id ?? "")).toBeFalsy();
-      });
-
       it("admin user can't add user to owner team", () => {
         expect(client.permission.canTeam(TeamActions.AddUser, mockSpace1, ownerTeam, adminUser.id ?? "")).toBeFalsy();
       });
@@ -244,13 +223,6 @@ describe("PermissionsService", () => {
     describe("RemoveUser", () => {
       it("can remove user from team as Owner", () => {
         expect(client.permission.canTeam(TeamActions.RemoveUser, mockSpace1, ownerTeam, ownerUser.id ?? "", ownerUser.id ?? "")).toBeTruthy();
-      });
-
-      it("can't remove itself from Owner team of Personal Space", () => {
-        expect(client.permission.canTeam(TeamActions.RemoveUser, {
-          ...mockSpace1,
-          kind: "Personal",
-        }, ownerTeam, ownerUser.id ?? "", ownerUser.id ?? "")).toBeFalsy();
       });
 
       it("admin team can't remove user from owner team", () => {

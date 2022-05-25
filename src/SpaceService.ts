@@ -20,7 +20,7 @@ import {
 import type { MapToEntity } from "./types/types";
 import type { Except } from "type-fest";
 
-export const spaceKinds = ["Personal", "Team"] as const;
+export const spaceKinds = ["Team"] as const;
 export type SpaceKind = typeof spaceKinds[number];
 
 export const spaceFeatures = ["DevCluster"] as const;
@@ -131,44 +131,6 @@ class SpaceService extends Base {
     );
 
     return (json as unknown) as CatalogAPI;
-  }
-
-  /**
-   * Add feature to users' Personal Spaces.
-   * @param feature - Feature to add
-   * @param users - Array of usernames or email addresses
-   */
-  async addSpaceFeature(feature: SpaceFeature, users: string[]): Promise<Record<string, unknown>> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/spaces/features`;
-
-    const json = await throwExpected(
-      async () => fetch.post(url, { feature, users }),
-      {
-        404: () => new NotFoundException(),
-      },
-    );
-
-    return (json as unknown) as Record<string, unknown>;
-  }
-
-  /**
-   * Remove feature from users' Personal Spaces.
-   * @param feature - Feature remove add
-   * @param users - Array of usernames or email addresses
-   */
-  async removeSpaceFeature(feature: SpaceFeature, users: string[]): Promise<Record<string, unknown>> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/spaces/features/remove`;
-
-    const json = await throwExpected(
-      async () => fetch.delete(url, { data: { feature, users } }),
-      {
-        404: () => new NotFoundException(),
-      },
-    );
-
-    return (json as unknown) as Record<string, unknown>;
   }
 
   /**

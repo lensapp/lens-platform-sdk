@@ -70,7 +70,7 @@ export class Permissions {
         return role === Roles.Owner;
 
       case Actions.DeleteSpace:
-        return forSpace.kind !== "Personal" && role === Roles.Owner;
+        return role === Roles.Owner;
 
       case Actions.PatchInvitation:
         return this.canPatchOrRevokeInvitation(forRevokeInvitation, role);
@@ -79,7 +79,7 @@ export class Permissions {
         return this.canPatchOrRevokeInvitation(forRevokeInvitation, role);
 
       case Actions.RenameSpace:
-        return forSpace.kind !== "Personal" && isAdminOrOwner;
+        return isAdminOrOwner;
 
       case Actions.CreateInvitation:
         return isAdminOrOwner;
@@ -129,11 +129,6 @@ export class Permissions {
           return false;
         }
 
-        // Prevent adding any user to Owner team of a Personal Space
-        if (team.kind === "Owner" && space.kind === "Personal") {
-          return false;
-        }
-
         if (team.kind === "Owner") {
           return role === Roles.Owner;
         }
@@ -151,11 +146,6 @@ export class Permissions {
 
       case TeamActions.RemoveUser: {
         if (!this.canSpace(Actions.PatchTeam, space, forUserId)) {
-          return false;
-        }
-
-        // Prevent removing creator of Personal Space from the Owner team
-        if (team.kind === "Owner" && space.kind === "Personal" && space.createdById === targetUserId) {
           return false;
         }
 
