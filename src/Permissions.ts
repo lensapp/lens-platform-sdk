@@ -119,8 +119,7 @@ export class Permissions {
    * @param targetUserId - User that is the target of the exection, e.g. user to be removed
    * @returns
    */
-  // eslint-disable-next-line max-params
-  canTeam(action: TeamActions, space: Space | SpaceEntity, team: Team | TeamEntity, forUserId: string, targetUserId?: string) {
+  canTeam(action: TeamActions, space: Space | SpaceEntity, team: Team | TeamEntity, forUserId: string) {
     const role = this.getRole(space, forUserId);
     const isAdminOrOwner = [Roles.Owner, Roles.Admin].includes(role);
     switch (action) {
