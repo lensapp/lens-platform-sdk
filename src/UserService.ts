@@ -196,7 +196,10 @@ class UserService extends Base {
     const url = `${apiEndpointAddress}/users/${username}/billing-page-token`;
     const json = await throwExpected(
       async () => fetch.get(url),
-      { 404: () => new NotFoundException(`Billing page token for ${username} not found`) },
+      { 404: () => new NotFoundException(`User ${username} not found`),
+        403: () => new ForbiddenException(`Getting the billing page token for ${username} is forbidden`),
+        422: error => new UnprocessableEntityException(error?.body.message),
+      },
     );
 
     return (json as unknown) as BillingPageToken;
