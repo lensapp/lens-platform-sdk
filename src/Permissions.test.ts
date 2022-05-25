@@ -216,37 +216,37 @@ describe("PermissionsService", () => {
       });
 
       it("member user can't add user to normal team", () => {
-        expect(client.permission.canTeam(TeamActions.AddUser, mockSpace1, normalTeam, memberUser.id ?? "", memberUser.id ?? "")).toBeFalsy();
+        expect(client.permission.canTeam(TeamActions.AddUser, mockSpace1, normalTeam, memberUser.id ?? "")).toBeFalsy();
       });
     });
 
     describe("RemoveUser", () => {
       it("can remove user from team as Owner", () => {
-        expect(client.permission.canTeam(TeamActions.RemoveUser, mockSpace1, ownerTeam, ownerUser.id ?? "", ownerUser.id ?? "")).toBeTruthy();
+        expect(client.permission.canTeam(TeamActions.RemoveUser, mockSpace1, ownerTeam, ownerUser.id ?? "")).toBeTruthy();
       });
 
       it("admin team can't remove user from owner team", () => {
-        expect(client.permission.canTeam(TeamActions.RemoveUser, mockSpace1, ownerTeam, adminUser.id ?? "", ownerUser.id ?? "")).toBeFalsy();
+        expect(client.permission.canTeam(TeamActions.RemoveUser, mockSpace1, ownerTeam, adminUser.id ?? "")).toBeFalsy();
       });
 
       it("admin team can remove user from admin team", () => {
-        expect(client.permission.canTeam(TeamActions.RemoveUser, mockSpace1, adminTeam, adminUser.id ?? "", adminUser.id ?? "")).toBeTruthy();
+        expect(client.permission.canTeam(TeamActions.RemoveUser, mockSpace1, adminTeam, adminUser.id ?? "")).toBeTruthy();
       });
 
       it("admin team can remove user from normal team", () => {
-        expect(client.permission.canTeam(TeamActions.RemoveUser, mockSpace1, normalTeam, adminUser.id ?? "", memberUser.id ?? "")).toBeTruthy();
+        expect(client.permission.canTeam(TeamActions.RemoveUser, mockSpace1, normalTeam, adminUser.id ?? "")).toBeTruthy();
       });
 
       it("member user can't remove user to owner team", () => {
-        expect(client.permission.canTeam(TeamActions.RemoveUser, mockSpace1, ownerTeam, memberUser.id ?? "", ownerUser.id ?? "")).toBeFalsy();
+        expect(client.permission.canTeam(TeamActions.RemoveUser, mockSpace1, ownerTeam, memberUser.id ?? "")).toBeFalsy();
       });
 
       it("member user can't remove user to admin team", () => {
-        expect(client.permission.canTeam(TeamActions.RemoveUser, mockSpace1, adminTeam, memberUser.id ?? "", adminUser.id ?? "")).toBeFalsy();
+        expect(client.permission.canTeam(TeamActions.RemoveUser, mockSpace1, adminTeam, memberUser.id ?? "")).toBeFalsy();
       });
 
       it("member user can't remove user to normal team", () => {
-        expect(client.permission.canTeam(TeamActions.RemoveUser, mockSpace1, normalTeam, memberUser.id ?? "", memberUser.id ?? "")).toBeFalsy();
+        expect(client.permission.canTeam(TeamActions.RemoveUser, mockSpace1, normalTeam, memberUser.id ?? "")).toBeFalsy();
       });
     });
   });

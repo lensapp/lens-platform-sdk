@@ -39,9 +39,8 @@ export class PermissionsService extends Base {
    * @param targetUserId - User that is the target of the exection, e.g. user to be removed
    * @returns
    */
-  // eslint-disable-next-line max-params
-  canTeam(action: TeamActions, space: Space | SpaceEntity, team: Team | TeamEntity, forUserId: string, targetUserId?: string) {
-    return this.permissions.canTeam(action, space, team, forUserId, targetUserId);
+  canTeam(action: TeamActions, space: Space | SpaceEntity, team: Team | TeamEntity, forUserId: string) {
+    return this.permissions.canTeam(action, space, team, forUserId);
   }
 
   /**
