@@ -11,6 +11,8 @@ import {
 } from "../src/exceptions";
 import { License } from "../src/types/types";
 
+jest.setTimeout(10000);
+
 describe("UserService", () => {
   const [userBob, userAlice, userSteve, userAdam] = config.users;
   let bobPlatform: TestPlatform;
