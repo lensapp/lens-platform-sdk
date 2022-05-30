@@ -77,16 +77,19 @@ export const throwExpected = async <T = any>(fn: () => Promise<T>, exceptionsMap
 
       const mappedExceptionFn = exceptionsMap[httpStatusCode];
 
+      const data = error.response?.data as any | undefined;
+      const message = data?.message as string | undefined;
+
       if (mappedExceptionFn) {
         throw mappedExceptionFn(
           await toPlatformErrorResponse(error?.response),
         );
       } else if (httpStatusCode === 400) {
-        throw new BadRequestException(error.response?.data?.message, error);
+        throw new BadRequestException(message, error);
       } else if (httpStatusCode === 401) {
-        throw new UnauthorizedException(error.response?.data?.message, error);
+        throw new UnauthorizedException(message, error);
       } else if (httpStatusCode === 403) {
-        throw new ForbiddenException(error.response?.data?.message, error);
+        throw new ForbiddenException(message, error);
       }
     }
 
