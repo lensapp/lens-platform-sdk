@@ -12,21 +12,24 @@ import {
 import { License } from "../src/types/types";
 
 describe("UserService", () => {
-  const [userBob, userAlice, userSteve] = config.users;
+  const [userBob, userAlice, userSteve, userAdam] = config.users;
   let bobPlatform: TestPlatform;
   let alicePlatform: TestPlatform;
   let stevePlatform: TestPlatform;
+  let adamPlatform: TestPlatform;
 
   beforeAll(async () => {
     bobPlatform = await testPlatformFactory(userBob.username, userBob.password);
     alicePlatform = await testPlatformFactory(userAlice.username, userAlice.password);
     stevePlatform = await testPlatformFactory(userSteve.username, userSteve.password);
+    adamPlatform = await testPlatformFactory(userAdam.username, userAdam.password);
   });
 
   beforeEach(() => {
     bobPlatform.fakeToken = undefined;
     alicePlatform.fakeToken = undefined;
     stevePlatform.fakeToken = undefined;
+    adamPlatform.fakeToken = undefined;
   });
 
   describe("getOne", () => {
@@ -169,10 +172,10 @@ describe("UserService", () => {
         // Make sure the subscription is active
         try {
           const license: License = {
-            subscriptionId: userSteve.subscriptionId!,
+            subscriptionId: userAdam.subscriptionId!,
             type: "pro",
           };
-          await stevePlatform.client.user.activateSubscription({ username: userSteve.username, license });
+          await adamPlatform.client.user.activateSubscription({ username: userAdam.username, license });
         } catch (_: unknown) {}
       });
 
@@ -180,27 +183,27 @@ describe("UserService", () => {
         // Make sure the subscription is deactivated
         try {
           const license: License = {
-            subscriptionId: userSteve.subscriptionId!,
+            subscriptionId: userAdam.subscriptionId!,
             type: "pro",
           };
-          await stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license });
+          await adamPlatform.client.user.deactivateSubscription({ username: userAdam.username, license });
         } catch (_: unknown) {}
       });
 
       it("rejects requests with invalid username", async () => {
-        stevePlatform.fakeToken = undefined;
+        adamPlatform.fakeToken = undefined;
 
-        return expect(stevePlatform.client.user.deactivateSubscription({ username: "FAKE_USER", license: { subscriptionId: userSteve.subscriptionId! } }))
+        return expect(adamPlatform.client.user.deactivateSubscription({ username: "FAKE_USER", license: { subscriptionId: userAdam.subscriptionId! } }))
             .rejects.toThrowError(ForbiddenException);
       });
 
       it("rejects requests with invalid subscriptionId", async () =>
-          expect(stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license: { subscriptionId: "FAKE_SUBSCRIPTION" } }))
+          expect(adamPlatform.client.user.deactivateSubscription({ username: userAdam.username, license: { subscriptionId: "FAKE_SUBSCRIPTION" } }))
               .rejects.toThrowError(NotFoundException),
       );
 
       it("returns undefined after subscription deactivation", async () =>
-          expect(stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license: { subscriptionId: userSteve.subscriptionId! } }))
+          expect(adamPlatform.client.user.deactivateSubscription({ username: userAdam.username, license: { subscriptionId: userAdam.subscriptionId! } }))
               .resolves.toBeUndefined(),
       );
     });
