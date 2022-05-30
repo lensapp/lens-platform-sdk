@@ -8,7 +8,7 @@ import {
   UserNameNotFoundException,
   LensSDKException,
   TokenNotFoundException,
-  SubscriptionAlreadyExistsException,
+  SubscriptionAlreadyExistsException, BadRequestException,
 } from "./exceptions";
 import { License } from "./types/types";
 
@@ -148,17 +148,12 @@ class UserService extends Base {
             if (message.includes("User")) {
               return new UserNameNotFoundException(username);
             }
-
-            return new NotFoundException(`Recurly subscription ${license.subscriptionId} not found`);
           }
 
-          return new LensSDKException(
-            500,
-            `Unexpected exception [Lens Platform SDK]: ${error?.body.message}`,
-            error,
-          );
+          return new NotFoundException(`Recurly subscription ${license.subscriptionId} not found`);
         },
         409: () => new SubscriptionAlreadyExistsException(),
+        400: () => new BadRequestException(),
         403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
         422: error => new UnprocessableEntityException(error?.body.message),
       },
@@ -180,17 +175,12 @@ class UserService extends Base {
             if (message.includes("User")) {
               return new UserNameNotFoundException(username);
             }
-
-            return new NotFoundException(`Recurly subscription ${license.subscriptionId} not found`);
           }
 
-          return new LensSDKException(
-            500,
-            `Unexpected exception [Lens Platform SDK]: ${error?.body.message}`,
-            error,
-          );
+          return new NotFoundException(`Recurly subscription ${license.subscriptionId} not found`);
         },
         403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
+        400: () => new BadRequestException(),
         422: error => new UnprocessableEntityException(error?.body.message),
       },
     );

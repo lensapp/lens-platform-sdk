@@ -117,37 +117,41 @@ describe("UserService", () => {
         await bobPlatform.client.user.deactivateSubscription({ username: userBob.username, license })
       } catch (_: unknown) {}
     });
+
     it("rejects requests with invalid username", async () => {
       const license = {
         subscriptionId: userBob.subscriptionId!,
-        type: LicenseType.proMonthly,
+        type: "pro",
       };
       return expect(bobPlatform.client.user.activateSubscription({ username: "FAKE_USER", license }))
         .rejects.toThrowError(ForbiddenException);
     });
+
     it("rejects requests with invalid subscriptionId", async () => {
       const license = {
         subscriptionId: "FAKE_SUBSCRIPTION",
-        type: LicenseType.proMonthly,
+        type: "pro",
       };
 
       return expect(bobPlatform.client.user.activateSubscription({ username: userBob.username, license }))
         .rejects.toThrowError(NotFoundException);
     });
+
     it("rejects requests for already existing subscriptions", async () => {
       const license = {
         subscriptionId: userBob.subscriptionId!,
-        type: LicenseType.proMonthly,
+        type: "pro",
       };
 
       await bobPlatform.client.user.activateSubscription({ username: userBob.username, license });
       return expect(bobPlatform.client.user.activateSubscription({ username: userBob.username, license }))
         .rejects.toThrowError(ConflictException);
     });
+
     it("returns the activated license", async () => {
       const license = {
         subscriptionId: userBob.subscriptionId!,
-        type: LicenseType.proMonthly,
+        type: "pro",
       };
 
       const result = await bobPlatform.client.user.activateSubscription({ username: userBob.username, license });
@@ -161,7 +165,7 @@ describe("UserService", () => {
       try {
         const license = {
           subscriptionId: userBob.subscriptionId!,
-          type: LicenseType.proMonthly,
+          type: "pro",
         };
         await bobPlatform.client.user.deactivateSubscription({ username: userBob.username, license });
         await bobPlatform.client.user.activateSubscription({ username: userBob.username, license });
@@ -183,7 +187,7 @@ describe("UserService", () => {
       try {
         const license = {
           subscriptionId: userBob.subscriptionId!,
-          type: LicenseType.proMonthly,
+          type: "pro",
         };
         await bobPlatform.client.user.deactivateSubscription({ username: userBob.username, license });
         await bobPlatform.client.user.activateSubscription({ username: userBob.username, license });
