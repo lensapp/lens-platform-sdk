@@ -9,7 +9,7 @@ import {
   UsernameAlreadyExistsException,
   ConflictException,
 } from "../src/exceptions";
-import { LicenseType } from "../src/types/types";
+import {License, LicenseType} from "../src/types/types";
 
 describe("UserService", () => {
   const [userBob, userAlice, userSteve] = config.users;
@@ -122,18 +122,18 @@ describe("UserService", () => {
     });
 
     it("rejects requests with invalid username", async () => {
-      const license = {
+      const license: License = {
         subscriptionId: userSteve.subscriptionId!,
-        type: "pro" as LicenseType,
+        type: "pro",
       };
       return expect(stevePlatform.client.user.activateSubscription({ username: "FAKE_USER", license }))
         .rejects.toThrowError(ForbiddenException);
     });
 
     it("rejects requests with invalid subscriptionId", async () => {
-      const license = {
+      const license: License = {
         subscriptionId: "FAKE_SUBSCRIPTION",
-        type: "pro" as LicenseType,
+        type: "pro",
       };
 
       return expect(stevePlatform.client.user.activateSubscription({ username: userSteve.username, license }))
@@ -141,9 +141,9 @@ describe("UserService", () => {
     });
 
     it("rejects requests for already existing subscriptions", async () => {
-      const license = {
+      const license: License = {
         subscriptionId: userSteve.subscriptionId!,
-        type: "pro" as LicenseType,
+        type: "pro",
       };
 
       await stevePlatform.client.user.activateSubscription({ username: userSteve.username, license });
@@ -152,9 +152,9 @@ describe("UserService", () => {
     });
 
     it("returns the activated license", async () => {
-      const license = {
+      const license: License = {
         subscriptionId: userSteve.subscriptionId!,
-        type: "pro" as LicenseType,
+        type: "pro",
       };
 
       const result = await stevePlatform.client.user.activateSubscription({ username: userSteve.username, license });
@@ -167,9 +167,9 @@ describe("UserService", () => {
     beforeEach(async () => {
       // Make sure the subscription is active
       try {
-        const license = {
+        const license: License = {
           subscriptionId: userSteve.subscriptionId!,
-          type: "pro" as LicenseType,
+          type: "pro",
         };
         await stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license });
         await stevePlatform.client.user.activateSubscription({ username: userSteve.username, license });
@@ -182,16 +182,18 @@ describe("UserService", () => {
       return expect(stevePlatform.client.user.deactivateSubscription({ username: "FAKE_USER", license: { subscriptionId: userSteve.subscriptionId! } }))
         .rejects.toThrowError(ForbiddenException);
     });
+
     it("rejects requests with invalid subscriptionId", async () =>
       expect(stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license: { subscriptionId: "FAKE_SUBSCRIPTION" } }))
         .rejects.toThrowError(NotFoundException)
     );
+
     it("returns undefined after subscription deactivation", async () => {
       // Active the license
       try {
-        const license = {
+        const license: License = {
           subscriptionId: userSteve.subscriptionId!,
-          type: "pro" as LicenseType,
+          type: "pro",
         };
         await stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license });
         await stevePlatform.client.user.activateSubscription({ username: userSteve.username, license });
