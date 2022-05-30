@@ -9,7 +9,7 @@ import {
   UsernameAlreadyExistsException,
   ConflictException,
 } from "../src/exceptions";
-import {License, LicenseType} from "../src/types/types";
+import { License } from "../src/types/types";
 
 describe("UserService", () => {
   const [userBob, userAlice, userSteve] = config.users;
@@ -110,97 +110,99 @@ describe("UserService", () => {
     });
   });
 
-  describe("activateSubscription", () => {
-    beforeEach(async () => {
-      try {
-        // Make sure the subscription isn't yet active
-        const license = {
-          subscriptionId: userSteve.subscriptionId!,
-        };
-        await stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license })
-      } catch (_: unknown) {}
-    });
+  describe("License", () => {
+    describe("activateSubscription", () => {
+      beforeEach(async () => {
+        try {
+          // Make sure the subscription isn't yet active
+          const license = {
+            subscriptionId: userSteve.subscriptionId!,
+          };
+          await stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license })
+        } catch (_: unknown) {}
+      });
 
-    it("rejects requests with invalid username", async () => {
-      const license: License = {
-        subscriptionId: userSteve.subscriptionId!,
-        type: "pro",
-      };
-      return expect(stevePlatform.client.user.activateSubscription({ username: "FAKE_USER", license }))
-        .rejects.toThrowError(ForbiddenException);
-    });
-
-    it("rejects requests with invalid subscriptionId", async () => {
-      const license: License = {
-        subscriptionId: "FAKE_SUBSCRIPTION",
-        type: "pro",
-      };
-
-      return expect(stevePlatform.client.user.activateSubscription({ username: userSteve.username, license }))
-        .rejects.toThrowError(NotFoundException);
-    });
-
-    it("rejects requests for already existing subscriptions", async () => {
-      const license: License = {
-        subscriptionId: userSteve.subscriptionId!,
-        type: "pro",
-      };
-
-      await stevePlatform.client.user.activateSubscription({ username: userSteve.username, license });
-      return expect(stevePlatform.client.user.activateSubscription({ username: userSteve.username, license }))
-        .rejects.toThrowError(ConflictException);
-    });
-
-    it("returns the activated license", async () => {
-      const license: License = {
-        subscriptionId: userSteve.subscriptionId!,
-        type: "pro",
-      };
-
-      const result = await stevePlatform.client.user.activateSubscription({ username: userSteve.username, license });
-
-      expect(result).toEqual(license);
-    });
-  });
-
-  describe("deactivateSubscription", () => {
-    beforeEach(async () => {
-      // Make sure the subscription is active
-      try {
+      it("rejects requests with invalid username", async () => {
         const license: License = {
           subscriptionId: userSteve.subscriptionId!,
           type: "pro",
         };
+        return expect(stevePlatform.client.user.activateSubscription({ username: "FAKE_USER", license }))
+            .rejects.toThrowError(ForbiddenException);
+      });
+
+      it("rejects requests with invalid subscriptionId", async () => {
+        const license: License = {
+          subscriptionId: "FAKE_SUBSCRIPTION",
+          type: "pro",
+        };
+
+        return expect(stevePlatform.client.user.activateSubscription({ username: userSteve.username, license }))
+            .rejects.toThrowError(NotFoundException);
+      });
+
+      it("rejects requests for already existing subscriptions", async () => {
+        const license: License = {
+          subscriptionId: userSteve.subscriptionId!,
+          type: "pro",
+        };
+
         await stevePlatform.client.user.activateSubscription({ username: userSteve.username, license });
-      } catch (_: unknown) {}
-    });
+        return expect(stevePlatform.client.user.activateSubscription({ username: userSteve.username, license }))
+            .rejects.toThrowError(ConflictException);
+      });
 
-    afterEach(async () => {
-      // Make sure the subscription is deactivated
-      try {
+      it("returns the activated license", async () => {
         const license: License = {
           subscriptionId: userSteve.subscriptionId!,
           type: "pro",
         };
-        await stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license });
-      } catch (_: unknown) {}
+
+        const result = await stevePlatform.client.user.activateSubscription({ username: userSteve.username, license });
+
+        expect(result).toEqual(license);
+      });
     });
 
-    it("rejects requests with invalid username", async () => {
-      stevePlatform.fakeToken = undefined;
+    describe("deactivateSubscription", () => {
+      beforeEach(async () => {
+        // Make sure the subscription is active
+        try {
+          const license: License = {
+            subscriptionId: userSteve.subscriptionId!,
+            type: "pro",
+          };
+          await stevePlatform.client.user.activateSubscription({ username: userSteve.username, license });
+        } catch (_: unknown) {}
+      });
 
-      return expect(stevePlatform.client.user.deactivateSubscription({ username: "FAKE_USER", license: { subscriptionId: userSteve.subscriptionId! } }))
-        .rejects.toThrowError(ForbiddenException);
+      afterEach(async () => {
+        // Make sure the subscription is deactivated
+        try {
+          const license: License = {
+            subscriptionId: userSteve.subscriptionId!,
+            type: "pro",
+          };
+          await stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license });
+        } catch (_: unknown) {}
+      });
+
+      it("rejects requests with invalid username", async () => {
+        stevePlatform.fakeToken = undefined;
+
+        return expect(stevePlatform.client.user.deactivateSubscription({ username: "FAKE_USER", license: { subscriptionId: userSteve.subscriptionId! } }))
+            .rejects.toThrowError(ForbiddenException);
+      });
+
+      it("rejects requests with invalid subscriptionId", async () =>
+          expect(stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license: { subscriptionId: "FAKE_SUBSCRIPTION" } }))
+              .rejects.toThrowError(NotFoundException),
+      );
+
+      it("returns undefined after subscription deactivation", async () =>
+          expect(stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license: { subscriptionId: userSteve.subscriptionId! } }))
+              .resolves.toBeUndefined(),
+      );
     });
-
-    it("rejects requests with invalid subscriptionId", async () =>
-      expect(stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license: { subscriptionId: "FAKE_SUBSCRIPTION" } }))
-        .rejects.toThrowError(NotFoundException),
-    );
-
-    it("returns undefined after subscription deactivation", async () =>
-      expect(stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license: { subscriptionId: userSteve.subscriptionId! } }))
-        .resolves.toBeUndefined(),
-    );
   });
 });
