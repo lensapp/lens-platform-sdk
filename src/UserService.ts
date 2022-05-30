@@ -153,7 +153,7 @@ class UserService extends Base {
           return new NotFoundException(`Recurly subscription ${license.subscriptionId} not found`);
         },
         409: () => new SubscriptionAlreadyExistsException(),
-        400: () => new BadRequestException(),
+        400: error => new BadRequestException(error?.body.message),
         403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
         422: error => new UnprocessableEntityException(error?.body.message),
       },

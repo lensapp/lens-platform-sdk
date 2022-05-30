@@ -11,12 +11,16 @@ export const config = {
     {
       username: getEnvironmentalVariable("STAGING_USERNAME_1"),
       password: getEnvironmentalVariable("STAGING_PASSWORD_1"),
-      subscriptionId: getEnvironmentalVariable("STAGING_SUBSCRIPTION_ID_1"),
     },
     {
       username: getEnvironmentalVariable("STAGING_USERNAME_2"),
-      password: getEnvironmentalVariable("STAGING_PASSWORD_2")
-    }
+      password: getEnvironmentalVariable("STAGING_PASSWORD_2"),
+    },
+    {
+      username: getEnvironmentalVariable("STAGING_USERNAME_3"),
+      password: getEnvironmentalVariable("STAGING_PASSWORD_3"),
+      subscriptionId: getEnvironmentalVariable("STAGING_SUBSCRIPTION_ID_1"),
+    },
   ],
   keyCloakAddress: getEnvironmentalVariable("KEYCLOAK_ADDRESS"),
   keycloakClientId: "lens-extension",
