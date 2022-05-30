@@ -28,9 +28,9 @@ export interface LensPlatformClientOptions {
   httpAdapter?: boolean;
   logLevel?: "error" | "silent" | "debug";
   /**
-   * Proxy options to be passed to axios.
+   * Proxy configs to be passed to axios.
    */
-  proxyOptions?: AxiosProxyConfig;
+  proxyConfigs?: AxiosProxyConfig;
 }
 
 type RequestHeaders = Record<string, string>;
@@ -85,7 +85,7 @@ class LensPlatformClient {
   apiEndpointAddress: LensPlatformClientOptions["apiEndpointAddress"];
   httpAdapter: LensPlatformClientOptions["httpAdapter"];
   logLevel: LensPlatformClientOptions["logLevel"];
-  proxyOptions: LensPlatformClientOptions["proxyOptions"];
+  proxyConfigs: LensPlatformClientOptions["proxyConfigs"];
   logger: pino.Logger;
   user: UserService;
   space: SpaceService;
@@ -103,7 +103,7 @@ class LensPlatformClient {
       throw new Error(`Options can not be ${options}`);
     }
 
-    const { accessToken, getAccessToken, httpAdapter, proxyOptions } = options;
+    const { accessToken, getAccessToken, httpAdapter, proxyConfigs } = options;
 
     if (!accessToken && !getAccessToken) {
       throw new Error(`Both accessToken ${accessToken} or getAccessToken are ${getAccessToken}`);
@@ -114,7 +114,7 @@ class LensPlatformClient {
 
     this.accessToken = accessToken;
     this.httpAdapter = httpAdapter;
-    this.proxyOptions = proxyOptions;
+    this.proxyConfigs = proxyConfigs;
     this.getAccessToken = getAccessToken;
     this.keyCloakAddress = options.keyCloakAddress;
     this.keycloakRealm = options.keycloakRealm;
@@ -163,7 +163,7 @@ class LensPlatformClient {
    */
   get fetch() {
     const getToken = this.getToken.bind(this);
-    const { defaultHeaders, httpAdapter, logger, proxyOptions } = this;
+    const { defaultHeaders, httpAdapter, logger, proxyConfigs } = this;
     const proxy = new Proxy(axios, {
       get(target: RequestLibrary, key: KeyOfRequestLibrary) {
         const prop = target[key];
@@ -201,10 +201,10 @@ class LensPlatformClient {
                 ...defaultHeaders,
               };
 
-              const requestOptions = {
+              const requestOptions: RequestOptions = {
                 headers: requestHeaders,
                 ...(httpAdapter ? { adapter: axiosHttpAdapter } : {}),
-                ...(proxyOptions ? { proxy: proxyOptions } : {}),
+                ...(proxyConfigs ? { proxy: proxyConfigs } : {}),
                 // Merge options
                 ...restOptions,
               };
