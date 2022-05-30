@@ -171,8 +171,18 @@ describe("UserService", () => {
           subscriptionId: userSteve.subscriptionId!,
           type: "pro",
         };
-        await stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license });
         await stevePlatform.client.user.activateSubscription({ username: userSteve.username, license });
+      } catch (_: unknown) {}
+    });
+
+    afterEach(async () => {
+      // Make sure the subscription is deactivated
+      try {
+        const license: License = {
+          subscriptionId: userSteve.subscriptionId!,
+          type: "pro",
+        };
+        await stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license });
       } catch (_: unknown) {}
     });
 
@@ -185,22 +195,12 @@ describe("UserService", () => {
 
     it("rejects requests with invalid subscriptionId", async () =>
       expect(stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license: { subscriptionId: "FAKE_SUBSCRIPTION" } }))
-        .rejects.toThrowError(NotFoundException)
+        .rejects.toThrowError(NotFoundException),
     );
 
-    it("returns undefined after subscription deactivation", async () => {
-      // Active the license
-      try {
-        const license: License = {
-          subscriptionId: userSteve.subscriptionId!,
-          type: "pro",
-        };
-        await stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license });
-        await stevePlatform.client.user.activateSubscription({ username: userSteve.username, license });
-      } catch (_: unknown) {}
-
-      return expect(stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license: { subscriptionId: userSteve.subscriptionId! } }))
-        .resolves.toBeUndefined();
-    });
+    it("returns undefined after subscription deactivation", async () =>
+      expect(stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license: { subscriptionId: userSteve.subscriptionId! } }))
+        .resolves.toBeUndefined(),
+    );
   });
 });
