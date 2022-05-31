@@ -6,22 +6,32 @@ import {
   ForbiddenException,
   NotFoundException,
   UnauthorizedException,
-  UsernameAlreadyExistsException
+  UsernameAlreadyExistsException,
+  ConflictException,
 } from "../src/exceptions";
+import { License } from "../src/types/types";
+
+jest.setTimeout(10000);
 
 describe("UserService", () => {
-  const [userBob, userAlice] = config.users;
+  const [userBob, userAlice, userSteve, userAdam] = config.users;
   let bobPlatform: TestPlatform;
   let alicePlatform: TestPlatform;
+  let stevePlatform: TestPlatform;
+  let adamPlatform: TestPlatform;
 
   beforeAll(async () => {
     bobPlatform = await testPlatformFactory(userBob.username, userBob.password);
     alicePlatform = await testPlatformFactory(userAlice.username, userAlice.password);
+    stevePlatform = await testPlatformFactory(userSteve.username, userSteve.password);
+    adamPlatform = await testPlatformFactory(userAdam.username, userAdam.password);
   });
 
   beforeEach(() => {
     bobPlatform.fakeToken = undefined;
     alicePlatform.fakeToken = undefined;
+    stevePlatform.fakeToken = undefined;
+    adamPlatform.fakeToken = undefined;
   });
 
   describe("getOne", () => {
@@ -102,6 +112,102 @@ describe("UserService", () => {
     it("can get self", async () => {
       const user = await bobPlatform.client.user.getSelf();
       expect(user.username).toEqual(userBob.username);
+    });
+  });
+
+  describe("License", () => {
+    describe("activateSubscription", () => {
+      beforeEach(async () => {
+        try {
+          // Make sure the subscription isn't yet active
+          const license = {
+            subscriptionId: userSteve.subscriptionId!,
+          };
+          await stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license })
+        } catch (_: unknown) {}
+      });
+
+      it.skip("rejects requests with invalid username", async () => {
+        const license: License = {
+          subscriptionId: userSteve.subscriptionId!,
+          type: "pro",
+        };
+        return expect(stevePlatform.client.user.activateSubscription({ username: "FAKE_USER", license }))
+            .rejects.toThrowError(ForbiddenException);
+      });
+
+      it.skip("rejects requests with invalid subscriptionId", async () => {
+        const license: License = {
+          subscriptionId: "FAKE_SUBSCRIPTION",
+          type: "pro",
+        };
+
+        return expect(stevePlatform.client.user.activateSubscription({ username: userSteve.username, license }))
+            .rejects.toThrowError(NotFoundException);
+      });
+
+      it.skip("rejects requests for already existing subscriptions", async () => {
+        const license: License = {
+          subscriptionId: userSteve.subscriptionId!,
+          type: "pro",
+        };
+
+        await stevePlatform.client.user.activateSubscription({ username: userSteve.username, license });
+        return expect(stevePlatform.client.user.activateSubscription({ username: userSteve.username, license }))
+            .rejects.toThrowError(ConflictException);
+      });
+
+      it("returns the activated license", async () => {
+        const license: License = {
+          subscriptionId: userSteve.subscriptionId!,
+          type: "pro",
+        };
+
+        const result = await stevePlatform.client.user.activateSubscription({ username: userSteve.username, license });
+
+        expect(result).toEqual(license);
+      });
+    });
+
+    describe("deactivateSubscription", () => {
+      beforeEach(async () => {
+        // Make sure the subscription is active
+        try {
+          const license: License = {
+            subscriptionId: userAdam.subscriptionId!,
+            type: "pro",
+          };
+          await adamPlatform.client.user.activateSubscription({ username: userAdam.username, license });
+        } catch (_: unknown) {}
+      });
+
+      afterEach(async () => {
+        // Make sure the subscription is deactivated
+        try {
+          const license: License = {
+            subscriptionId: userAdam.subscriptionId!,
+            type: "pro",
+          };
+          await adamPlatform.client.user.deactivateSubscription({ username: userAdam.username, license });
+        } catch (_: unknown) {}
+      });
+
+      it.skip("rejects requests with invalid username", async () => {
+        adamPlatform.fakeToken = undefined;
+
+        return expect(adamPlatform.client.user.deactivateSubscription({ username: "FAKE_USER", license: { subscriptionId: userAdam.subscriptionId! } }))
+            .rejects.toThrowError(ForbiddenException);
+      });
+
+      it.skip("rejects requests with invalid subscriptionId", async () =>
+          expect(adamPlatform.client.user.deactivateSubscription({ username: userAdam.username, license: { subscriptionId: "FAKE_SUBSCRIPTION" } }))
+              .rejects.toThrowError(NotFoundException),
+      );
+
+      it("returns undefined after subscription deactivation", async () =>
+          expect(adamPlatform.client.user.deactivateSubscription({ username: userAdam.username, license: { subscriptionId: userAdam.subscriptionId! } }))
+              .resolves.toBeUndefined(),
+      );
     });
   });
 });

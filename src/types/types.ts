@@ -12,3 +12,10 @@ export interface EntityType {
 }
 
 export type MapToEntity<Type extends EntityType> = MapPropsToDate<Type, "createdAt" | "updatedAt">;
+
+export type LicenseType = "pro" | "personal" | "pro-trial";
+
+export type License = {
+  type: LicenseType;
+  subscriptionId: string;
+};

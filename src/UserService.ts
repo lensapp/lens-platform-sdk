@@ -8,7 +8,9 @@ import {
   UserNameNotFoundException,
   LensSDKException,
   TokenNotFoundException,
+  SubscriptionAlreadyExistsException, BadRequestException,
 } from "./exceptions";
+import { License } from "./types/types";
 
 /**
  *
@@ -128,6 +130,57 @@ class UserService extends Base {
           );
         },
         404: () => new UserNameNotFoundException(username),
+        422: error => new UnprocessableEntityException(error?.body.message),
+      },
+    );
+  }
+
+  async activateSubscription({ username, license }: { username: string; license: License }): Promise<License> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/users/${username}/licenses`;
+    const json = await throwExpected(
+      async () => fetch.post(url, license),
+      {
+        404: error => {
+          const message = error?.body.message;
+
+          if (typeof message === "string") {
+            if (message.includes("User")) {
+              return new UserNameNotFoundException(username);
+            }
+          }
+
+          return new NotFoundException(`Recurly subscription ${license.subscriptionId} not found`);
+        },
+        409: () => new SubscriptionAlreadyExistsException(),
+        400: error => new BadRequestException(error?.body.message),
+        403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
+        422: error => new UnprocessableEntityException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as License;
+  }
+
+  async deactivateSubscription({ username, license }: { username: string; license: Pick<License, "subscriptionId"> }): Promise<void> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/users/${username}/licenses/${license.subscriptionId}`;
+    await throwExpected(
+      async () => fetch.delete(url),
+      {
+        404: error => {
+          const message = error?.body.message;
+
+          if (typeof message === "string") {
+            if (message.includes("User")) {
+              return new UserNameNotFoundException(username);
+            }
+          }
+
+          return new NotFoundException(`Recurly subscription ${license.subscriptionId} not found`);
+        },
+        403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
+        400: () => new BadRequestException(),
         422: error => new UnprocessableEntityException(error?.body.message),
       },
     );
