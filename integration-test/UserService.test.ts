@@ -127,7 +127,7 @@ describe("UserService", () => {
         } catch (_: unknown) {}
       });
 
-      it("rejects requests with invalid username", async () => {
+      it.skip("rejects requests with invalid username", async () => {
         const license: License = {
           subscriptionId: userSteve.subscriptionId!,
           type: "pro",
@@ -136,7 +136,7 @@ describe("UserService", () => {
             .rejects.toThrowError(ForbiddenException);
       });
 
-      it("rejects requests with invalid subscriptionId", async () => {
+      it.skip("rejects requests with invalid subscriptionId", async () => {
         const license: License = {
           subscriptionId: "FAKE_SUBSCRIPTION",
           type: "pro",
@@ -146,7 +146,7 @@ describe("UserService", () => {
             .rejects.toThrowError(NotFoundException);
       });
 
-      it("rejects requests for already existing subscriptions", async () => {
+      it.skip("rejects requests for already existing subscriptions", async () => {
         const license: License = {
           subscriptionId: userSteve.subscriptionId!,
           type: "pro",
@@ -192,14 +192,14 @@ describe("UserService", () => {
         } catch (_: unknown) {}
       });
 
-      it("rejects requests with invalid username", async () => {
+      it.skip("rejects requests with invalid username", async () => {
         adamPlatform.fakeToken = undefined;
 
         return expect(adamPlatform.client.user.deactivateSubscription({ username: "FAKE_USER", license: { subscriptionId: userAdam.subscriptionId! } }))
             .rejects.toThrowError(ForbiddenException);
       });
 
-      it("rejects requests with invalid subscriptionId", async () =>
+      it.skip("rejects requests with invalid subscriptionId", async () =>
           expect(adamPlatform.client.user.deactivateSubscription({ username: userAdam.username, license: { subscriptionId: "FAKE_SUBSCRIPTION" } }))
               .rejects.toThrowError(NotFoundException),
       );
