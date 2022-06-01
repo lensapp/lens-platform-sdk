@@ -167,6 +167,18 @@ describe("UserService", () => {
 
         expect(result).toEqual(license);
       });
+
+      it("returns the activated personal license", async () => {
+        const license: License = {
+          subscriptionId: "",
+          type: "personal",
+          personalLicenseEligibilityAccepted: true,
+        };
+
+        const result = await stevePlatform.client.user.activateSubscription({ username: userSteve.username, license });
+
+        expect(result).toEqual(license);
+      });
     });
 
     describe("deactivateSubscription", () => {
