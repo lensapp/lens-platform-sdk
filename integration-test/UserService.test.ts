@@ -210,4 +210,16 @@ describe("UserService", () => {
       );
     });
   });
+
+  describe("getBillingPageToken", () => {
+    it("rejects requests with invalid username", async () =>
+      expect(bobPlatform.client.user.getBillingPageToken({ username: "FAKE_USER" }))
+        .rejects.toThrowError(ForbiddenException)
+    );
+    it("returns the billing page token", async () => {
+      const token = await bobPlatform.client.user.getBillingPageToken({ username: userBob.username });
+      expect(token).toHaveProperty("hostedLoginToken");
+      expect(typeof token.hostedLoginToken).toBe("string");
+    });
+  });
 });
