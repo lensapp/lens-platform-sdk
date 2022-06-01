@@ -14,9 +14,7 @@ import { License } from "../src/types/types";
 jest.setTimeout(10000);
 
 describe("UserService", () => {
-  const [userBob, userAlice, userSteve, userAdam] = config.users;
-  // TODO: Create user for Erin
-  const userErin = userSteve;
+  const [userBob, userAlice, userSteve, userAdam, userErin] = config.users;
   let bobPlatform: TestPlatform;
   let alicePlatform: TestPlatform;
   let stevePlatform: TestPlatform;
