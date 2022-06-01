@@ -18,4 +18,5 @@ export type LicenseType = "pro" | "personal" | "pro-trial";
 export type License = {
   type: LicenseType;
   subscriptionId: string;
+  personalLicenseEligibilityAccepted?: boolean;
 };
