@@ -15,16 +15,20 @@ jest.setTimeout(10000);
 
 describe("UserService", () => {
   const [userBob, userAlice, userSteve, userAdam] = config.users;
+  // TODO: Create user for Erin
+  const userErin = userSteve;
   let bobPlatform: TestPlatform;
   let alicePlatform: TestPlatform;
   let stevePlatform: TestPlatform;
   let adamPlatform: TestPlatform;
+  let erinPlatform: TestPlatform;
 
   beforeAll(async () => {
     bobPlatform = await testPlatformFactory(userBob.username, userBob.password);
     alicePlatform = await testPlatformFactory(userAlice.username, userAlice.password);
     stevePlatform = await testPlatformFactory(userSteve.username, userSteve.password);
     adamPlatform = await testPlatformFactory(userAdam.username, userAdam.password);
+    erinPlatform = await testPlatformFactory(userErin.username, userErin.password);
   });
 
   beforeEach(() => {
@@ -32,6 +36,7 @@ describe("UserService", () => {
     alicePlatform.fakeToken = undefined;
     stevePlatform.fakeToken = undefined;
     adamPlatform.fakeToken = undefined;
+    erinPlatform.fakeToken = undefined;
   });
 
   describe("getOne", () => {
@@ -213,11 +218,11 @@ describe("UserService", () => {
 
   describe("getBillingPageToken", () => {
     it("rejects requests with invalid username", async () =>
-      expect(bobPlatform.client.user.getBillingPageToken({ username: "FAKE_USER" }))
+      expect(erinPlatform.client.user.getBillingPageToken({ username: "FAKE_USER" }))
         .rejects.toThrowError(ForbiddenException)
     );
     it("returns the billing page token", async () => {
-      const token = await bobPlatform.client.user.getBillingPageToken({ username: userBob.username });
+      const token = await erinPlatform.client.user.getBillingPageToken({ username: userErin.username });
       expect(token).toHaveProperty("hostedLoginToken");
       expect(typeof token.hostedLoginToken).toBe("string");
     });
