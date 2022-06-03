@@ -216,11 +216,11 @@ describe("UserService", () => {
 
   describe("getBillingPageToken", () => {
     it("rejects requests with invalid username", async () =>
-      expect(erinPlatform.client.user.getBillingPageToken({ username: "FAKE_USER" }))
+      expect(erinPlatform.client.user.getBillingPageToken("FAKE_USER"))
         .rejects.toThrowError(ForbiddenException)
     );
     it("returns the billing page token", async () => {
-      const token = await erinPlatform.client.user.getBillingPageToken({ username: userErin.username });
+      const token = await erinPlatform.client.user.getBillingPageToken(userErin.username);
       expect(token).toHaveProperty("hostedLoginToken");
       expect(typeof token.hostedLoginToken).toBe("string");
     });

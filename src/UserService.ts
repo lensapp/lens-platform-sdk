@@ -191,7 +191,7 @@ class UserService extends Base {
     );
   }
 
-  async getBillingPageToken({ username }: { username: string }): Promise<BillingPageToken> {
+  async getBillingPageToken(username: string): Promise<BillingPageToken> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/billing-page-token`;
     const json = await throwExpected(
