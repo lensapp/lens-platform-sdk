@@ -33,6 +33,10 @@ export interface User {
 
 type UserWithEmail = User & { email: string };
 
+type BillingPageToken = {
+  hostedLoginToken: string;
+};
+
 export interface UserAttributes {
   fullname?: string;
   company?: string;
@@ -45,6 +49,7 @@ export interface UserAttributes {
  *
  * currently we have:
  * - `.getOne` maps to `GET /users/{username}`
+ * - `.getBillingPageToken` maps to `GET /users/{username}/billing-page-token`
  *
  * @remarks
  * This class should be generated using OpenAPI in the future.
@@ -184,6 +189,20 @@ class UserService extends Base {
         422: error => new UnprocessableEntityException(error?.body.message),
       },
     );
+  }
+
+  async getBillingPageToken(username: string): Promise<BillingPageToken> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/users/${username}/billing-page-token`;
+    const json = await throwExpected(
+      async () => fetch.get(url),
+      { 404: () => new NotFoundException(`User ${username} not found`),
+        403: () => new ForbiddenException(`Getting the billing page token for ${username} is forbidden`),
+        422: error => new UnprocessableEntityException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as BillingPageToken;
   }
 }
 
