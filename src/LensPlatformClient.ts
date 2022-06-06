@@ -10,6 +10,8 @@ import axios, { type AxiosRequestConfig, type AxiosProxyConfig } from "axios";
 import pino from "pino";
 import decode from "jwt-decode";
 import { UserRolesService } from "./UserRolesService";
+import http from "http";
+import https from "https";
 
 // Axios defaults to xhr adapter if XMLHttpRequest is available.
 // LensPlatformClient supports using the http adapter if httpAdapter
@@ -31,6 +33,14 @@ export interface LensPlatformClientOptions {
    * Proxy configs to be passed to axios.
    */
   proxyConfigs?: AxiosProxyConfig;
+  /**
+   * HTTP agent to be used by axios.
+   */
+  httpAgent?: http.Agent;
+  /**
+   * HTTPS agent to be used by axios.
+   */
+  httpsAgent?: https.Agent;
 }
 
 type RequestHeaders = Record<string, string>;
@@ -86,6 +96,8 @@ class LensPlatformClient {
   httpAdapter: LensPlatformClientOptions["httpAdapter"];
   logLevel: LensPlatformClientOptions["logLevel"];
   proxyConfigs: LensPlatformClientOptions["proxyConfigs"];
+  httpAgent: LensPlatformClientOptions["httpAgent"];
+  httpsAgent: LensPlatformClientOptions["httpsAgent"];
   logger: pino.Logger;
   user: UserService;
   space: SpaceService;
@@ -103,7 +115,7 @@ class LensPlatformClient {
       throw new Error(`Options can not be ${options}`);
     }
 
-    const { accessToken, getAccessToken, httpAdapter, proxyConfigs } = options;
+    const { accessToken, getAccessToken, httpAdapter, proxyConfigs, httpAgent, httpsAgent } = options;
 
     if (!accessToken && !getAccessToken) {
       throw new Error(`Both accessToken ${accessToken} or getAccessToken are ${getAccessToken}`);
@@ -115,6 +127,8 @@ class LensPlatformClient {
     this.accessToken = accessToken;
     this.httpAdapter = httpAdapter;
     this.proxyConfigs = proxyConfigs;
+    this.httpAgent = httpAgent;
+    this.httpsAgent = httpsAgent;
     this.getAccessToken = getAccessToken;
     this.keyCloakAddress = options.keyCloakAddress;
     this.keycloakRealm = options.keycloakRealm;
@@ -163,7 +177,7 @@ class LensPlatformClient {
    */
   get fetch() {
     const getToken = this.getToken.bind(this);
-    const { defaultHeaders, httpAdapter, logger, proxyConfigs } = this;
+    const { defaultHeaders, httpAdapter, logger, proxyConfigs, httpAgent, httpsAgent } = this;
     const proxy = new Proxy(axios, {
       get(target: RequestLibrary, key: KeyOfRequestLibrary) {
         const prop = target[key];
@@ -205,6 +219,8 @@ class LensPlatformClient {
                 headers: requestHeaders,
                 ...(httpAdapter ? { adapter: axiosHttpAdapter } : {}),
                 ...(proxyConfigs ? { proxy: proxyConfigs } : {}),
+                ...(httpAgent ? { httpAgent } : {}),
+                ...(httpsAgent ? { httpsAgent } : {}),
                 // Merge options
                 ...restOptions,
               };
