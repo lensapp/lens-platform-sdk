@@ -5,6 +5,8 @@ Lens Platform Client SDK
 Use SDK in Lens extension:
 
 ```ts
+import http from "http";
+import https from "https";
 import { LensPlatformClient } from "lens-platform-sdk";
 import { Component } from "@k8slens/extensions";
 
@@ -22,6 +24,8 @@ const lensPlatformClient = new LensPlatformClient({
     apiEndpointAddress: "", // api endpoint address, e.g. "https://api.k8slens.dev"
     httpAdapter: false // Optional, defaults to false. If true, the axios HTTP adapter is used instead of xhr
     logLevel: "debug" // Optional, defaults to 'silent'. Options are 'silent' | 'debug' | 'error'
+    httpAgent: new http.Agent() // Optional, your own instance of HTTP agent.
+    httpsAgent: new https.Agent() // Optional, your own instance of HTTPS agent.
 });
 ```
 
@@ -36,6 +40,7 @@ npm run lint
 ## Using the SDK in Electron
 
 You will need to change the Axios HTTP adapter to use Node to get around CORS issues:
+
 ```
 // Set in LensPlatformClient options:
 httpAdapter: true
@@ -86,4 +91,3 @@ Copyright (c) 2021 Mirantis, Inc.
 
 Licensed under the MIT license.
 <https://opensource.org/licenses/MIT>
-
