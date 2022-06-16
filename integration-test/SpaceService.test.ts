@@ -8,7 +8,7 @@ import {
   SpaceNotFoundException,
   ForbiddenException,
   NotFoundException,
-  ClusterNotFoundException
+  ClusterNotFoundException,
 } from "../src/exceptions";
 
 const TEST_SPACE_NAME = "test-space";
@@ -50,7 +50,7 @@ describe("SpaceService", () => {
     beforeAll(async () => {
       existingSpace = await testPlatformBob.client.space.createOne({
         name: `sdk-e2e-test-${rng()}`,
-        description: "Test space for createOne function"
+        description: "Test space for createOne function",
       });
     });
 
@@ -78,11 +78,11 @@ describe("SpaceService", () => {
     beforeAll(async () => {
       bobSpace = await testPlatformBob.client.space.createOne({
         name: `sdk-e2e-${rng()}`,
-        description: "Test space for getOne function"
+        description: "Test space for getOne function",
       });
       aliceSpace = await testPlatformAlice.client.space.createOne({
         name: `sdk-e2e-${rng()}`,
-        description: "Test space for getOne function"
+        description: "Test space for getOne function",
       });
     });
 
@@ -121,11 +121,11 @@ describe("SpaceService", () => {
     beforeAll(async () => {
       bobSpace = await testPlatformBob.client.space.createOne({
         name: `sdk-e2e-${rng()}`,
-        description: "Test space for getOne function"
+        description: "Test space for getOne function",
       });
       aliceSpace = await testPlatformAlice.client.space.createOne({
         name: `sdk-e2e-${rng()}`,
-        description: "Test space for getOne function"
+        description: "Test space for getOne function",
       });
     });
 
@@ -151,7 +151,7 @@ describe("SpaceService", () => {
         id: expect.any(String),
         domain,
         spaceId: bobSpace.id,
-        updatedAt: expect.any(String)
+        updatedAt: expect.any(String),
       });
 
       const invitationDomains = await testPlatformBob.client.space.getInvitationDomains({ name: bobSpace.name });
@@ -162,7 +162,7 @@ describe("SpaceService", () => {
         id: expect.any(String),
         domain,
         spaceId: bobSpace.id,
-        updatedAt: expect.any(String)
+        updatedAt: expect.any(String),
       }]);
 
       await testPlatformBob.client.space.deleteInvitationDomain({ name: bobSpace.name, invitationDomainId: invitationDomains[0].id });
@@ -185,7 +185,7 @@ describe("SpaceService", () => {
     beforeAll(async () => {
       aliceSpace = await testPlatformAlice.client.space.createOne({
         name: spaceName,
-        description: "Test space for getOne function"
+        description: "Test space for getOne function",
       });
       aliceCluster = await testPlatformAlice.client.space.createOneCluster({
         name: spaceName,
@@ -193,15 +193,15 @@ describe("SpaceService", () => {
           name: `${spaceName}-cluster`,
           description: "Integration Test Cluster Description",
           kind: "K8sCluster",
-          region: "eu"
-        }
+          region: "eu",
+        },
       });
     });
 
     afterAll(async () => {
       if (aliceCluster) {
         await testPlatformAlice.client.space.deleteOneCluster({
-          name: aliceSpace.name, clusterId: aliceCluster.id!
+          name: aliceSpace.name, clusterId: aliceCluster.id!,
         });
       }
 
@@ -228,7 +228,7 @@ describe("SpaceService", () => {
     beforeAll(async () => {
       aliceSpace = await testPlatformAlice.client.space.createOne({
         name: spaceName,
-        description: "Test space for getOne function"
+        description: "Test space for getOne function",
       });
       aliceCluster = await testPlatformAlice.client.space.createOneCluster({
         name: spaceName,
@@ -236,15 +236,15 @@ describe("SpaceService", () => {
           name: `${spaceName}-cluster`,
           description: "Integration Test Cluster Description",
           kind: "K8sCluster",
-          region: "eu"
-        }
+          region: "eu",
+        },
       });
     });
 
     afterAll(async () => {
       if (aliceCluster) {
         await testPlatformAlice.client.space.deleteOneCluster({
-          name: aliceSpace.name, clusterId: aliceCluster.id!
+          name: aliceSpace.name, clusterId: aliceCluster.id!,
         });
       }
 
@@ -270,11 +270,11 @@ describe("SpaceService", () => {
     beforeAll(async () => {
       bobSpace = await testPlatformBob.client.space.createOne({
         name: `sdk-e2e-${rng()}`,
-        description: "Test space for updateOne function"
+        description: "Test space for updateOne function",
       });
       aliceSpace = await testPlatformAlice.client.space.createOne({
         name: `sdk-e2e-${rng()}`,
-        description: "Test space for updateOne function"
+        description: "Test space for updateOne function",
       });
     });
 
@@ -295,8 +295,8 @@ describe("SpaceService", () => {
         .rejects.toThrowError(UnauthorizedException);
     });
 
-    it("rejects when space already exists", async () => expect(testPlatformBob.client.space.updateOne(bobSpace.name, { name: aliceSpace.name }))
-      .rejects.toThrowError(SpaceNameReservedException));
+    it("rejects when trying to rename space", async () => expect(testPlatformBob.client.space.updateOne(bobSpace.name, { name: aliceSpace.name }))
+      .rejects.toThrowError(ForbiddenException));
 
     it("rejects when trying to modify space without permissions", async () => expect(testPlatformBob.client.space.updateOne(aliceSpace.name, { name: aliceSpace.name, description: "Pwned by Bob" }))
       .rejects.toThrowError(ForbiddenException));
@@ -309,7 +309,7 @@ describe("SpaceService", () => {
       testPlatformBob.fakeToken = undefined;
       existingSpace = await testPlatformBob.client.space.createOne({
         name: `sdk-e2e-test-${rng()}`,
-        description: "Test space for createCatalogApi function"
+        description: "Test space for createCatalogApi function",
       });
     });
 
