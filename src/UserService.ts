@@ -31,7 +31,7 @@ export interface User {
   }>;
 }
 
-type UserWithEmail = User & { email: string };
+export type UserWithEmail = User & { email: string };
 
 type BillingPageToken = {
   hostedLoginToken: string;

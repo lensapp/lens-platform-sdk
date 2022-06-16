@@ -8,11 +8,11 @@ import type { OpenIdConnectUserInfo } from "./OpenIdConnect";
 import { Actions, K8sClusterActions, Permissions, Roles, TeamActions } from "./Permissions";
 import type { Space, SpaceEntity } from "./SpaceService";
 import type { Team, TeamEntity } from "./TeamService";
-import type { User, UserAttributes } from "./UserService";
+import type { User, UserWithEmail, UserAttributes } from "./UserService";
 
 export * from "./exceptions";
 export type {
-  User, UserAttributes, Space, InvitationDomain, Team, K8sCluster, Invitation, BillingPlan, OpenIdConnectUserInfo,
+  User, UserWithEmail, UserAttributes, Space, InvitationDomain, Team, K8sCluster, Invitation, BillingPlan, OpenIdConnectUserInfo,
   SpaceEntity, TeamEntity, K8sClusterEntity, InvitationEntity, InvitationDomainEntity, DevClusterCrdState, Phase,
 };
 export type { LensPlatformClientType, LensPlatformClientOptions };
