@@ -77,7 +77,7 @@ export const throwExpected = async <T = any>(fn: () => Promise<T>, exceptionsMap
 
       const mappedExceptionFn = exceptionsMap[httpStatusCode];
 
-      const data = error.response?.data;
+      const data = error.response?.data as any | undefined;
       const message = data?.message as string | undefined;
 
       if (mappedExceptionFn) {
