@@ -53,6 +53,52 @@ export type SubscriptionInfo = {
   trialEndsAt?: Date | null;
 };
 
+export type Address = {
+  /**
+   * Phone number
+   */
+  phone: string | null;
+  /**
+   * Street 1
+   */
+  street1: string | null;
+  /**
+   * Street 2
+   */
+  street2: string | null;
+  /**
+   * City
+   */
+  city: string | null;
+  /**
+   * State or province.
+   */
+  region: string | null;
+  /**
+   * Zip or postal code.
+   */
+  postalCode: string | null;
+  /**
+   * Country, 2-letter ISO 3166-1 alpha-2 code.
+   */
+  country: string | null;
+
+};
+
+export type BillingInfo = {
+  lastName: string | null;
+  firstName: string | null;
+  company: string | null;
+  address: Address | null;
+  paymentMethod: {
+    cardType: string | null;
+    firstSix: string | null;
+    lastTwo: string | null;
+    expMonth: Number | null;
+    expYear: Number | null;
+  };
+};
+
 /**
  *
  * The class for consuming all `user` resources.
@@ -227,6 +273,20 @@ class UserService extends Base {
     );
 
     return (json as unknown) as BillingPageToken;
+  }
+
+  async getUserBillingInformation(username: string): Promise<BillingInfo> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/users/${username}/billing`;
+    const json = await throwExpected(
+      async () => fetch.get(url),
+      {
+        404: () => new NotFoundException(`User ${username} not found`),
+        403: () => new ForbiddenException(`Getting the billing information for ${username} is forbidden`),
+      },
+    );
+
+    return (json as unknown) as BillingInfo;
   }
 }
 
