@@ -250,4 +250,36 @@ describe("UserService", () => {
       expect(typeof token.hostedLoginToken).toBe("string");
     });
   });
+
+  describe("getBillingInfo", () => {
+    it("rejects requests with invalid username", async () =>
+      expect(bobPlatform.client.user.getUserBillingInformation("FAKE_USER"))
+        .rejects.toThrowError(ForbiddenException),
+    );
+
+    it("returns the billing information", async () => {
+      const billingInfo = {
+        lastName: "sdfsdf",
+        firstName: "sdfsdf",
+        company: null,
+        address: {
+          street1: "dfgdfgdfg",
+          street2: "8",
+          city: "dfgdfg",
+          region: "none",
+          postalCode: "4444",
+          country: "DE",
+          phone: "fdgg",
+        },
+        paymentMethod: {
+          cardType: "Visa",
+          firstSix: "411111",
+          expMonth: 12,
+          expYear: 2023,
+        },
+      };
+      const billingInformation = await bobPlatform.client.user.getUserBillingInformation(userBob.username);
+      expect(billingInformation).toEqual(billingInfo);
+    });
+  });
 });
