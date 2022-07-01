@@ -216,7 +216,6 @@ describe("UserService", () => {
     describe("Get user subscriptions", () => {
       it("Should get list of subscriptions", async () => {
         const userSubscriptions = await bobPlatform.client.user.getUserSubscriptions(userBob.username);
-        expect(userSubscriptions.length).toEqual(1);
         expect(userSubscriptions).toEqual([]);
       });
     });
