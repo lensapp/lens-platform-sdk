@@ -83,7 +83,7 @@ export type Address = {
    */
   country?: string | null;
 
-}
+};
 
 export type BillingInfo = {
   lastName?: string | null;
@@ -96,7 +96,7 @@ export type BillingInfo = {
     lastTwo?: string | null;
     expMonth?: Number | null;
     expYear?: Number | null;
-  }
+  };
 };
 
 /**
