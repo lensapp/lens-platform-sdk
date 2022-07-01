@@ -156,9 +156,8 @@ class UserService extends Base {
     const json = await throwExpected(
       async () => fetch.get(url),
       {
-        422: error => new UnprocessableEntityException(error?.body.message),
         404: error => new NotFoundException(error?.body.message),
-        403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
+        403: () => new ForbiddenException(`Access to user ${username} is forbidden`),
       },
     );
 
