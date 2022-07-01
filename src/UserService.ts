@@ -57,45 +57,45 @@ export type Address = {
   /**
    * Phone number
    */
-  phone?: string | null;
+  phone: string | null;
   /**
    * Street 1
    */
-  street1?: string | null;
+  street1: string | null;
   /**
    * Street 2
    */
-  street2?: string | null;
+  street2: string | null;
   /**
    * City
    */
-  city?: string | null;
+  city: string | null;
   /**
    * State or province.
    */
-  region?: string | null;
+  region: string | null;
   /**
    * Zip or postal code.
    */
-  postalCode?: string | null;
+  postalCode: string | null;
   /**
    * Country, 2-letter ISO 3166-1 alpha-2 code.
    */
-  country?: string | null;
+  country: string | null;
 
 };
 
 export type BillingInfo = {
-  lastName?: string | null;
-  firstName?: string | null;
-  company?: string | null;
-  address?: Address | null;
-  paymentMethod?: {
-    cardType?: string | null;
-    firstSix?: string | null;
-    lastTwo?: string | null;
-    expMonth?: Number | null;
-    expYear?: Number | null;
+  lastName: string | null;
+  firstName: string | null;
+  company: string | null;
+  address: Address | null;
+  paymentMethod: {
+    cardType: string | null;
+    firstSix: string | null;
+    lastTwo: string | null;
+    expMonth: Number | null;
+    expYear: Number | null;
   };
 };
 
