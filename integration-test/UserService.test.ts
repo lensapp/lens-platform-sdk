@@ -212,6 +212,31 @@ describe("UserService", () => {
               .resolves.toBeUndefined(),
       );
     });
+
+    describe("Get user subscriptions", () => {
+      it("Should get list of subscriptions", async () => {
+        const subscriptions = [{
+          currentPeriodEndsAt: "2023-07-01T08:01:22.000Z",
+          currentPeriodStartedAt: "2022-07-01T08:01:22.000Z",
+          id: "6327929c2cfb8762b99eec44ddb3c3c4",
+          planCode: "pro-yearly",
+          planName: "Pro",
+          trialEndsAt: null,
+          trialStartedAt: null,
+        },
+        {
+          currentPeriodEndsAt: "2022-07-24T12:15:15.000Z",
+          currentPeriodStartedAt: "2022-06-24T12:15:15.000Z",
+          id: "6264c96770f423f8980c7d45569dc21a",
+          planCode: "pro-monthly",
+          planName: "Pro",
+          trialEndsAt: null,
+          trialStartedAt: null,
+        }];
+        const userSubscriptions = await bobPlatform.client.user.getUserSubscriptions(userBob.username);
+        expect(userSubscriptions).toEqual(subscriptions);
+      });
+    });
   });
 
   describe("getBillingPageToken", () => {

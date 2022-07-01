@@ -43,6 +43,16 @@ export interface UserAttributes {
   tshirt?: string;
 }
 
+export type SubscriptionInfo = {
+  id?: string | null;
+  planName?: string | null;
+  planCode?: string | null;
+  currentPeriodStartedAt?: Date | null;
+  currentPeriodEndsAt?: Date | null;
+  trialStartedAt?: Date | null;
+  trialEndsAt?: Date | null;
+};
+
 /**
  *
  * The class for consuming all `user` resources.
@@ -140,9 +150,23 @@ class UserService extends Base {
     );
   }
 
+  async getUserSubscriptions(username: string): Promise<SubscriptionInfo[]> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/users/${username}/subscriptions`;
+    const json = await throwExpected(
+      async () => fetch.get(url),
+      {
+        404: error => new NotFoundException(error?.body.message),
+        403: () => new ForbiddenException(`Access to user ${username} is forbidden`),
+      },
+    );
+
+    return (json as unknown) as SubscriptionInfo[];
+  }
+
   async activateSubscription({ username, license }: { username: string; license: License }): Promise<License> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/users/${username}/licenses`;
+    const url = `${apiEndpointAddress}/users/${username}/subscriptions`;
     const json = await throwExpected(
       async () => fetch.post(url, license),
       {
@@ -169,7 +193,7 @@ class UserService extends Base {
 
   async deactivateSubscription({ username, license }: { username: string; license: Pick<License, "subscriptionId"> }): Promise<void> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/users/${username}/licenses/${license.subscriptionId}`;
+    const url = `${apiEndpointAddress}/users/${username}/subscriptions/${license.subscriptionId}`;
     await throwExpected(
       async () => fetch.delete(url),
       {
