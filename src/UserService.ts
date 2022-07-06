@@ -50,11 +50,11 @@ export type SubscriptionInfo = {
   /**
    * Current payment period start date string
    */
-  currentPeriodStartedAt?: Date | null;
+  currentPeriodStartedAt?: string | null;
   /**
    * Current payment period end date string
    */
-  currentPeriodEndsAt?: Date | null;
+  currentPeriodEndsAt?: string | null;
   /**
    * Trial start date string
    */
