@@ -276,6 +276,7 @@ describe("UserService", () => {
           firstSix: "411111",
           expMonth: 12,
           expYear: 2023,
+          lastTwo: null,
         },
       };
       const billingInformation = await bobPlatform.client.user.getUserBillingInformation(userBob.username);
