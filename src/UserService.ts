@@ -47,10 +47,22 @@ export type SubscriptionInfo = {
   id?: string | null;
   planName?: string | null;
   planCode?: string | null;
-  currentPeriodStartedAt?: Date | null;
-  currentPeriodEndsAt?: Date | null;
-  trialStartedAt?: Date | null;
-  trialEndsAt?: Date | null;
+  /**
+   * Current payment period start date string
+   */
+  currentPeriodStartedAt?: string | null;
+  /**
+   * Current payment period end date string
+   */
+  currentPeriodEndsAt?: string | null;
+  /**
+   * Trial start date string
+   */
+  trialStartedAt?: string | null;
+  /**
+   * Trial end date string
+   */
+  trialEndsAt?: string | null;
 };
 
 export type Address = {
