@@ -240,7 +240,7 @@ class SpaceService extends Base {
       async () => fetch.get(url),
       {
         // TODO: differentiate between space, cluster, user and token not being found
-        404: error => {
+        404(error) {
           const message = error?.body.message;
           if (typeof message === "string" && message.includes("Space ")) {
             return new SpaceNotFoundException(name);
@@ -331,7 +331,7 @@ class SpaceService extends Base {
     const json = await throwExpected(
       async () => fetch.get(url),
       {
-        404: error => {
+        404(error) {
           const message = error?.body.message;
           if (typeof message === "string" && message.includes("Space ")) {
             return new SpaceNotFoundException(name);
@@ -427,7 +427,7 @@ class SpaceService extends Base {
     await throwExpected(
       async () => fetch.delete(url),
       {
-        404: error => {
+        404(error) {
           const message = error?.body?.message;
           if (typeof message === "string" && message.includes(name)) {
             return new SpaceNotFoundException(name);

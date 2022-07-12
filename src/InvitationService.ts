@@ -112,7 +112,7 @@ class InvitationService extends Base {
       async () => fetch.post(url, invitation),
       {
         404: () => new SpaceNotFoundException(`id: ${invitation.spaceId}`),
-        422: e => {
+        422(e) {
           const msg: string = e?.body.message ?? "";
 
           if (msg.includes("is already in space")) {
@@ -145,7 +145,7 @@ class InvitationService extends Base {
     const json = await throwExpected(
       async () => fetch.patch(url, invitation),
       {
-        403: error => {
+        403(error) {
           const message = error?.body?.message;
           if (typeof message === "string" && message.includes("your email address domain")) {
             return new InvalidEmailDomainException(error?.body?.message);

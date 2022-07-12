@@ -77,7 +77,7 @@ class UserRolesService extends Base {
       async () => fetch.patch(url, { role: teamRole }),
       {
         404: error => getNotFoundException(error, userName),
-        422: error => {
+        422(error) {
           const message = error?.body.message;
           if (typeof message === "string" && message.includes("Role should be")) {
             return new InvalidRoleException(role);
