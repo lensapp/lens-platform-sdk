@@ -111,7 +111,7 @@ class TeamService extends Base {
 
     const json = await throwExpected(
       async () => fetch.delete(url), {
-        404: error => {
+        404(error) {
           const message = error?.body.message;
           if (typeof message === "string" && message.includes("Space not found")) {
             return new SpaceNotFoundException();

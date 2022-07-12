@@ -183,7 +183,7 @@ class UserService extends Base {
     await throwExpected(
       async () => fetch.delete(url),
       {
-        500: error => {
+        500(error) {
           const message = error?.body.message;
 
           if (typeof message === "string") {
@@ -228,7 +228,7 @@ class UserService extends Base {
     const json = await throwExpected(
       async () => fetch.post(url, license),
       {
-        404: error => {
+        404(error) {
           const message = error?.body.message;
 
           if (typeof message === "string") {
@@ -255,7 +255,7 @@ class UserService extends Base {
     await throwExpected(
       async () => fetch.delete(url),
       {
-        404: error => {
+        404(error) {
           const message = error?.body.message;
 
           if (typeof message === "string") {
