@@ -222,6 +222,20 @@ class UserService extends Base {
     return (json as unknown) as SubscriptionInfo[];
   }
 
+  async getUserSubscription(username: string, subscriptionId: string): Promise<SubscriptionInfo> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/users/${username}/subscriptions/${subscriptionId})`;
+    const json = await throwExpected(
+      async () => fetch.get(url),
+      {
+        404: error => new NotFoundException(error?.body.message),
+        403: () => new ForbiddenException(`Access to user ${username} is forbidden`),
+      },
+    );
+
+    return (json as unknown) as SubscriptionInfo;
+  }
+
   async activateSubscription({ username, license }: { username: string; license: License }): Promise<License> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/subscriptions`;
