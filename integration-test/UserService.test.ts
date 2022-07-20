@@ -80,7 +80,7 @@ describe("UserService", () => {
     });
 
     it("throws UsernameAlreadyExistsException when trying to change username to existing user's", async () => expect(bobPlatform.client.user.updateOne(userBob.username, {
-      username: userAlice.username
+      username: userAlice.username,
     })).rejects.toThrowError(UsernameAlreadyExistsException));
   });
 
@@ -99,8 +99,8 @@ describe("UserService", () => {
 
     it("rejects bad requests", async () =>
       expect(
-        bobPlatform.client.user.getMany()
-      ).rejects.toThrowError(BadRequestException)
+        bobPlatform.client.user.getMany(),
+      ).rejects.toThrowError(BadRequestException),
     );
   });
 
@@ -126,7 +126,7 @@ describe("UserService", () => {
           const license = {
             subscriptionId: userSteve.subscriptionId!,
           };
-          await stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license })
+          await stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license });
         } catch (_: unknown) {}
       });
 
@@ -136,7 +136,7 @@ describe("UserService", () => {
           type: "pro",
         };
         return expect(stevePlatform.client.user.activateSubscription({ username: "FAKE_USER", license }))
-            .rejects.toThrowError(ForbiddenException);
+          .rejects.toThrowError(ForbiddenException);
       });
 
       it.skip("rejects requests with invalid subscriptionId", async () => {
@@ -146,7 +146,7 @@ describe("UserService", () => {
         };
 
         return expect(stevePlatform.client.user.activateSubscription({ username: userSteve.username, license }))
-            .rejects.toThrowError(NotFoundException);
+          .rejects.toThrowError(NotFoundException);
       });
 
       it.skip("rejects requests for already existing subscriptions", async () => {
@@ -157,7 +157,7 @@ describe("UserService", () => {
 
         await stevePlatform.client.user.activateSubscription({ username: userSteve.username, license });
         return expect(stevePlatform.client.user.activateSubscription({ username: userSteve.username, license }))
-            .rejects.toThrowError(ConflictException);
+          .rejects.toThrowError(ConflictException);
       });
 
       it("returns the activated license", async () => {
@@ -199,17 +199,17 @@ describe("UserService", () => {
         adamPlatform.fakeToken = undefined;
 
         return expect(adamPlatform.client.user.deactivateSubscription({ username: "FAKE_USER", license: { subscriptionId: userAdam.subscriptionId! } }))
-            .rejects.toThrowError(ForbiddenException);
+          .rejects.toThrowError(ForbiddenException);
       });
 
       it.skip("rejects requests with invalid subscriptionId", async () =>
-          expect(adamPlatform.client.user.deactivateSubscription({ username: userAdam.username, license: { subscriptionId: "FAKE_SUBSCRIPTION" } }))
-              .rejects.toThrowError(NotFoundException),
+        expect(adamPlatform.client.user.deactivateSubscription({ username: userAdam.username, license: { subscriptionId: "FAKE_SUBSCRIPTION" } }))
+          .rejects.toThrowError(NotFoundException),
       );
 
       it("returns undefined after subscription deactivation", async () =>
-          expect(adamPlatform.client.user.deactivateSubscription({ username: userAdam.username, license: { subscriptionId: userAdam.subscriptionId! } }))
-              .resolves.toBeUndefined(),
+        expect(adamPlatform.client.user.deactivateSubscription({ username: userAdam.username, license: { subscriptionId: userAdam.subscriptionId! } }))
+          .resolves.toBeUndefined(),
       );
     });
 
@@ -237,12 +237,28 @@ describe("UserService", () => {
         expect(userSubscriptions).toEqual(subscriptions);
       });
     });
+
+    describe("Get user subscription", () => {
+      it("Should get subscription", async () => {
+        const subscription = {
+          currentPeriodEndsAt: "2023-07-01T08:01:22.000Z",
+          currentPeriodStartedAt: "2022-07-01T08:01:22.000Z",
+          id: "6327929c2cfb8762b99eec44ddb3c3c4",
+          planCode: "pro-yearly",
+          planName: "Pro",
+          trialEndsAt: null,
+          trialStartedAt: null,
+        };
+        const userSubscription = await bobPlatform.client.user.getUserSubscription(userBob.username, subscription.id);
+        expect(userSubscription).toEqual(subscription);
+      });
+    });
   });
 
   describe("getBillingPageToken", () => {
     it("rejects requests with invalid username", async () =>
       expect(erinPlatform.client.user.getBillingPageToken("FAKE_USER"))
-        .rejects.toThrowError(ForbiddenException)
+        .rejects.toThrowError(ForbiddenException),
     );
     it("returns the billing page token", async () => {
       const token = await erinPlatform.client.user.getBillingPageToken(userErin.username);
