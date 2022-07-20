@@ -14,6 +14,7 @@ export * from "./exceptions";
 export type {
   User, UserWithEmail, UserAttributes, Space, InvitationDomain, Team, K8sCluster, Invitation, BillingPlan, OpenIdConnectUserInfo,
   SpaceEntity, TeamEntity, K8sClusterEntity, InvitationEntity, InvitationDomainEntity, DevClusterCrdState, Phase, SubscriptionInfo,
+  BillingInfo,
 };
 export type { LensPlatformClientType, LensPlatformClientOptions };
 export { LensPlatformClient, Roles, Actions, K8sClusterActions, Permissions, TeamActions };
