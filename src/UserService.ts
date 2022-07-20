@@ -63,6 +63,11 @@ export type SubscriptionInfo = {
    * Trial end date string
    */
   trialEndsAt?: string | null;
+
+  /**
+   * Name of the company of the Recurly account
+   */
+  companyName?: string | null;
 };
 
 export type Address = {

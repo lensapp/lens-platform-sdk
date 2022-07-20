@@ -223,6 +223,7 @@ describe("UserService", () => {
           planName: "Pro",
           trialEndsAt: null,
           trialStartedAt: null,
+          companyName: "sdgfdgdfg",
         },
         {
           currentPeriodEndsAt: "2022-07-24T12:15:15.000Z",
@@ -232,6 +233,7 @@ describe("UserService", () => {
           planName: "Pro",
           trialEndsAt: null,
           trialStartedAt: null,
+          companyName: "sdgfdgdfg",
         }];
         const userSubscriptions = await bobPlatform.client.user.getUserSubscriptions(userBob.username);
         expect(userSubscriptions).toEqual(subscriptions);
@@ -248,6 +250,7 @@ describe("UserService", () => {
           planName: "Pro",
           trialEndsAt: null,
           trialStartedAt: null,
+          companyName: "sdgfdgdfg",
         };
         const userSubscription = await bobPlatform.client.user.getUserSubscription(userBob.username, subscription.id);
         expect(userSubscription).toEqual(subscription);
