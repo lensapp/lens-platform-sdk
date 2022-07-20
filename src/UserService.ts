@@ -68,6 +68,11 @@ export type SubscriptionInfo = {
    * Name of the company of the Recurly account
    */
   companyName?: string | null;
+
+  /**
+   * Account code of the subscription's Recurly account
+   */
+  accountCode?: string | null;
 };
 
 export type Address = {
