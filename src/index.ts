@@ -8,7 +8,7 @@ import type { OpenIdConnectUserInfo } from "./OpenIdConnect";
 import { Actions, K8sClusterActions, Permissions, Roles, TeamActions } from "./Permissions";
 import type { Space, SpaceEntity } from "./SpaceService";
 import type { Team, TeamEntity } from "./TeamService";
-import type { User, UserWithEmail, UserAttributes, SubscriptionInfo } from "./UserService";
+import type { User, UserWithEmail, UserAttributes, SubscriptionInfo, BillingInfo } from "./UserService";
 
 export * from "./exceptions";
 export type {
