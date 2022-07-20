@@ -224,7 +224,7 @@ class UserService extends Base {
 
   async getUserSubscription(username: string, subscriptionId: string): Promise<SubscriptionInfo> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/users/${username}/subscriptions/${subscriptionId})`;
+    const url = `${apiEndpointAddress}/users/${username}/subscriptions/${subscriptionId}`;
     const json = await throwExpected(
       async () => fetch.get(url),
       {
