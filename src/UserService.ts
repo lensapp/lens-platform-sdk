@@ -73,6 +73,11 @@ export type SubscriptionInfo = {
    * Account code of the subscription's Recurly account
    */
   accountCode?: string | null;
+
+  /**
+   * True if the subscription belongs to a business Recurly account
+   */
+  isBusinessAccount: boolean;
 };
 
 export type Address = {
