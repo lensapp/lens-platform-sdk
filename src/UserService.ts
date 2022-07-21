@@ -307,7 +307,23 @@ class UserService extends Base {
     const url = `${apiEndpointAddress}/users/${username}/billing-page-token`;
     const json = await throwExpected(
       async () => fetch.get(url),
-      { 404: () => new NotFoundException(`User ${username} not found`),
+      {
+        404: () => new NotFoundException(`User ${username} not found`),
+        403: () => new ForbiddenException(`Getting the billing page token for ${username} is forbidden`),
+        422: error => new UnprocessableEntityException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as BillingPageToken;
+  }
+
+  async getBillingPageTokenBySubscriptionId(username: string, subscriptionId: string): Promise<BillingPageToken> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/users/${username}/subscriptions/${subscriptionId}/billing-page-token`;
+    const json = await throwExpected(
+      async () => fetch.get(url),
+      {
+        404: () => new NotFoundException(`User ${username} not found`),
         403: () => new ForbiddenException(`Getting the billing page token for ${username} is forbidden`),
         422: error => new UnprocessableEntityException(error?.body.message),
       },

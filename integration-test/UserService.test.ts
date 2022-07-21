@@ -269,8 +269,22 @@ describe("UserService", () => {
       expect(erinPlatform.client.user.getBillingPageToken("FAKE_USER"))
         .rejects.toThrowError(ForbiddenException),
     );
+
     it("returns the billing page token", async () => {
       const token = await erinPlatform.client.user.getBillingPageToken(userErin.username);
+      expect(token).toHaveProperty("hostedLoginToken");
+      expect(typeof token.hostedLoginToken).toBe("string");
+    });
+  });
+
+  describe("getBillingPageTokenBySubscriptionId", () => {
+    it("rejects requests with invalid username", async () =>
+      expect(erinPlatform.client.user.getBillingPageTokenBySubscriptionId("FAKE_USER", "foo-bar"))
+        .rejects.toThrowError(ForbiddenException),
+    );
+
+    it("returns the billing page token for subscription", async () => {
+      const token = await bobPlatform.client.user.getBillingPageTokenBySubscriptionId(userBob.username, "6327929c2cfb8762b99eec44ddb3c3c4");
       expect(token).toHaveProperty("hostedLoginToken");
       expect(typeof token.hostedLoginToken).toBe("string");
     });
