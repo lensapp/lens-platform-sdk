@@ -228,8 +228,8 @@ describe("UserService", () => {
           isBusinessAccount: false,
         },
         {
-          currentPeriodEndsAt: "2022-07-24T12:15:15.000Z",
-          currentPeriodStartedAt: "2022-06-24T12:15:15.000Z",
+          currentPeriodEndsAt: "2022-08-24T12:15:15.000Z",
+          currentPeriodStartedAt: "2022-07-24T12:15:15.000Z",
           id: "6264c96770f423f8980c7d45569dc21a",
           planCode: "pro-monthly",
           planName: "Pro",
