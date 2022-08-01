@@ -22,8 +22,8 @@ export class UsernameAlreadyExistsException extends ConflictException {
 }
 
 export class SubscriptionAlreadyExistsException extends ConflictException {
-  constructor() {
-    super();
+  constructor(message: string) {
+    super(message);
     Object.setPrototypeOf(this, SubscriptionAlreadyExistsException.prototype);
   }
 }
