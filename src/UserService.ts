@@ -43,6 +43,8 @@ export interface UserAttributes {
   tshirt?: string;
 }
 
+export type SubscriptionState = "active" | "canceled" | "expired" | "failed" | "future" | "paused";
+
 export type SubscriptionInfo = {
   id?: string | null;
   planName?: string | null;
@@ -78,6 +80,11 @@ export type SubscriptionInfo = {
    * True if the subscription belongs to a business Recurly account
    */
   isBusinessAccount: boolean;
+
+  /**
+   * State of the subscription
+   */
+  state: SubscriptionState;
 };
 
 export type Address = {
