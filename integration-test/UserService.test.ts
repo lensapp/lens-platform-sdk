@@ -226,6 +226,7 @@ describe("UserService", () => {
           companyName: "sdgfdgdfg",
           accountCode: "f63ed988-017a-4a0f-8486-cc8cf5ec6f32",
           isBusinessAccount: false,
+          state: "active",
         },
         {
           currentPeriodEndsAt: "2022-08-24T12:15:15.000Z",
@@ -238,6 +239,7 @@ describe("UserService", () => {
           companyName: "sdgfdgdfg",
           accountCode: "f63ed988-017a-4a0f-8486-cc8cf5ec6f32",
           isBusinessAccount: false,
+          state: "active",
         }];
         const userSubscriptions = await bobPlatform.client.user.getUserSubscriptions(userBob.username);
         expect(userSubscriptions).toEqual(subscriptions);
@@ -257,6 +259,7 @@ describe("UserService", () => {
           companyName: "sdgfdgdfg",
           accountCode: "f63ed988-017a-4a0f-8486-cc8cf5ec6f32",
           isBusinessAccount: false,
+          state: "active",
         };
         const userSubscription = await bobPlatform.client.user.getUserSubscription(userBob.username, subscription.id);
         expect(userSubscription).toEqual(subscription);
