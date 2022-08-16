@@ -358,6 +358,29 @@ class UserService extends Base {
 
     return (json as unknown) as BillingInfo;
   }
+
+  /**
+   * Get user's lis of business ids.
+   */
+  async getBusinessIds(): Promise<BusinessId[]> {
+    const decodedAccessToken = await this.lensPlatformClient.getDecodedAccessToken();
+
+    if (decodedAccessToken?.preferred_username) {
+      const username = decodedAccessToken?.preferred_username;
+      const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+      const url = `${apiEndpointAddress}/users/${username}/business-ids`;
+      const json = await throwExpected(
+        async () => fetch.get(url),
+        {
+          403: error => new ForbiddenException(error?.body.message),
+        },
+      );
+
+      return (json as unknown) as BusinessId[];
+    }
+
+    throw new Error(`jwt.preferred_username is ${decodedAccessToken?.preferred_username}`);
+  }
 }
 
 export { UserService };
