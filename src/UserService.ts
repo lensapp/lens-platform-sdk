@@ -381,6 +381,31 @@ class UserService extends Base {
 
     throw new Error(`jwt.preferred_username is ${decodedAccessToken?.preferred_username}`);
   }
+
+  /**
+   * Create a business under user's account.
+   */
+  async createOneBusinessId(businessId: BusinessId & { id?: string }): Promise<BusinessId> {
+    const decodedAccessToken = await this.lensPlatformClient.getDecodedAccessToken();
+
+    if (decodedAccessToken?.preferred_username) {
+      const username = decodedAccessToken?.preferred_username;
+      const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+      const url = `${apiEndpointAddress}/users/${username}/business-ids`;
+      const json = await throwExpected(
+        async () => fetch.post(url, businessId),
+        {
+          400: error => new BadRequestException(error?.body.message),
+          422: error => new UnprocessableEntityException(error?.body.message),
+          403: error => new ForbiddenException(error?.body.message),
+        },
+      );
+
+      return (json as unknown) as BusinessId;
+    }
+
+    throw new Error(`jwt.preferred_username is ${decodedAccessToken?.preferred_username}`);
+  }
 }
 
 export { UserService };
