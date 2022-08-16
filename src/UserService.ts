@@ -133,6 +133,12 @@ export type BillingInfo = {
   };
 };
 
+export type BusinessId = {
+  id: string;
+  name: string;
+  address: string;
+};
+
 /**
  *
  * The class for consuming all `user` resources.
