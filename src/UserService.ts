@@ -405,7 +405,7 @@ class UserService extends Base {
   }
 
   /**
-   * Get user's list of Lens Business Ids.
+   * Get user's list of businesses (Lens Business IDs).
    */
   async getBusinesses(): Promise<Business[]> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
@@ -421,9 +421,9 @@ class UserService extends Base {
   }
 
   /**
-   * Create a business.
+   * Create a business ("Lens Business ID").
    */
-  async createOneBusinessId(business: Business & { id?: string }): Promise<Business> {
+  async createOneBusiness(business: Business & { id?: string }): Promise<Business> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses`;
     const json = await throwExpected(
