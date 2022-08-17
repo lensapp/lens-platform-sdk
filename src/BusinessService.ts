@@ -4,6 +4,7 @@ import {
   ForbiddenException,
   UnprocessableEntityException,
   BadRequestException,
+  NotFoundException,
 } from "./exceptions";
 
 /**
@@ -81,7 +82,24 @@ class BusinessService extends Base {
   }
 
   /**
-   * Create a business ("Lens Business ID").
+   * Get one business entity ("Lens Business ID") by id.
+   */
+  async getOne(id: Business["id"]): Promise<Business> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${id}`;
+    const json = await throwExpected(
+      async () => fetch.get(url),
+      {
+        404: error => new NotFoundException(error?.body.message),
+        403: error => new ForbiddenException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as Business;
+  }
+
+  /**
+   * Create a new business ("Lens Business ID").
    */
   async createOne(business: Business & { id?: string }): Promise<Business> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
@@ -96,6 +114,20 @@ class BusinessService extends Base {
     );
 
     return (json as unknown) as Business;
+  }
+
+  /**
+   * Get delete business entity ("Lens Business ID") by id.
+   */
+  async deleteOne(id: Business["id"]): Promise<void> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${id}`;
+    await throwExpected(
+      async () => fetch.delete(url),
+      {
+        403: error => new ForbiddenException(error?.body.message),
+      },
+    );
   }
 }
 
