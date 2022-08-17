@@ -6,6 +6,7 @@ import { PermissionsService } from "./PermissionsService";
 import { InvitationService } from "./InvitationService";
 import { PlanService } from "./PlanService";
 import { BillingPageTokenService } from "./BillingPageTokenService";
+import { BusinessService } from "./BusinessService";
 import axios, { type AxiosRequestConfig, type AxiosProxyConfig } from "axios";
 import pino from "pino";
 import decode from "jwt-decode";
@@ -105,6 +106,7 @@ class LensPlatformClient {
   team: TeamService;
   plan: PlanService;
   billingPageToken: BillingPageTokenService;
+  business: BusinessService;
   permission: PermissionsService;
   invitation: InvitationService;
   openIDConnect: OpenIdConnect;
@@ -143,6 +145,7 @@ class LensPlatformClient {
     this.permission = new PermissionsService(this);
     this.invitation = new InvitationService(this);
     this.billingPageToken = new BillingPageTokenService(this);
+    this.business = new BusinessService(this);
     this.openIDConnect = new OpenIdConnect(this);
   }
 
