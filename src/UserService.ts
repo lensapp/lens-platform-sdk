@@ -133,10 +133,50 @@ export type BillingInfo = {
   };
 };
 
+/**
+ * "Lens Business ID"
+ */
 export type Business = {
+  /**
+   * The business id (in uuid format)
+   */
   id: string;
+  /**
+   * The business name.
+   */
   name: string;
+  /**
+   * The business address.
+   */
   address: string;
+  /**
+   * The business additional address (a.k.a. "address line 2").
+   */
+  additionalAddress: string | null;
+  /**
+   * The business country.
+   */
+  country: string;
+  /**
+   * The business zip/postal code.
+   */
+  zip: string;
+  /**
+   * The business phone number.
+   */
+  phoneNumber: string;
+  /**
+   * The date the business was created.
+   */
+  createdAt: string;
+  /**
+   * The date the business was updated.
+   */
+  updatedAt: string;
+  /**
+   * The users that are in the business.
+   */
+  businessUsers: [];
 };
 
 /**
