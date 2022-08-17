@@ -53,13 +53,19 @@ export type Business = {
 };
 
 type BusinessUser = {
+  /**
+   * Id of the user
+   */
   id: string;
+  /**
+   * Role of the user in the business
+   */
   role: "Administrator" | "Member";
 };
 
 class BusinessService extends Base {
   /**
-   * Get user's list of businesses (Lens Business IDs).
+   * Lists business entities ("Lens Business ID") that the authenticated user has explicit permissions to access.
    */
   async getMany(): Promise<Business[]> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
