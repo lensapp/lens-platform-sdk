@@ -408,48 +408,34 @@ class UserService extends Base {
    * Get user's list of Lens Business Ids.
    */
   async getBusinesses(): Promise<Business[]> {
-    const decodedAccessToken = await this.lensPlatformClient.getDecodedAccessToken();
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses`;
+    const json = await throwExpected(
+      async () => fetch.get(url),
+      {
+        403: error => new ForbiddenException(error?.body.message),
+      },
+    );
 
-    if (decodedAccessToken?.preferred_username) {
-      const username = decodedAccessToken?.preferred_username;
-      const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-      const url = `${apiEndpointAddress}/users/${username}/businesses`;
-      const json = await throwExpected(
-        async () => fetch.get(url),
-        {
-          403: error => new ForbiddenException(error?.body.message),
-        },
-      );
-
-      return (json as unknown) as Business[];
-    }
-
-    throw new Error(`jwt.preferred_username is ${decodedAccessToken?.preferred_username}`);
+    return (json as unknown) as Business[];
   }
 
   /**
-   * Create a business under user's account.
+   * Create a business.
    */
-  async createOneBusinessId(businessId: Business & { id?: string }): Promise<Business> {
-    const decodedAccessToken = await this.lensPlatformClient.getDecodedAccessToken();
+  async createOneBusinessId(business: Business & { id?: string }): Promise<Business> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses`;
+    const json = await throwExpected(
+      async () => fetch.post(url, business),
+      {
+        400: error => new BadRequestException(error?.body.message),
+        422: error => new UnprocessableEntityException(error?.body.message),
+        403: error => new ForbiddenException(error?.body.message),
+      },
+    );
 
-    if (decodedAccessToken?.preferred_username) {
-      const username = decodedAccessToken?.preferred_username;
-      const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-      const url = `${apiEndpointAddress}/users/${username}/businesses`;
-      const json = await throwExpected(
-        async () => fetch.post(url, businessId),
-        {
-          400: error => new BadRequestException(error?.body.message),
-          422: error => new UnprocessableEntityException(error?.body.message),
-          403: error => new ForbiddenException(error?.body.message),
-        },
-      );
-
-      return (json as unknown) as Business;
-    }
-
-    throw new Error(`jwt.preferred_username is ${decodedAccessToken?.preferred_username}`);
+    return (json as unknown) as Business;
   }
 }
 
