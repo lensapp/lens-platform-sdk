@@ -176,7 +176,12 @@ export type Business = {
   /**
    * The users that are in the business.
    */
-  businessUsers: [];
+  businessUsers: BusinessUser[];
+};
+
+type BusinessUser = {
+  id: string;
+  role: "Administrator" | "Member";
 };
 
 /**
