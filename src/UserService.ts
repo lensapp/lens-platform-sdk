@@ -133,7 +133,7 @@ export type BillingInfo = {
   };
 };
 
-export type BusinessId = {
+export type Business = {
   id: string;
   name: string;
   address: string;
@@ -360,15 +360,15 @@ class UserService extends Base {
   }
 
   /**
-   * Get user's lis of business ids.
+   * Get user's list of Lens Business Ids.
    */
-  async getBusinessIds(): Promise<BusinessId[]> {
+  async getBusinesses(): Promise<Business[]> {
     const decodedAccessToken = await this.lensPlatformClient.getDecodedAccessToken();
 
     if (decodedAccessToken?.preferred_username) {
       const username = decodedAccessToken?.preferred_username;
       const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-      const url = `${apiEndpointAddress}/users/${username}/business-ids`;
+      const url = `${apiEndpointAddress}/users/${username}/businesses`;
       const json = await throwExpected(
         async () => fetch.get(url),
         {
@@ -376,7 +376,7 @@ class UserService extends Base {
         },
       );
 
-      return (json as unknown) as BusinessId[];
+      return (json as unknown) as Business[];
     }
 
     throw new Error(`jwt.preferred_username is ${decodedAccessToken?.preferred_username}`);
@@ -385,13 +385,13 @@ class UserService extends Base {
   /**
    * Create a business under user's account.
    */
-  async createOneBusinessId(businessId: BusinessId & { id?: string }): Promise<BusinessId> {
+  async createOneBusinessId(businessId: Business & { id?: string }): Promise<Business> {
     const decodedAccessToken = await this.lensPlatformClient.getDecodedAccessToken();
 
     if (decodedAccessToken?.preferred_username) {
       const username = decodedAccessToken?.preferred_username;
       const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-      const url = `${apiEndpointAddress}/users/${username}/business-ids`;
+      const url = `${apiEndpointAddress}/users/${username}/businesses`;
       const json = await throwExpected(
         async () => fetch.post(url, businessId),
         {
@@ -401,7 +401,7 @@ class UserService extends Base {
         },
       );
 
-      return (json as unknown) as BusinessId;
+      return (json as unknown) as Business;
     }
 
     throw new Error(`jwt.preferred_username is ${decodedAccessToken?.preferred_username}`);
