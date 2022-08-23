@@ -32,9 +32,13 @@ export type Business = {
    */
   country: string;
   /**
-   * The business state.
+   * The business state / province.
    */
   state: string | null;
+  /**
+   * The business city.
+   */
+  city: string;
   /**
    * The business zip/postal code.
    */
@@ -105,7 +109,7 @@ class BusinessService extends Base {
   /**
    * Create a new business ("Lens Business ID").
    */
-  async createOne(business: Business & { id?: string }): Promise<Business> {
+  async createOne(business: Omit<Business, "id"> & { id?: string }): Promise<Business> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses`;
     const json = await throwExpected(
