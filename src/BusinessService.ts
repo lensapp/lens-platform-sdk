@@ -32,9 +32,13 @@ export type Business = {
    */
   country: string;
   /**
-   * The business state.
+   * The business state / province.
    */
   state: string | null;
+  /**
+   * The business city.
+   */
+  city: string;
   /**
    * The business zip/postal code.
    */
