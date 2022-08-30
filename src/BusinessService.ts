@@ -61,6 +61,38 @@ export type Business = {
   businessUsers: BusinessUser[];
 };
 
+export type BusinessSubscription = {
+  /**
+   * Subscription ID
+   */
+  id: string;
+  /**
+   * Subscription state/status  (Recurly `subscription["state"]`)
+   */
+  state: string;
+  /**
+   * Subscribed plan name (Recurly `subscription["plan"]["name"]`)
+   */
+  planName: string;
+  /**
+   * Subscribed plan code (Recurly `subscription["plan"]["code"]`)
+   */
+  planCode: string;
+  /**
+   * The date of next billing cycle (Recurly subscription["currentPeriodEndsAt"] in ISO format)
+   */
+  nextRenewalDate: string;
+  /**
+   * Total number of seats in this subscription, including unassigned and assigned. (Recurly subscription["quantity"])
+   */
+  seats: number;
+  /**
+   * The seats that have not been assigned to a user yet.
+   * = `seat` field - (number of subscription id in user_subscriptions table)
+   */
+  aviableSeats: number;
+};
+
 type BusinessUser = {
   /**
    * Id of the user
@@ -136,6 +168,24 @@ class BusinessService extends Base {
         403: error => new ForbiddenException(error?.body.message),
       },
     );
+  }
+
+  /**
+   * Lists the subscriptions by id
+   */
+  async getSubscriptions(id: Business["id"]): Promise<BusinessSubscription[]> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${id}/subscriptions`;
+    const json = await throwExpected(
+      async () => fetch.get(url),
+      {
+        400: error => new BadRequestException(error?.body.message),
+        404: error => new NotFoundException(error?.body.message),
+        403: error => new ForbiddenException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as BusinessSubscription[];
   }
 }
 
