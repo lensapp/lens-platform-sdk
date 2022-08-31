@@ -9,13 +9,13 @@ import { Actions, K8sClusterActions, Permissions, Roles, TeamActions } from "./P
 import type { Space, SpaceEntity } from "./SpaceService";
 import type { Team, TeamEntity } from "./TeamService";
 import type { User, UserWithEmail, UserAttributes, SubscriptionInfo, BillingInfo } from "./UserService";
-import type { Business } from "./BusinessService";
+import type { Business, BusinessSubscription } from "./BusinessService";
 
 export * from "./exceptions";
 export type {
   User, UserWithEmail, UserAttributes, Space, InvitationDomain, Team, K8sCluster, Invitation, BillingPlan, OpenIdConnectUserInfo,
   SpaceEntity, TeamEntity, K8sClusterEntity, InvitationEntity, InvitationDomainEntity, DevClusterCrdState, Phase, SubscriptionInfo,
-  BillingInfo, Business,
+  BillingInfo, Business, BusinessSubscription,
 };
 export type { LensPlatformClientType, LensPlatformClientOptions };
 export { LensPlatformClient, Roles, Actions, K8sClusterActions, Permissions, TeamActions };
