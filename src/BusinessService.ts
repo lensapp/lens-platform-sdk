@@ -90,7 +90,7 @@ export type BusinessSubscription = {
    * The seats that have not been assigned to a user yet.
    * = `seat` field - (number of subscription id in user_subscriptions table)
    */
-  aviableSeats: number;
+  availableSeats: number;
 };
 
 type BusinessUser = {
