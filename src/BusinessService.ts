@@ -93,6 +93,44 @@ export type BusinessSubscription = {
   availableSeats: number;
 };
 
+export type UserBusinessRole = "Administrator" | "Member";
+export type BusinessInvitationState = "pending" | "active";
+
+export type BusinessInvitation = {
+  /**
+   * The business invitation ID
+   */
+  id: string;
+  /**
+   * The role of the invited user in the business
+   */
+  role: UserBusinessRole;
+  /**
+   * Email address of the invited user
+   */
+  email: string;
+  /**
+   * The subscription ID of the subscription that the invited user will be assigned to
+   */
+  subscriptionId?: string;
+  /**
+   * The state of the invitation
+   */
+  state: BusinessInvitationState;
+  /**
+   * The date the invitation was created.
+   */
+  createdAt: string;
+  /**
+   * The date the invitation was updated.
+   */
+  updatedAt: string;
+  /**
+   * The userId that creates the invitation.
+   */
+  createdById: string;
+};
+
 type BusinessUser = {
   /**
    * Id of the user
@@ -101,7 +139,7 @@ type BusinessUser = {
   /**
    * Role of the user in the business
    */
-  role: "Administrator" | "Member";
+  role: UserBusinessRole;
 };
 
 class BusinessService extends Base {
@@ -186,6 +224,35 @@ class BusinessService extends Base {
     );
 
     return (json as unknown) as BusinessSubscription[];
+  }
+
+  /**
+   * Create a new invitation for a user to join a business, optionally assigning them to a subscription by given subscriptionId.
+   *
+   * @remarks inviter has to be the administrator of the business
+   */
+  async createInvitation(id: Business["id"], email: string, subscriptionId?: string): Promise<{
+    id: BusinessInvitation["id"];
+    email: BusinessInvitation["email"];
+    subscriptionId: BusinessInvitation["subscriptionId"];
+  }> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${id}/invitations`;
+    const json = await throwExpected(
+      async () => fetch.post(url, { email, subscriptionId }),
+      {
+        400: error => new BadRequestException(error?.body.message),
+        422: error => new UnprocessableEntityException(error?.body.message),
+        404: error => new NotFoundException(error?.body.message),
+        403: error => new ForbiddenException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as {
+      id: BusinessInvitation["id"];
+      email: BusinessInvitation["email"];
+      subscriptionId: BusinessInvitation["subscriptionId"];
+    };
   }
 }
 
