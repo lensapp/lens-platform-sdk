@@ -256,18 +256,16 @@ class BusinessService extends Base {
   }
 
   /**
-   * Update a business invitation by id.
-   *
-   * To accept an invitation, set the `invitation.state` to `active`.
+   * Accept an invitation to join a business.
    */
-  async updateInvitation(
-    id: Business["id"] | Business["name"],
-    invitation: Partial<Omit<BusinessInvitation, "id" | "createdAt" | "updatedAt" | "createdById">> & { id: string },
+  async acceptInvitation(
+    id: Business["id"],
+    invitationId: BusinessInvitation["id"],
   ) {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/businesses/${id}/invitations/${invitation.id}`;
+    const url = `${apiEndpointAddress}/businesses/${id}/invitations/${invitationId}`;
     const json = await throwExpected(
-      async () => fetch.patch(url, invitation),
+      async () => fetch.patch(url),
       {
         400: error => new BadRequestException(error?.body.message),
         422: error => new UnprocessableEntityException(error?.body.message),
