@@ -254,6 +254,28 @@ class BusinessService extends Base {
       subscriptionId: BusinessInvitation["subscriptionId"];
     };
   }
+
+  /**
+   * Accept an invitation to join a business.
+   */
+  async acceptInvitation(
+    id: Business["id"],
+    invitationId: BusinessInvitation["id"],
+  ) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${id}/invitations/${invitationId}`;
+    const json = await throwExpected(
+      async () => fetch.patch(url),
+      {
+        400: error => new BadRequestException(error?.body.message),
+        422: error => new UnprocessableEntityException(error?.body.message),
+        404: error => new NotFoundException(error?.body.message),
+        403: error => new ForbiddenException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as BusinessInvitation;
+  }
 }
 
 export { BusinessService };
