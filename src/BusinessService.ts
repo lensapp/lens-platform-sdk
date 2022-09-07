@@ -94,7 +94,7 @@ export type BusinessSubscription = {
 };
 
 export type UserBusinessRole = "Administrator" | "Member";
-export type BusinessInvitationState = "pending" | "active";
+export type BusinessInvitationState = "pending" | "active" | "accepted";
 
 export type BusinessInvitation = {
   /**
@@ -253,6 +253,30 @@ class BusinessService extends Base {
       email: BusinessInvitation["email"];
       subscriptionId: BusinessInvitation["subscriptionId"];
     };
+  }
+
+  /**
+   * Update a business invitation by id.
+   *
+   * To accept an invitation, set the `invitation.state` to `accepted`.
+   */
+  async updateInvitation(
+    id: Business["id"] | Business["name"],
+    invitation: Partial<Omit<BusinessInvitation, "id" | "createdAt" | "updatedAt" | "createdById">> & { id: string },
+  ) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${id}/invitations/${invitation.id}`;
+    const json = await throwExpected(
+      async () => fetch.patch(url, invitation),
+      {
+        400: error => new BadRequestException(error?.body.message),
+        422: error => new UnprocessableEntityException(error?.body.message),
+        404: error => new NotFoundException(error?.body.message),
+        403: error => new ForbiddenException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as BusinessInvitation;
   }
 }
 
