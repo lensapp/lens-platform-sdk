@@ -94,7 +94,7 @@ export type BusinessSubscription = {
 };
 
 export type UserBusinessRole = "Administrator" | "Member";
-export type BusinessInvitationState = "pending" | "active" | "accepted";
+export type BusinessInvitationState = "pending" | "active";
 
 export type BusinessInvitation = {
   /**
@@ -258,7 +258,7 @@ class BusinessService extends Base {
   /**
    * Update a business invitation by id.
    *
-   * To accept an invitation, set the `invitation.state` to `accepted`.
+   * To accept an invitation, set the `invitation.state` to `active`.
    */
   async updateInvitation(
     id: Business["id"] | Business["name"],
