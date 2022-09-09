@@ -159,6 +159,35 @@ export type BusinessSubscription = {
   usedSeats: UsedSeat[];
 };
 
+export type BusinessUsers = {
+  /**
+   * The id of the business user.
+   */
+  id: string;
+  /**
+   * The username of the business user.
+   */
+  username: string;
+  /**
+   * The email of the business user.
+   */
+  email: string;
+  /**
+   * The fullname of the business user.
+   */
+  fullname: string;
+  /**
+   * The role of the user in the business.
+   */
+  role: UserBusinessRole;
+  /**
+   * The state of the user in the business.
+   *   - `active` if the user is in the business.
+   *   - `pendign` if the user is invited but not yet in the business.
+   */
+  state: BusinessInvitationState;
+};
+
 export type UserBusinessRole = "Administrator" | "Member";
 export type BusinessInvitationState = "pending" | "active";
 
@@ -290,6 +319,23 @@ class BusinessService extends Base {
     );
 
     return (json as unknown) as BusinessSubscription[];
+  }
+
+  /**
+   * Lists the users in the business by id
+   */
+  async getUsers(id: Business["id"]): Promise<BusinessUsers[]> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${id}/users`;
+    const json = await throwExpected(
+      async () => fetch.get(url),
+      {
+        404: error => new NotFoundException(error?.body.message),
+        403: error => new ForbiddenException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as BusinessUsers[];
   }
 
   /**
