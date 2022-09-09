@@ -61,36 +61,102 @@ export type Business = {
   businessUsers: BusinessUser[];
 };
 
+/**
+ * The subscription that have been assigned to a user (`user_subscriptions` relation)
+ */
+export type UsedSeat = {
+  /**
+   * The id of user_subscriptions entity
+   */
+  id: string;
+  /**
+   * The id of subscription entity
+   */
+  subscriptionId: string;
+  /**
+   * The created data of user_subscriptions entity in ISO format, e.g. 2022-06-28T08:13:06.000Z
+   */
+  createdAt: string;
+  /**
+   * The updated data of user_subscriptions entity in ISO format, e.g. 2022-06-28T08:13:06.000Z
+   */
+  updatedAt: string;
+  /**
+   * The activation data of user_subscriptions entity in ISO format, e.g. 2022-06-28T08:13:06.000Z
+   */
+  activatedAt: string;
+  /**
+   * The de-activation data of user_subscriptions entity in ISO format, e.g. 2022-06-28T08:13:06.000Z
+   */
+  deactivatedAt: string;
+  /**
+   * The expiration data of user_subscriptions entity in ISO format, e.g. 2022-06-28T08:13:06.000Z
+   */
+  expiredAt: string;
+  /**
+   * The user that is assigned to this subscription
+   */
+  user: {
+    /**
+     * The id of the user
+     */
+    id: string;
+    /**
+     * The username of the user
+     */
+    username: string;
+    /**
+     * The first name of the user
+     */
+    firstName: string;
+    /**
+     * The last name of the user
+     */
+    lastName: string;
+    /**
+     * The full name of the user
+     */
+    fullname: string;
+  };
+};
+
 export type BusinessSubscription = {
   /**
    * Subscription ID
    */
   id: string;
   /**
-   * Subscription state/status  (Recurly `subscription["state"]`)
-   */
-  state: string;
-  /**
-   * Subscribed plan name (Recurly `subscription["plan"]["name"]`)
+   * Subscribed plan name (Recurly `subscription["plan"]["name"]`, e.g. "Pro")
    */
   planName: string;
   /**
-   * Subscribed plan code (Recurly `subscription["plan"]["code"]`)
+   * Subscribed plan code (Recurly `subscription["plan"]["code"]`, e.g. "pro-monthly")
    */
   planCode: string;
   /**
-   * The date of next billing cycle (Recurly subscription["currentPeriodEndsAt"] in ISO format)
+   * Is trial subscription
    */
-  nextRenewalDate: string;
+  isTrial: boolean;
+  /**
+   * Current billing period started at (Recurly subscription["currentPeriodStartedAt"] in ISO format. e.g. 2022-06-28T08:13:06.000Z)
+   */
+  currentPeriodStartedAt: string | null;
+  /**
+   * Current billing period ends at (Recurly subscription["currentPeriodEndsAt"] in ISO format, e.g. 2022-06-28T08:13:06.000Z)
+   */
+  currentPeriodEndsAt: string | null;
+  /**
+   * Is a business account
+   */
+  businessAccount: boolean;
   /**
    * Total number of seats in this subscription, including unassigned and assigned. (Recurly subscription["quantity"])
    */
   seats: number;
   /**
-   * The seats that have not been assigned to a user yet.
-   * = `seat` field - (number of subscription id in user_subscriptions table)
+   * The subscription that have been assigned to a user (`user_subscriptions` relation)
    */
-  availableSeats: number;
+  usedSeats: UsedSeat[];
 };
 
 export type UserBusinessRole = "Administrator" | "Member";
