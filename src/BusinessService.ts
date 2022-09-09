@@ -159,6 +159,47 @@ export type BusinessSubscription = {
   usedSeats: UsedSeat[];
 };
 
+export type BusinessUser = {
+  /**
+   * The id of the business user.
+   */
+  id: string;
+  /**
+   * The username of the business user.
+   */
+  username: string;
+  /**
+   * The email of the business user.
+   */
+  email: string;
+  /**
+   * The fullname of the business user.
+   */
+  fullname: string;
+  /**
+   * The state of the user in the business.
+   *   - `active` if the user is in the business.
+   *   - `pendign` if the user is invited but not yet in the business.
+   */
+  state: BusinessInvitationState;
+  /**
+   * The role of the user in the business.
+   */
+  role: UserBusinessRole;
+  /**
+   * The createdTimestamp of the business user.
+   */
+  createdTimestamp: string;
+  /**
+   * The firstName of the business user.
+   */
+  firstName: string;
+  /**
+   * The lastName of the business user.
+   */
+  lastName: string;
+};
+
 export type UserBusinessRole = "Administrator" | "Member";
 export type BusinessInvitationState = "pending" | "active";
 
@@ -195,17 +236,6 @@ export type BusinessInvitation = {
    * The userId that creates the invitation.
    */
   createdById: string;
-};
-
-type BusinessUser = {
-  /**
-   * Id of the user
-   */
-  id: string;
-  /**
-   * Role of the user in the business
-   */
-  role: UserBusinessRole;
 };
 
 class BusinessService extends Base {
@@ -290,6 +320,23 @@ class BusinessService extends Base {
     );
 
     return (json as unknown) as BusinessSubscription[];
+  }
+
+  /**
+   * Lists the users in the business by id
+   */
+  async getUsers(id: Business["id"]): Promise<BusinessUser[]> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${id}/users`;
+    const json = await throwExpected(
+      async () => fetch.get(url),
+      {
+        404: error => new NotFoundException(error?.body.message),
+        403: error => new ForbiddenException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as BusinessUser[];
   }
 
   /**
