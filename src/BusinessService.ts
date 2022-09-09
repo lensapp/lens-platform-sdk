@@ -159,7 +159,7 @@ export type BusinessSubscription = {
   usedSeats: UsedSeat[];
 };
 
-export type BusinessUsers = {
+export type BusinessUser = {
   /**
    * The id of the business user.
    */
@@ -177,15 +177,27 @@ export type BusinessUsers = {
    */
   fullname: string;
   /**
-   * The role of the user in the business.
-   */
-  role: UserBusinessRole;
-  /**
    * The state of the user in the business.
    *   - `active` if the user is in the business.
    *   - `pendign` if the user is invited but not yet in the business.
    */
   state: BusinessInvitationState;
+  /**
+   * The role of the user in the business.
+   */
+  role: UserBusinessRole;
+  /**
+   * The createdTimestamp of the business user.
+   */
+  createdTimestamp: string;
+  /**
+   * The firstName of the business user.
+   */
+  firstName: string;
+  /**
+   * The lastName of the business user.
+   */
+  lastName: string;
 };
 
 export type UserBusinessRole = "Administrator" | "Member";
@@ -224,17 +236,6 @@ export type BusinessInvitation = {
    * The userId that creates the invitation.
    */
   createdById: string;
-};
-
-type BusinessUser = {
-  /**
-   * Id of the user
-   */
-  id: string;
-  /**
-   * Role of the user in the business
-   */
-  role: UserBusinessRole;
 };
 
 class BusinessService extends Base {
@@ -324,7 +325,7 @@ class BusinessService extends Base {
   /**
    * Lists the users in the business by id
    */
-  async getUsers(id: Business["id"]): Promise<BusinessUsers[]> {
+  async getUsers(id: Business["id"]): Promise<BusinessUser[]> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}/users`;
     const json = await throwExpected(
@@ -335,7 +336,7 @@ class BusinessService extends Base {
       },
     );
 
-    return (json as unknown) as BusinessUsers[];
+    return (json as unknown) as BusinessUser[];
   }
 
   /**
