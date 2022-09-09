@@ -1,4 +1,5 @@
 import { Base } from "./Base";
+import type { UsedSeat } from "./BusinessService";
 import {
   throwExpected,
   NotFoundException,
@@ -65,6 +66,16 @@ export type SubscriptionInfo = {
    * Trial end date string
    */
   trialEndsAt?: string | null;
+
+  /**
+   * Total number of seats in this subscription. (Recurly subscription["quantity"])
+   */
+  seats: number;
+
+  /**
+   * The subscription that have been assigned to a user (`user_subscriptions` relation)
+   */
+  usedSeats: UsedSeat[];
 
   /**
    * Name of the company of the Recurly account
