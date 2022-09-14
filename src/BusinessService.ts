@@ -323,6 +323,48 @@ class BusinessService extends Base {
   }
 
   /**
+   * Activate user business subscription seat
+   */
+  async activateBusinessUserSubscription({ businessId, businessSubscriptionId, businessInvitationId, username }: { businessId: string; businessSubscriptionId: string; businessInvitationId: string; username: string }): Promise<UsedSeat> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/business/${businessId}/subscriptions`;
+    const json = await throwExpected(
+      async () => fetch.post(url, {
+        invitationId: businessInvitationId,
+        subscriptionId: businessSubscriptionId,
+      }),
+      {
+        404: error => new NotFoundException(error?.body.message),
+        400: error => new BadRequestException(error?.body.message),
+        403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
+        422: error => new UnprocessableEntityException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as UsedSeat;
+  }
+
+  /**
+   * Deactivate user business subscription seat
+   * Request user has to be an owner of the subscription seat or Business Administrator
+   */
+  async deActivateBusinessUserSubscription({ businessId, businessSubscriptionId, username }: { businessId: string; businessSubscriptionId: string; username: string }): Promise<UsedSeat> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/business/${businessId}/subscriptions/${businessSubscriptionId}`;
+    const json = await throwExpected(
+      async () => fetch.patch(url),
+      {
+        404: error => new NotFoundException(error?.body.message),
+        400: error => new BadRequestException(error?.body.message),
+        403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
+        422: error => new UnprocessableEntityException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as UsedSeat;
+  }
+
+  /**
    * Lists the users in the business by id
    */
   async getUsers(id: Business["id"]): Promise<BusinessUser[]> {
