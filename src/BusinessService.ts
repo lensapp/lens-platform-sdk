@@ -6,7 +6,6 @@ import {
   BadRequestException,
   NotFoundException,
 } from "./exceptions";
-import { License } from "./types/types";
 
 /**
  * "Lens Business ID"
