@@ -325,13 +325,13 @@ class BusinessService extends Base {
   /**
    * Activate user business subscription seat
    */
-  async activateBusinessUserSubscription({ businessId, recurlySubscriptionId, businessInvitationId, username }: { businessId: string; recurlySubscriptionId: string; businessInvitationId: string; username: string }): Promise<UsedSeat> {
+  async activateBusinessUserSubscription({ businessId, businessSubscriptionId, businessInvitationId, username }: { businessId: string; businessSubscriptionId: string; businessInvitationId: string; username: string }): Promise<UsedSeat> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/business/${businessId}/subscriptions`;
     const json = await throwExpected(
       async () => fetch.post(url, {
         invitationId: businessInvitationId,
-        subscriptionId: recurlySubscriptionId,
+        subscriptionId: businessSubscriptionId,
       }),
       {
         404: error => new NotFoundException(error?.body.message),
