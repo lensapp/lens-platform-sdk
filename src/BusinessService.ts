@@ -345,6 +345,7 @@ class BusinessService extends Base {
 
   /**
    * Deactivate user business subscription seat
+   * Request user has to be an owner of the subscription seat or Business Administrator
    */
   async deActivateBusinessUserSubscription({ businessId, businessSubscriptionId, username }: { businessId: string; businessSubscriptionId: string; username: string }): Promise<UsedSeat> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
