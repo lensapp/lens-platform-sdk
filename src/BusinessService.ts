@@ -326,7 +326,7 @@ class BusinessService extends Base {
   /**
    * Activate user business subscription seat
    */
-  async activateBusinessUserSubscription({ businessId, recurlySubscriptionId, businessInvitationId, username }: { businessId: string; recurlySubscriptionId: string; businessInvitationId: string; username: string }): Promise<License> {
+  async activateBusinessUserSubscription({ businessId, recurlySubscriptionId, businessInvitationId, username }: { businessId: string; recurlySubscriptionId: string; businessInvitationId: string; username: string }): Promise<UsedSeat> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/business/${businessId}/subscriptions/${recurlySubscriptionId}`;
     const json = await throwExpected(
@@ -341,13 +341,13 @@ class BusinessService extends Base {
       },
     );
 
-    return (json as unknown) as License;
+    return (json as unknown) as UsedSeat;
   }
 
   /**
    * Deactivate user business subscription seat
    */
-  async deActivateBusinessUserSubscription({ businessId, businessSubscriptionId, username }: { businessId: string; businessSubscriptionId: string; username: string }): Promise<License> {
+  async deActivateBusinessUserSubscription({ businessId, businessSubscriptionId, username }: { businessId: string; businessSubscriptionId: string; username: string }): Promise<UsedSeat> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/business/${businessId}/subscriptions/${businessSubscriptionId}`;
     const json = await throwExpected(
@@ -360,7 +360,7 @@ class BusinessService extends Base {
       },
     );
 
-    return (json as unknown) as License;
+    return (json as unknown) as UsedSeat;
   }
 
   /**
