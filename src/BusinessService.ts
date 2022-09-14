@@ -6,6 +6,7 @@ import {
   BadRequestException,
   NotFoundException,
 } from "./exceptions";
+import { License } from "./types/types";
 
 /**
  * "Lens Business ID"
@@ -320,6 +321,46 @@ class BusinessService extends Base {
     );
 
     return (json as unknown) as BusinessSubscription[];
+  }
+
+  /**
+   * Activate user business subscription seat
+   */
+  async activateBusinessUserSubscription({ businessId, recurlySubscriptionId, businessInvitationId, username }: { businessId: string; recurlySubscriptionId: string; businessInvitationId: string; username: string }): Promise<License> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/business/${businessId}/subscriptions/${recurlySubscriptionId}`;
+    const json = await throwExpected(
+      async () => fetch.post(url, {
+        invitationId: businessInvitationId,
+      }),
+      {
+        404: error => new NotFoundException(error?.body.message),
+        400: error => new BadRequestException(error?.body.message),
+        403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
+        422: error => new UnprocessableEntityException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as License;
+  }
+
+  /**
+   * Deactivate user business subscription seat
+   */
+  async deActivateBusinessUserSubscription({ businessId, businessSubscriptionId, username }: { businessId: string; businessSubscriptionId: string; username: string }): Promise<License> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/business/${businessId}/subscriptions/${businessSubscriptionId}`;
+    const json = await throwExpected(
+      async () => fetch.patch(url),
+      {
+        404: error => new NotFoundException(error?.body.message),
+        400: error => new BadRequestException(error?.body.message),
+        403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
+        422: error => new UnprocessableEntityException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as License;
   }
 
   /**
