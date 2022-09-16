@@ -88,11 +88,11 @@ export type UsedSeat = {
   /**
    * The de-activation data of user_subscriptions entity in ISO format, e.g. 2022-06-28T08:13:06.000Z
    */
-  deactivatedAt: string;
+  deactivatedAt: string | null;
   /**
    * The expiration data of user_subscriptions entity in ISO format, e.g. 2022-06-28T08:13:06.000Z
    */
-  expiredAt: string;
+  expiredAt: string | null;
   /**
    * The user that is assigned to this subscription
    */
