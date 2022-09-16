@@ -161,21 +161,21 @@ export type BusinessSubscription = {
 
 export type BusinessUser = {
   /**
-   * The id of the business user.
+   * The id of the business user, `undefined` if user is invited but not yet have an account.
    */
-  id: string;
+  id?: string;
   /**
-   * The username of the business user.
+   * The username of the business user, `undefined` if user is invited but not yet have an account.
    */
-  username: string;
+  username?: string;
   /**
-   * The email of the business user.
+   * The email of the business user or the email of the invited user.
    */
   email: string;
   /**
-   * The fullname of the business user.
+   * The fullname of the business user, `undefined` if user is invited but not yet have an account.
    */
-  fullname: string;
+  fullname?: string;
   /**
    * The state of the user in the business.
    *   - `active` if the user is in the business.
@@ -183,21 +183,21 @@ export type BusinessUser = {
    */
   state: BusinessInvitationState;
   /**
-   * The role of the user in the business.
+   * The role of the user in the business or the role of the invited user.
    */
   role: UserBusinessRole;
   /**
-   * The createdTimestamp of the business user.
+   * The createdTimestamp of the business user, `undefined` if user is invited but not yet have an account.
    */
-  createdTimestamp: string;
+  createdTimestamp?: string;
   /**
-   * The firstName of the business user.
+   * The firstName of the business user, `undefined` if user is invited but not yet have an account.
    */
-  firstName: string;
+  firstName?: string;
   /**
-   * The lastName of the business user.
+   * The lastName of the business user, `undefined` if user is invited but not yet have an account.
    */
-  lastName: string;
+  lastName?: string;
 };
 
 export type UserBusinessRole = "Administrator" | "Member";
