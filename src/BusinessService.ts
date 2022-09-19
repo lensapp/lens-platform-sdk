@@ -382,6 +382,22 @@ class BusinessService extends Base {
   }
 
   /**
+   * Get the list of business invitations by business id
+   */
+  async getInvitations(id: Business["id"]): Promise<BusinessInvitation[]> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${id}/invitations`;
+    const json = await throwExpected(
+      async () => fetch.get(url),
+      {
+        403: error => new ForbiddenException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as BusinessInvitation[];
+  }
+
+  /**
    * Create a new invitation for a user to join a business, optionally assigning them to a subscription by given subscriptionId.
    *
    * @remarks inviter has to be the administrator of the business
