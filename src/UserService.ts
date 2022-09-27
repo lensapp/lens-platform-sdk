@@ -11,7 +11,7 @@ import {
   TokenNotFoundException,
   SubscriptionAlreadyExistsException, BadRequestException,
 } from "./exceptions";
-import { License } from "./types/types";
+import { BillingPageToken, License } from "./types/types";
 
 /**
  *
@@ -33,10 +33,6 @@ export interface User {
 }
 
 export type UserWithEmail = User & { email: string };
-
-type BillingPageToken = {
-  hostedLoginToken: string;
-};
 
 export interface UserAttributes {
   fullname?: string;
