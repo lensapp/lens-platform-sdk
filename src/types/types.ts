@@ -19,3 +19,7 @@ export type License = {
   type: LicenseType;
   subscriptionId: string;
 };
+
+export type BillingPageToken = {
+  hostedLoginToken: string;
+};
