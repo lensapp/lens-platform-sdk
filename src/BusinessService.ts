@@ -6,6 +6,7 @@ import {
   BadRequestException,
   NotFoundException,
 } from "./exceptions";
+import { BillingPageToken } from "./types/types";
 
 /**
  * "Lens Business ID"
@@ -446,6 +447,26 @@ class BusinessService extends Base {
     );
 
     return (json as unknown) as BusinessInvitation;
+  }
+
+  /**
+   * Get token for Recurly hosted pages
+   *
+   * @remarks user has to be the administrator of the business
+   */
+  async getBillingPageToken(id: Business["id"]): Promise<BillingPageToken> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${id}/billing-page-token`;
+    const json = await throwExpected(
+      async () => fetch.get(url),
+      {
+        404: error => new NotFoundException(error?.body.message),
+        403: () => new ForbiddenException(`Getting the billing page token for businessId ${id} is forbidden`),
+        422: error => new UnprocessableEntityException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as BillingPageToken;
   }
 }
 
