@@ -94,6 +94,93 @@ export type SubscriptionInfo = {
   state: SubscriptionState;
 };
 
+export type SubscriptionSeatInfo = {
+  id?: string | null;
+  planName?: string | null;
+  planCode?: string | null;
+  /**
+   * Current payment period start date string
+   */
+  currentPeriodStartedAt?: string | null;
+  /**
+   * Current payment period end date string
+   */
+  currentPeriodEndsAt?: string | null;
+  /**
+   * Trial start date string
+   */
+  trialStartedAt?: string | null;
+  /**
+   * Trial end date string
+   */
+  trialEndsAt?: string | null;
+
+  /**
+   * Total number of seats in this subscription. (Recurly subscription["quantity"])
+   */
+  seats: number;
+
+  /**
+   * The subscription that have been assigned to a user (`user_subscriptions` relation)
+   */
+  usedSeats: UsedSeat[];
+
+  /**
+   * Name of the company of the Recurly account
+   */
+  companyName?: string | null;
+
+  /**
+   * Account code of the subscription's Recurly account
+   */
+  accountCode?: string | null;
+
+  /**
+   * True if the subscription belongs to a business Recurly account
+   */
+  isBusinessAccount: boolean;
+
+  /**
+   * State of the Recurly subscription
+   */
+  recurlySubscriptionState: SubscriptionState;
+
+  /**
+   * Subscription activation date string
+   */
+  activatedAt: string | null;
+
+  /**
+   * Subscription deactivation date string
+   */
+  deactivatedAt: string | null;
+
+  /**
+   * Subscription creation date string
+   */
+  createdAt: string | null;
+
+  /**
+   * Subscription update date string
+   */
+  updatedAt: string | null;
+
+  /**
+   * Subscription expiration date string
+   */
+  expiredAt: string | null;
+
+  /**
+   * Recurly subscription UUID format ID
+   */
+  subscriptionId: string;
+
+  /**
+   * Recurly subscription short format ID
+   */
+  shortSubscriptionId: string;
+};
+
 export type Address = {
   /**
    * Phone number
@@ -249,6 +336,20 @@ class UserService extends Base {
     );
 
     return (json as unknown) as SubscriptionInfo[];
+  }
+
+  async getUserSubscriptionsSeats(username: string): Promise<SubscriptionSeatInfo[]> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/users/${username}/subscriptions/v2`;
+    const json = await throwExpected(
+      async () => fetch.get(url),
+      {
+        404: error => new NotFoundException(error?.body.message),
+        403: () => new ForbiddenException(`Access to user ${username} is forbidden`),
+      },
+    );
+
+    return (json as unknown) as SubscriptionSeatInfo[];
   }
 
   async getUserSubscription(username: string, subscriptionId: string): Promise<SubscriptionInfo> {
