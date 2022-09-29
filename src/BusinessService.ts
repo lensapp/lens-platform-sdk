@@ -7,6 +7,7 @@ import {
   NotFoundException,
 } from "./exceptions";
 import { BillingPageToken } from "./types/types";
+import { SubscriptionState } from "./UserService";
 
 /**
  * "Lens Business ID"
@@ -158,6 +159,10 @@ export type BusinessSubscription = {
    * The subscription that have been assigned to a user (`user_subscriptions` relation)
    */
   usedSeats: UsedSeat[];
+  /**
+   * State of the subscription
+   */
+  state: SubscriptionState;
 };
 
 export type BusinessUser = {
