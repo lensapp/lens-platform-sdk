@@ -319,12 +319,5 @@ describe("SpaceService", () => {
         await testPlatformBob.client.space.deleteOne({ name: existingSpace.name });
       }
     });
-
-    it("rejects requests with invalid tokens", async () => {
-      testPlatformBob.fakeToken = "fake token";
-
-      return expect(testPlatformBob.client.space.createCatalogApi(existingSpace.name))
-        .rejects.toThrowError(UnauthorizedException);
-    });
   });
 });

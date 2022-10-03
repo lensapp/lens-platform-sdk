@@ -117,23 +117,6 @@ class SpaceService extends Base {
   }
 
   /**
-   * Create CatalogAPI for the Space if it's missing
-   */
-  async createCatalogApi(spaceName: string): Promise<CatalogAPI> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/spaces/${spaceName}/catalog-api`;
-
-    const json = await throwExpected(
-      async () => fetch.post(url),
-      {
-        404: () => new SpaceNotFoundException(spaceName),
-      },
-    );
-
-    return (json as unknown) as CatalogAPI;
-  }
-
-  /**
    * Add feature to users' Personal Spaces.
    * @param feature - Feature to add
    * @param users - Array of usernames or email addresses
