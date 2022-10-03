@@ -331,7 +331,7 @@ class BusinessService extends Base {
   /**
    * Accept business invitation
    */
-  async acceptBusinessInvitation({ businessId, businessInvitationId, username }: { businessId: string; businessInvitationId: string; username: string }): Promise<UsedSeat> {
+  async acceptBusinessInvitation({ businessId, businessInvitationId, username }: { businessId: string; businessInvitationId: string; username: string }): Promise<BusinessInvitation> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${businessId}/invitations/${businessInvitationId}`;
     const json = await throwExpected(
@@ -346,7 +346,7 @@ class BusinessService extends Base {
       }
     );
 
-    return (json as unknown) as UsedSeat;
+    return (json as unknown) as BusinessInvitation;
   }
 
   /**
