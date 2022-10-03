@@ -329,27 +329,6 @@ class BusinessService extends Base {
   }
 
   /**
-   * Accept business invitation
-   */
-  async acceptBusinessInvitation({ businessId, businessInvitationId, username }: { businessId: string; businessInvitationId: string; username: string }): Promise<BusinessInvitation> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/businesses/${businessId}/invitations/${businessInvitationId}`;
-    const json = await throwExpected(
-      async () => fetch.patch(url, {
-        state: "active",
-      }),
-      {
-        404: error => new NotFoundException(error?.body.message),
-        400: error => new BadRequestException(error?.body.message),
-        403: () => new ForbiddenException(`Accepting invitation for ${username} is forbidden`),
-        422: error => new UnprocessableEntityException(error?.body.message),
-      },
-    );
-
-    return (json as unknown) as BusinessInvitation;
-  }
-
-  /**
    * Activate user business subscription seat
    */
   async activateBusinessUserSubscription({ businessId, businessSubscriptionId, businessInvitationId, username }: { businessId: string; businessSubscriptionId: string; businessInvitationId: string; username: string }): Promise<UsedSeat> {
@@ -463,7 +442,9 @@ class BusinessService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}/invitations/${invitationId}`;
     const json = await throwExpected(
-      async () => fetch.patch(url),
+      async () => fetch.patch(url, {
+        state: "active",
+      }),
       {
         400: error => new BadRequestException(error?.body.message),
         422: error => new UnprocessableEntityException(error?.body.message),
