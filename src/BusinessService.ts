@@ -336,14 +336,14 @@ class BusinessService extends Base {
     const url = `${apiEndpointAddress}/businesses/${businessId}/invitations/${businessInvitationId}`;
     const json = await throwExpected(
       async () => fetch.patch(url, {
-        state: "active"
+        state: "active",
       }),
       {
         404: error => new NotFoundException(error?.body.message),
         400: error => new BadRequestException(error?.body.message),
         403: () => new ForbiddenException(`Accepting invitation for ${username} is forbidden`),
         422: error => new UnprocessableEntityException(error?.body.message),
-      }
+      },
     );
 
     return (json as unknown) as BusinessInvitation;
