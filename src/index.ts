@@ -8,13 +8,13 @@ import type { OpenIdConnectUserInfo } from "./OpenIdConnect";
 import { Actions, K8sClusterActions, Permissions, Roles, TeamActions } from "./Permissions";
 import type { Space, SpaceEntity } from "./SpaceService";
 import type { Team, TeamEntity } from "./TeamService";
-import type { User, UserWithEmail, UserAttributes, SubscriptionInfo, BillingInfo } from "./UserService";
+import type { User, UserWithEmail, UserAttributes, SubscriptionInfo, BillingInfo, SubscriptionSeatInfo } from "./UserService";
 import type { Business, BusinessSubscription, BusinessInvitation, UserBusinessRole, BusinessInvitationState, BusinessUser } from "./BusinessService";
 
 export * from "./exceptions";
 export type {
   User, UserWithEmail, UserAttributes, Space, InvitationDomain, Team, K8sCluster, Invitation, BillingPlan, OpenIdConnectUserInfo,
-  SpaceEntity, TeamEntity, K8sClusterEntity, InvitationEntity, InvitationDomainEntity, DevClusterCrdState, Phase, SubscriptionInfo,
+  SpaceEntity, TeamEntity, K8sClusterEntity, InvitationEntity, InvitationDomainEntity, DevClusterCrdState, Phase, SubscriptionInfo, SubscriptionSeatInfo,
   BillingInfo, Business, BusinessSubscription, BusinessInvitation, UserBusinessRole, BusinessInvitationState, BusinessUser,
 };
 export type { LensPlatformClientType, LensPlatformClientOptions };
