@@ -148,7 +148,7 @@ export type SubscriptionSeatInfo = {
   /**
    * Subscription activation date string
    */
-  activatedAt: string | null;
+  activatedAt: string;
 
   /**
    * Subscription deactivation date string
@@ -158,12 +158,12 @@ export type SubscriptionSeatInfo = {
   /**
    * Subscription creation date string
    */
-  createdAt: string | null;
+  createdAt: string;
 
   /**
    * Subscription update date string
    */
-  updatedAt: string | null;
+  updatedAt: string;
 
   /**
    * Subscription expiration date string
