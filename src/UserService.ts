@@ -340,7 +340,7 @@ class UserService extends Base {
 
   async getUserSubscriptionsSeats(username: string): Promise<SubscriptionSeatInfo[]> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/users/${username}/subscriptions/v2`;
+    const url = `${apiEndpointAddress}/users/${username}/subscription-seats`;
     const json = await throwExpected(
       async () => fetch.get(url),
       {
