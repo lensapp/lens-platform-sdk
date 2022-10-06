@@ -442,7 +442,9 @@ class BusinessService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}/invitations/${invitationId}`;
     const json = await throwExpected(
-      async () => fetch.patch(url),
+      async () => fetch.patch(url, {
+        state: "active",
+      }),
       {
         400: error => new BadRequestException(error?.body.message),
         422: error => new UnprocessableEntityException(error?.body.message),

@@ -301,30 +301,4 @@ describe("SpaceService", () => {
     it("rejects when trying to modify space without permissions", async () => expect(testPlatformBob.client.space.updateOne(aliceSpace.name, { name: aliceSpace.name, description: "Pwned by Bob" }))
       .rejects.toThrowError(ForbiddenException));
   });
-
-  describe("createCatalogApi", () => {
-    let existingSpace: Space;
-
-    beforeAll(async () => {
-      testPlatformBob.fakeToken = undefined;
-      existingSpace = await testPlatformBob.client.space.createOne({
-        name: `sdk-e2e-test-${rng()}`,
-        description: "Test space for createCatalogApi function",
-      });
-    });
-
-    afterAll(async () => {
-      if (existingSpace) {
-        testPlatformBob.fakeToken = undefined;
-        await testPlatformBob.client.space.deleteOne({ name: existingSpace.name });
-      }
-    });
-
-    it("rejects requests with invalid tokens", async () => {
-      testPlatformBob.fakeToken = "fake token";
-
-      return expect(testPlatformBob.client.space.createCatalogApi(existingSpace.name))
-        .rejects.toThrowError(UnauthorizedException);
-    });
-  });
 });
