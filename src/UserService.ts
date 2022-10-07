@@ -94,7 +94,7 @@ export type SubscriptionInfo = {
   state: SubscriptionState;
 };
 
-export type SubscriptionSeatInfo = {
+export type SubscriptionSeat = {
   id?: string | null;
   planName?: string | null;
   planCode?: string | null;
@@ -179,6 +179,11 @@ export type SubscriptionSeatInfo = {
    * Recurly subscription short format ID
    */
   shortSubscriptionId: string;
+
+  /**
+   * Is the seat active
+   */
+  active: boolean;
 };
 
 export type Address = {
@@ -338,7 +343,7 @@ class UserService extends Base {
     return (json as unknown) as SubscriptionInfo[];
   }
 
-  async getUserSubscriptionsSeats(username: string): Promise<SubscriptionSeatInfo[]> {
+  async getUserSubscriptionsSeats(username: string): Promise<SubscriptionSeat[]> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/subscription-seats`;
     const json = await throwExpected(
@@ -349,7 +354,7 @@ class UserService extends Base {
       },
     );
 
-    return (json as unknown) as SubscriptionSeatInfo[];
+    return (json as unknown) as SubscriptionSeat[];
   }
 
   async getUserSubscription(username: string, subscriptionId: string): Promise<SubscriptionInfo> {
