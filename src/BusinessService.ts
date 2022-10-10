@@ -285,7 +285,7 @@ class BusinessService extends Base {
   /**
    * Create a new business ("Lens Business ID").
    */
-  async createOne(business: Omit<Business, "id" | "createdAt" | "updatedAt" | "businessUsers"> & { id?: string }): Promise<Business> {
+  async createOne(business: Omit<Business, "id" | "createdAt" | "updatedAt" | "businessUsers" | "external"> & { id?: string }): Promise<Business> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses`;
     const json = await throwExpected(
