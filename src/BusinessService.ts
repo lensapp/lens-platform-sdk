@@ -61,6 +61,10 @@ export type Business = {
    * The users that are in the business.
    */
   businessUsers: BusinessUser[];
+  /**
+   * External is true when a business is created by external provider.
+   */
+  external: boolean;
 };
 
 /**
