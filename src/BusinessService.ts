@@ -461,6 +461,27 @@ class BusinessService extends Base {
   }
 
   /**
+   * Delete business invitation
+   */
+  async deleteInvitation(
+    id: Business["id"],
+    invitationId: BusinessInvitation["id"],
+  ) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${id}/invitations/${invitationId}`;
+    const json = await throwExpected(
+      async () => fetch.delete(url),
+      {
+        400: error => new BadRequestException(error?.body.message),
+        404: error => new NotFoundException(error?.body.message),
+        403: error => new ForbiddenException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as BusinessInvitation;
+  }
+
+  /**
    * Get token for Recurly hosted pages
    *
    * @remarks user has to be the administrator of the business
