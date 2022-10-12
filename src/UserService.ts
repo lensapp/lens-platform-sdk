@@ -398,9 +398,60 @@ class UserService extends Base {
     return (json as unknown) as License;
   }
 
+  async activateSubscriptionSeat({ username, license }: { username: string; license: License }): Promise<License> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/users/${username}/subscription-seats`;
+    const json = await throwExpected(
+      async () => fetch.post(url, license),
+      {
+        404(error) {
+          const message = error?.body.message;
+
+          if (typeof message === "string") {
+            if (message.includes("User")) {
+              return new UserNameNotFoundException(username);
+            }
+          }
+
+          return new NotFoundException(`Recurly subscription ${license.subscriptionId} not found`);
+        },
+        409: error => new SubscriptionAlreadyExistsException(error?.body.message ?? `Subscription seat for user ${username} already exists`),
+        400: error => new BadRequestException(error?.body.message),
+        403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
+        422: error => new UnprocessableEntityException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as License;
+  }
+
   async deactivateSubscription({ username, license }: { username: string; license: Pick<License, "subscriptionId"> }): Promise<void> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/subscriptions/${license.subscriptionId}`;
+    await throwExpected(
+      async () => fetch.delete(url),
+      {
+        404(error) {
+          const message = error?.body.message;
+
+          if (typeof message === "string") {
+            if (message.includes("User")) {
+              return new UserNameNotFoundException(username);
+            }
+          }
+
+          return new NotFoundException(`Recurly subscription ${license.subscriptionId} not found`);
+        },
+        403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
+        400: () => new BadRequestException(),
+        422: error => new UnprocessableEntityException(error?.body.message),
+      },
+    );
+  }
+
+  async deactivateSubscriptionSeat({ username, license }: { username: string; license: Pick<License, "subscriptionId"> }): Promise<void> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/users/${username}/subscription-seats/${license.subscriptionId}`;
     await throwExpected(
       async () => fetch.delete(url),
       {
