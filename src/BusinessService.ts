@@ -212,7 +212,7 @@ export type BusinessUser = {
 
 export type UserBusinessRole = "Administrator" | "Member";
 export type BusinessInvitationState = "pending" | "active";
-
+export type BusinessUpdate = Omit<Business, "id" | "createdAt" | "updatedAt" | "businessUsers" | "external">;
 export type BusinessInvitation = {
   /**
    * The business invitation ID
@@ -303,9 +303,9 @@ class BusinessService extends Base {
   /**
    * Update a existing business ("Lens Business ID").
    */
-  async updateOne(business: Omit<Business, "id" | "createdAt" | "updatedAt" | "businessUsers" | "external"> & { id?: string }): Promise<Business> {
+  async updateOne(id: string, business: BusinessUpdate): Promise<Business> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/businesses`;
+    const url = `${apiEndpointAddress}/businesses/${id}`;
     const json = await throwExpected(
       async () => fetch.patch(url, business),
       {
