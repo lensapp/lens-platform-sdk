@@ -301,6 +301,25 @@ class BusinessService extends Base {
   }
 
   /**
+   * Update a existing business ("Lens Business ID").
+   */
+  async updateOne(business: Omit<Business, "id" | "createdAt" | "updatedAt" | "businessUsers" | "external"> & { id?: string }): Promise<Business> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses`;
+    const json = await throwExpected(
+      async () => fetch.patch(url, business),
+      {
+        400: error => new BadRequestException(error?.body.message),
+        422: error => new UnprocessableEntityException(error?.body.message),
+        401: error => new UnprocessableEntityException(error?.body.message),
+        403: error => new ForbiddenException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as Business;
+  }
+
+  /**
    * Get delete business entity ("Lens Business ID") by id.
    */
   async deleteOne(id: Business["id"]): Promise<void> {
