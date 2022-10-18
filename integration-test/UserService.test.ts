@@ -209,7 +209,7 @@ describe("UserService", () => {
 
       it.skip("returns undefined after subscription deactivation", async () =>
         expect(adamPlatform.client.user.deactivateSubscription({ username: userAdam.username, license: { subscriptionId: userAdam.subscriptionId! } }))
-          .rejects.toBeUndefined(),
+          .resolves.toBeUndefined(),
       );
     });
 
