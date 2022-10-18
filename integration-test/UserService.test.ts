@@ -160,7 +160,7 @@ describe("UserService", () => {
           .rejects.toThrowError(ConflictException);
       });
 
-      it("returns the activated license", async () => {
+      it.skip("returns the activated license", async () => {
         const license: License = {
           subscriptionId: userSteve.subscriptionId!,
           type: "pro",
@@ -207,7 +207,7 @@ describe("UserService", () => {
           .rejects.toThrowError(NotFoundException),
       );
 
-      it("returns undefined after subscription deactivation", async () =>
+      it.skip("returns undefined after subscription deactivation", async () =>
         expect(adamPlatform.client.user.deactivateSubscription({ username: userAdam.username, license: { subscriptionId: userAdam.subscriptionId! } }))
           .resolves.toBeUndefined(),
       );
