@@ -65,6 +65,14 @@ export type Business = {
    * External is true when a business is created by external provider.
    */
   external: boolean;
+  /**
+   * The website URL of the business
+   */
+  websiteUrl: string;
+  /**
+   * The department name of the business
+   */
+  department: string;
 };
 
 /**
