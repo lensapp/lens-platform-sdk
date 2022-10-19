@@ -44,7 +44,8 @@
       "esm",
       "cjs"
     ],
-    "dts": true
+    "dts": true,
+    "target": "es5"
   },
   "eslintConfig": {
     "plugins": [
