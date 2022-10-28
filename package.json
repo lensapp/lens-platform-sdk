@@ -26,7 +26,7 @@
     "build": "npm run build:dist",
     "build:dist": "rm -rf dist && run-p build:cjs build:esm",
     "build:cjs": "tsc -p tsconfig.cjs.json",
-    "build:esm": "tsc -p tsconfig.esm.json && echo '{\"type\": \"module\"}'> dist/esm/package.json"
+    "build:esm": "tsc -p tsconfig.esm.json"
   },
   "repository": {
     "type": "git",
