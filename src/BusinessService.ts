@@ -439,15 +439,16 @@ class BusinessService extends Base {
    *
    * @remarks inviter has to be the administrator of the business
    */
-  async createInvitation(id: Business["id"], email: string, subscriptionId?: string): Promise<{
+  async createInvitation(id: Business["id"], email: string, subscriptionId?: string, role = "Member"): Promise<{
     id: BusinessInvitation["id"];
     email: BusinessInvitation["email"];
     subscriptionId: BusinessInvitation["subscriptionId"];
+    role: UserBusinessRole;
   }> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}/invitations`;
     const json = await throwExpected(
-      async () => fetch.post(url, { email, subscriptionId }),
+      async () => fetch.post(url, { email, subscriptionId, role }),
       {
         400: error => new BadRequestException(error?.body.message),
         422: error => new UnprocessableEntityException(error?.body.message),
@@ -460,6 +461,7 @@ class BusinessService extends Base {
       id: BusinessInvitation["id"];
       email: BusinessInvitation["email"];
       subscriptionId: BusinessInvitation["subscriptionId"];
+      role: BusinessInvitation["role"];
     };
   }
 
