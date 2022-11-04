@@ -131,6 +131,10 @@ export type UsedSeat = {
      * The full name of the user
      */
     fullname: string;
+    /**
+     * User's email address
+     */
+    email: string;
   };
 };
 
