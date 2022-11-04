@@ -220,6 +220,11 @@ export type BusinessUser = {
    * The lastName of the business user, `undefined` if user is invited but not yet have an account.
    */
   lastName?: string;
+  /**
+   * The date the user was invited to the business.
+   * `undefined` if the user is not joined via invitation.
+   */
+  invitationCreatedAt?: string;
 };
 
 export type UserBusinessRole = "Administrator" | "Member";
