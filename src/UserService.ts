@@ -42,6 +42,10 @@ export interface UserAttributes {
 
 export type SubscriptionState = "active" | "canceled" | "expired" | "failed" | "future" | "paused";
 
+export type OfflineActivationCode = {
+  activationCode: string;
+};
+
 export type SubscriptionInfo = {
   id?: string | null;
   planName?: string | null;
@@ -82,6 +86,11 @@ export type SubscriptionInfo = {
    * Account code of the subscription's Recurly account
    */
   accountCode?: string | null;
+
+  /**
+   * Subscription used for offline
+   */
+  offline?: boolean | null;
 
   /**
    * True if the subscription belongs to a business Recurly account
@@ -377,7 +386,7 @@ class UserService extends Base {
     return (json as unknown) as SubscriptionInfo;
   }
 
-  async getUserSubscriptionOfflineActivationCode(username: string, subscriptionId: string, offlineCodeActivationData: ActivationCodeData): Promise<SubscriptionInfo> {
+  async getUserSubscriptionOfflineActivationCode(username: string, subscriptionId: string, offlineCodeActivationData: ActivationCodeData): Promise<OfflineActivationCode> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/subscription-seats/${subscriptionId}/activation-code?accessToken=a${offlineCodeActivationData.accessToken}&refreshToken=${offlineCodeActivationData.refreshToken}&idTokenTest=${offlineCodeActivationData.idToken}`;
     const json = await throwExpected(
@@ -388,7 +397,7 @@ class UserService extends Base {
       },
     );
 
-    return (json as unknown) as SubscriptionInfo;
+    return (json as unknown) as OfflineActivationCode;
   }
 
   async activateSubscription({ username, license }: { username: string; license: License }): Promise<License> {
