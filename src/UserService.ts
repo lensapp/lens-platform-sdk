@@ -386,20 +386,6 @@ class UserService extends Base {
     return (json as unknown) as SubscriptionInfo;
   }
 
-  async getUserSubscriptionOfflineActivationCode(username: string, subscriptionId: string, offlineCodeActivationData: ActivationCodeData): Promise<OfflineActivationCode> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/users/${username}/subscription-seats/${subscriptionId}/activation-code?accessToken=a${offlineCodeActivationData.accessToken}&refreshToken=${offlineCodeActivationData.refreshToken}&idTokenTest=${offlineCodeActivationData.idToken}`;
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        404: error => new NotFoundException(error?.body.message),
-        403: () => new ForbiddenException(`Access to user ${username} is forbidden`),
-      },
-    );
-
-    return (json as unknown) as OfflineActivationCode;
-  }
-
   async activateSubscription({ username, license }: { username: string; license: License }): Promise<License> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/subscriptions`;
@@ -454,11 +440,11 @@ class UserService extends Base {
     return (json as unknown) as License;
   }
 
-  async setSubscriptionSeatOffline({ username, license }: { username: string; license: License }): Promise<License> {
+  async getSubscriptionSeatOfflineActivationCode({ username, subscriptionSeatId, activationCodeData }: { username: string; subscriptionSeatId: string; activationCodeData: ActivationCodeData }): Promise<OfflineActivationCode | null> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/users/${username}/subscription-seats/${license.subscriptionId}/offline`;
+    const url = `${apiEndpointAddress}/users/${username}/subscription-seats/${subscriptionSeatId}/activation-code`;
     const json = await throwExpected(
-      async () => fetch.patch(url, { offline: true }),
+      async () => fetch.post(url, activationCodeData),
       {
         404(error) {
           const message = error?.body.message;
@@ -469,7 +455,7 @@ class UserService extends Base {
             }
           }
 
-          return new NotFoundException(`Recurly subscription ${license.subscriptionId} not found`);
+          return new NotFoundException("Subscription seat subscriptionSeatId not found");
         },
         400: error => new BadRequestException(error?.body.message),
         403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
@@ -477,7 +463,7 @@ class UserService extends Base {
       },
     );
 
-    return (json as unknown) as License;
+    return (json as unknown) as OfflineActivationCode;
   }
 
   async deactivateSubscription({ username, license }: { username: string; license: Pick<License, "subscriptionId"> }): Promise<void> {
