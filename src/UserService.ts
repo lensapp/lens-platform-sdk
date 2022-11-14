@@ -232,6 +232,12 @@ export type BillingInfo = {
   };
 };
 
+export interface ActivationCodeData {
+  accessToken: string;
+  idToken: string;
+  refreshToken: string;
+}
+
 /**
  *
  * The class for consuming all `user` resources.
@@ -371,6 +377,20 @@ class UserService extends Base {
     return (json as unknown) as SubscriptionInfo;
   }
 
+  async getUserSubscriptionOfflineActivationCode(username: string, subscriptionId: string, offlineCodeActivationData: ActivationCodeData): Promise<SubscriptionInfo> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/users/${username}/subscription-seats/${subscriptionId}/activation-code?accessToken=a${offlineCodeActivationData.accessToken}&refreshToken=${offlineCodeActivationData.refreshToken}&idTokenTest=${offlineCodeActivationData.idToken}`;
+    const json = await throwExpected(
+      async () => fetch.get(url),
+      {
+        404: error => new NotFoundException(error?.body.message),
+        403: () => new ForbiddenException(`Access to user ${username} is forbidden`),
+      },
+    );
+
+    return (json as unknown) as SubscriptionInfo;
+  }
+
   async activateSubscription({ username, license }: { username: string; license: License }): Promise<License> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/subscriptions`;
@@ -416,6 +436,32 @@ class UserService extends Base {
           return new NotFoundException(`Recurly subscription ${license.subscriptionId} not found`);
         },
         409: error => new SubscriptionAlreadyExistsException(error?.body.message ?? `Subscription seat for user ${username} already exists`),
+        400: error => new BadRequestException(error?.body.message),
+        403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
+        422: error => new UnprocessableEntityException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as License;
+  }
+
+  async setSubscriptionSeatOffline({ username, license }: { username: string; license: License }): Promise<License> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/users/${username}/subscription-seats/${license.subscriptionId}/offline`;
+    const json = await throwExpected(
+      async () => fetch.patch(url, { offline: true }),
+      {
+        404(error) {
+          const message = error?.body.message;
+
+          if (typeof message === "string") {
+            if (message.includes("User")) {
+              return new UserNameNotFoundException(username);
+            }
+          }
+
+          return new NotFoundException(`Recurly subscription ${license.subscriptionId} not found`);
+        },
         400: error => new BadRequestException(error?.body.message),
         403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
         422: error => new UnprocessableEntityException(error?.body.message),
