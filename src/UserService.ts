@@ -42,6 +42,10 @@ export interface UserAttributes {
 
 export type SubscriptionState = "active" | "canceled" | "expired" | "failed" | "future" | "paused";
 
+export type OfflineActivationCode = {
+  activationCode: string;
+};
+
 export type SubscriptionInfo = {
   id?: string | null;
   planName?: string | null;
@@ -82,6 +86,11 @@ export type SubscriptionInfo = {
    * Account code of the subscription's Recurly account
    */
   accountCode?: string | null;
+
+  /**
+   * Subscription used for offline
+   */
+  offline?: boolean | null;
 
   /**
    * True if the subscription belongs to a business Recurly account
@@ -231,6 +240,12 @@ export type BillingInfo = {
     expYear: Number | null;
   };
 };
+
+export interface ActivationCodeData {
+  accessToken: string;
+  idToken: string;
+  refreshToken: string;
+}
 
 /**
  *
@@ -423,6 +438,32 @@ class UserService extends Base {
     );
 
     return (json as unknown) as License;
+  }
+
+  async getSubscriptionSeatOfflineActivationCode({ username, subscriptionSeatId, activationCodeData }: { username: string; subscriptionSeatId: string; activationCodeData: ActivationCodeData }): Promise<OfflineActivationCode | null> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/users/${username}/subscription-seats/${subscriptionSeatId}/activation-code`;
+    const json = await throwExpected(
+      async () => fetch.post(url, activationCodeData),
+      {
+        404(error) {
+          const message = error?.body.message;
+
+          if (typeof message === "string") {
+            if (message.includes("User")) {
+              return new UserNameNotFoundException(username);
+            }
+          }
+
+          return new NotFoundException(`Subscription seat ${subscriptionSeatId} not found`);
+        },
+        400: error => new BadRequestException(error?.body.message),
+        403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
+        422: error => new UnprocessableEntityException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as OfflineActivationCode;
   }
 
   async deactivateSubscription({ username, license }: { username: string; license: Pick<License, "subscriptionId"> }): Promise<void> {
