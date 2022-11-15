@@ -193,6 +193,11 @@ export type SubscriptionSeat = {
    * Is the seat active
    */
   active: boolean;
+
+  /**
+   * Subscription used offline
+   */
+  offline: boolean | null;
 };
 
 export type Address = {
