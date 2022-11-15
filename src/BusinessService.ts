@@ -106,7 +106,7 @@ export type UsedSeat = {
   /**
    * Subscription seat used offline
    */
-  offline: boolean | null;
+  offline: boolean;
   /**
    * The expiration data of user_subscriptions entity in ISO format, e.g. 2022-06-28T08:13:06.000Z
    */

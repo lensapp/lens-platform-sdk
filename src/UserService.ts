@@ -90,7 +90,7 @@ export type SubscriptionInfo = {
   /**
    * Subscription seat used for offline
    */
-  offline?: boolean | null;
+  offline: boolean;
 
   /**
    * True if the subscription belongs to a business Recurly account
@@ -197,7 +197,7 @@ export type SubscriptionSeat = {
   /**
    * Subscription used offline
    */
-  offline: boolean | null;
+  offline: boolean;
 };
 
 export type Address = {
