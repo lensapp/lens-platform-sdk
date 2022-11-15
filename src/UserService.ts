@@ -88,7 +88,7 @@ export type SubscriptionInfo = {
   accountCode?: string | null;
 
   /**
-   * Subscription used for offline
+   * Subscription seat used for offline
    */
   offline?: boolean | null;
 
