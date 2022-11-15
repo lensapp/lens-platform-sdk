@@ -20,3 +20,5 @@ export type {
 export type { LensPlatformClientType, LensPlatformClientOptions };
 export { LensPlatformClient, Roles, Actions, K8sClusterActions, Permissions, TeamActions };
 
+export * as Constants from "./data";
+
