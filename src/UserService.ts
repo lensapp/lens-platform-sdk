@@ -455,7 +455,7 @@ class UserService extends Base {
             }
           }
 
-          return new NotFoundException("Subscription seat subscriptionSeatId not found");
+          return new NotFoundException(`Subscription seat ${subscriptionSeatId} not found`);
         },
         400: error => new BadRequestException(error?.body.message),
         403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
