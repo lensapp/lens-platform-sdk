@@ -9,7 +9,9 @@ import {
   UserNameNotFoundException,
   LensSDKException,
   TokenNotFoundException,
-  SubscriptionAlreadyExistsException, BadRequestException,
+  SubscriptionAlreadyExistsException,
+  BadRequestException,
+  UnauthorizedException,
 } from "./exceptions";
 import { BillingPageToken, License } from "./types/types";
 
@@ -266,6 +268,15 @@ export interface ActivationCodeData {
  * @alpha
  */
 class UserService extends Base {
+  async getUsername() {
+    const token = await this.lensPlatformClient.getDecodedAccessToken();
+    if (!token?.preferred_username) {
+      throw new Error("no access token or no preferred_username");
+    }
+
+    return token.preferred_username;
+  }
+
   async getOne({ username }: { username: string }, queryString?: string): Promise<UserWithEmail> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}${queryString ? `?${queryString}` : ""}`;
@@ -561,6 +572,111 @@ class UserService extends Base {
     );
 
     return (json as unknown) as BillingInfo;
+  }
+
+  /**
+   * Get all emails (primary+secondary) of the user
+   */
+  async getEmails() {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const username = await this.getUsername();
+    const url = `${apiEndpointAddress}/users/${username}/emails`;
+    const json = await throwExpected(
+      async () => fetch.get(url),
+      {
+        401: error => new UnauthorizedException(error?.body?.message),
+        404: error => new NotFoundException(error?.body?.message),
+      },
+    );
+
+    return (json as unknown) as Record<string, "verified" | "unverified" | "primary">;
+  }
+
+  /**
+   * Add new secondary email(s) to user's account, newly added email will be unverified 
+   * and can be promoted to primary later verification.
+   */
+  async createEmails(emails: string[]) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const username = await this.getUsername();
+    const url = `${apiEndpointAddress}/users/${username}/emails`;
+    const json = await throwExpected(
+      async () => fetch.post(url, emails),
+      {
+        400: error => new BadRequestException(error?.body?.message),
+        401: error => new UnauthorizedException(error?.body?.message),
+        422: error => new UnprocessableEntityException(error?.body?.message),
+      },
+    );
+
+    return (json as unknown) as string[];
+  }
+
+  /**
+   * Delete secondary email(s) from user account
+   */
+  async deleteEmails(emails: string[]) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const username = await this.getUsername();
+    const url = `${apiEndpointAddress}/users/${username}/emails`;
+    await throwExpected(
+      async () => fetch.delete(url, { data: emails }),
+      {
+        400: error => new BadRequestException(error?.body?.message),
+        401: error => new UnauthorizedException(error?.body?.message),
+        422: error => new UnprocessableEntityException(error?.body?.message),
+      },
+    );
+  }
+
+  /**
+   * Send a verification email to a user's unverified secondary email address
+   */
+  async sendVerificationEmail(email: string) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const username = await this.getUsername();
+    const url = `${apiEndpointAddress}/users/${username}/emails/send-verification`;
+    await throwExpected(
+      async () => fetch.put(url, { email }),
+      {
+        400: error => new BadRequestException(error?.body?.message),
+        401: error => new UnauthorizedException(error?.body?.message),
+      },
+    );
+  }
+
+  /**
+   * Verify a user's secondary email using the token
+   */
+  async verifySecondaryEmail(token: string) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const username = await this.getUsername();
+    const url = `${apiEndpointAddress}/users/${username}/emails/verification`;
+    await throwExpected(
+      async () => fetch.post(url, { token }),
+      {
+        400: error => new BadRequestException(error?.body?.message),
+        401: error => new UnauthorizedException(error?.body?.message),
+        422: error => new UnprocessableEntityException(error?.body?.message),
+      },
+    );
+  }
+
+  /**
+   * Set a verified email as user's primary email
+   */
+  async setPrimaryEmail(email: string) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const username = await this.getUsername();
+    const url = `${apiEndpointAddress}/users/${username}/emails`;
+    await throwExpected(
+      async () => fetch.patch(url, { email }),
+      {
+        400: error => new BadRequestException(error?.body?.message),
+        401: error => new UnauthorizedException(error?.body?.message),
+        422: error => new UnprocessableEntityException(error?.body?.message),
+      },
+    );
   }
 }
 
