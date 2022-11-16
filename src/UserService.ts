@@ -593,7 +593,7 @@ class UserService extends Base {
   }
 
   /**
-   * Add new secondary email(s) to user's account, newly added email will be unverified 
+   * Add new secondary email(s) to user's account, newly added email will be unverified
    * and can be promoted to primary later verification.
    */
   async createEmails(emails: string[]) {
