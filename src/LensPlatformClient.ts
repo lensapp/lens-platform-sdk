@@ -61,7 +61,7 @@ interface DecodedAccessToken {
   jti: string;
   name?: string;
   nonce: string;
-  preferred_username?: string;
+  preferred_username: string;
   realm_access: { roles: string[] };
   resource_access: { roles: string[] };
   scope: string;
