@@ -26,6 +26,8 @@ export interface User {
   id?: string;
   username?: string;
   fullname?: string;
+  firstName?: string;
+  lastName?: string;
   userAttributes?: Array<{
     id: string;
     userId: string;
@@ -38,6 +40,8 @@ export type UserWithEmail = User & { email: string };
 
 export interface UserAttributes {
   fullname?: string;
+  firstName?: string;
+  lastName?: string;
   company?: string;
   tshirt?: string;
 }
