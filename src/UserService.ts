@@ -678,6 +678,20 @@ class UserService extends Base {
       },
     );
   }
+
+  async confirmPersonalLicenseEligibility(username: string) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/users/${username}/confirm-personal-eligibility`;
+
+    await throwExpected(
+      async () => fetch.post(url, { username }),
+      {
+        400: error => new BadRequestException(error?.body?.message),
+        401: error => new UnauthorizedException(error?.body?.message),
+        404: () => new NotFoundException(`User ${username} not found`),
+      },
+    );
+  }
 }
 
 export { UserService };
