@@ -689,7 +689,7 @@ class UserService extends Base {
         400: error => new BadRequestException(error?.body?.message),
         401: error => new UnauthorizedException(error?.body?.message),
         404: () => new NotFoundException(`User ${username} not found`),
-      }
+      },
     );
   }
 }
