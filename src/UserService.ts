@@ -26,6 +26,8 @@ export interface User {
   id?: string;
   username?: string;
   fullname?: string;
+  firstName?: string;
+  lastName?: string;
   userAttributes?: Array<{
     id: string;
     userId: string;
