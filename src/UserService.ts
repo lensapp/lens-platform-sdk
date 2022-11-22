@@ -274,7 +274,7 @@ class UserService extends Base {
   async getUsername() {
     const token = await this.lensPlatformClient.getDecodedAccessToken();
     if (!token?.preferred_username) {
-      throw new LensSDKException("", "no access token or no preferred_username");
+      throw new LensSDKException(null, "no access token or no preferred_username");
     }
 
     return token.preferred_username;
@@ -655,7 +655,7 @@ class UserService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const decoded = decode<{ username: string; email: string }>(token);
     if (!decoded.username) {
-      throw new LensSDKException("", "Invalid token");
+      throw new LensSDKException(null, "Invalid token");
     }
 
     const url = `${apiEndpointAddress}/users/${decoded.username}/emails/verification`;
