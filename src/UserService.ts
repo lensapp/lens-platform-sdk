@@ -1,3 +1,4 @@
+import decode from "jwt-decode";
 import { Base } from "./Base";
 import type { UsedSeat } from "./BusinessService";
 import {
@@ -273,7 +274,7 @@ class UserService extends Base {
   async getUsername() {
     const token = await this.lensPlatformClient.getDecodedAccessToken();
     if (!token?.preferred_username) {
-      throw new Error("no access token or no preferred_username");
+      throw new LensSDKException("", "no access token or no preferred_username");
     }
 
     return token.preferred_username;
@@ -652,8 +653,12 @@ class UserService extends Base {
    */
   async verifySecondaryEmail(token: string) {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const username = await this.getUsername();
-    const url = `${apiEndpointAddress}/users/${username}/emails/verification`;
+    const decoded = decode<{ username: string; email: string }>(token);
+    if (!decoded.username) {
+      throw new LensSDKException("", "Invalid token");
+    }
+
+    const url = `${apiEndpointAddress}/users/${decoded.username}/emails/verification`;
     await throwExpected(
       async () => fetch.post(url, { token }),
       {
