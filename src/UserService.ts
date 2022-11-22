@@ -40,8 +40,6 @@ export type UserWithEmail = User & { email: string };
 
 export interface UserAttributes {
   fullname?: string;
-  firstName?: string;
-  lastName?: string;
   company?: string;
   tshirt?: string;
 }
