@@ -49,4 +49,50 @@ describe(".user.*", () => {
   it("can call deleteOne", async () => {
     await lensPlatformClient.user.deleteOne(username);
   });
+
+  it("should get full name from first and last names", async () => {
+    const user = {
+      firstName: "John",
+      lastName: "Doe",
+      email: "test@test.test",
+      fullname: "John Doe test",
+      username: "Johntest",
+      password: "test",
+    };
+
+    expect(lensPlatformClient.user.getUserFullName(user)).toEqual("John Doe");
+  });
+
+  it("should get full name from first name", async () => {
+    const user = {
+      firstName: "John",
+      email: "test@test.test",
+      fullname: "John Doe test",
+      username: "Johntest",
+      password: "test",
+    };
+
+    expect(lensPlatformClient.user.getUserFullName(user)).toEqual("John");
+  });
+
+  it("should get full name from full name", async () => {
+    const user = {
+      email: "test@test.test",
+      fullname: "John Doe test",
+      username: "Johntest",
+      password: "test",
+    };
+
+    expect(lensPlatformClient.user.getUserFullName(user)).toEqual("John Doe test");
+  });
+
+  it("should get full name from username", async () => {
+    const user = {
+      email: "test@test.test",
+      username: "Johntest",
+      password: "test",
+    };
+
+    expect(lensPlatformClient.user.getUserFullName(user)).toEqual("Johntest");
+  });
 });
