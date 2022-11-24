@@ -708,11 +708,11 @@ class UserService extends Base {
     }
 
     if (firstName) {
-      return `${firstName}`;
+      return firstName;
     }
 
     if (fullname) {
-      return `${fullname}`;
+      return fullname;
     }
 
     return username ?? "";
