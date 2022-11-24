@@ -699,6 +699,24 @@ class UserService extends Base {
       },
     );
   }
+
+  getUserFullName(user: User): string {
+    const { firstName, lastName, fullname, username } = user;
+
+    if (firstName && lastName) {
+      return `${firstName} ${lastName}`;
+    }
+
+    if (firstName) {
+      return firstName;
+    }
+
+    if (fullname) {
+      return fullname;
+    }
+
+    return username ?? "";
+  }
 }
 
 export { UserService };
