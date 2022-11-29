@@ -341,7 +341,7 @@ class BusinessService extends Base {
   }
 
   /**
-   * Get delete business entity ("Lens Business ID") by id.
+   * Delete business entity ("Lens Business ID") by id.
    */
   async deleteOne(id: Business["id"]): Promise<void> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
@@ -350,6 +350,21 @@ class BusinessService extends Base {
       async () => fetch.delete(url),
       {
         403: error => new ForbiddenException(error?.body.message),
+      },
+    );
+  }
+
+  /**
+   * Delete user from the business.
+   */
+  async deleteBusinessUser(businessId: Business["id"], userId: string): Promise<void> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessId}/users/${userId}`;
+    await throwExpected(
+      async () => fetch.delete(url),
+      {
+        403: error => new ForbiddenException(error?.body.message),
+        404: error => new NotFoundException(error?.body.message),
       },
     );
   }
