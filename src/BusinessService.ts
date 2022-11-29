@@ -322,7 +322,7 @@ class BusinessService extends Base {
   }
 
   /**
-   * Update a existing business ("Lens Business ID").
+   * Update an existing business ("Lens Business ID").
    */
   async updateOne(id: string, business: BusinessUpdate): Promise<Business> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
@@ -367,6 +367,26 @@ class BusinessService extends Base {
         404: error => new NotFoundException(error?.body.message),
       },
     );
+  }
+
+  /**
+   * Change existing business user role
+   */
+  async changeBusinessUserRole(businessId: Business["id"], userId: string, role: UserBusinessRole): Promise<BusinessUser> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessId}/users/${userId}`;
+    const json = await throwExpected(
+      async () => fetch.patch(url, { role }),
+      {
+        400: error => new BadRequestException(error?.body.message),
+        422: error => new UnprocessableEntityException(error?.body.message),
+        401: error => new UnprocessableEntityException(error?.body.message),
+        403: error => new ForbiddenException(error?.body.message),
+        404: error => new NotFoundException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as BusinessUser;
   }
 
   /**
