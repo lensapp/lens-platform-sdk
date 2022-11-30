@@ -21,7 +21,7 @@ jobs:
         git config --local user.email "github-action@mirantis.com"
         git config --local user.name "Github Action Bot"
     - name: '`npm version patch` if PR has no label "minor" or "major"'
-      if: ${{ !contains(github.event.pull_request.labels.*.name, 'minor') || !contains(github.event.pull_request.labels.*.name, 'major') }}
+      if: ${{ !contains(github.event.pull_request.labels.*.name, 'minor') && !contains(github.event.pull_request.labels.*.name, 'major') }}
       run: |
         npm version patch
     - name: '`npm version minor` if PR has label "minor"'
