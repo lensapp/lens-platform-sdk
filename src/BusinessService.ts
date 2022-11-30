@@ -5,6 +5,7 @@ import {
   UnprocessableEntityException,
   BadRequestException,
   NotFoundException,
+  ConflictException,
 } from "./exceptions";
 import { BillingPageToken } from "./types/types";
 import { SubscriptionState } from "./UserService";
@@ -502,7 +503,7 @@ class BusinessService extends Base {
       async () => fetch.post(url, { email, subscriptionId, role }),
       {
         400: error => new BadRequestException(error?.body.message),
-        409: error => new BadRequestException(error?.body.message),
+        409: error => new ConflictException(error?.body.message),
         422: error => new UnprocessableEntityException(error?.body.message),
         404: error => new NotFoundException(error?.body.message),
         403: error => new ForbiddenException(error?.body.message),
