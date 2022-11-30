@@ -229,6 +229,11 @@ export type BusinessUser = {
    * `undefined` if the user is not joined via invitation.
    */
   invitationCreatedAt?: string;
+
+  /**
+   * The users ID in business
+   */
+  businessUserId?: string;
 };
 
 export type UserBusinessRole = "Administrator" | "Member";
@@ -357,9 +362,9 @@ class BusinessService extends Base {
   /**
    * Delete user from the business.
    */
-  async deleteBusinessUser(businessId: Business["id"], userId: string): Promise<void> {
+  async deleteBusinessUser(businessId: Business["id"], businessUserId: string): Promise<void> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/businesses/${businessId}/users/${userId}`;
+    const url = `${apiEndpointAddress}/businesses/${businessId}/users/${businessUserId}`;
     await throwExpected(
       async () => fetch.delete(url),
       {
@@ -372,17 +377,15 @@ class BusinessService extends Base {
   /**
    * Change existing business user role
    */
-  async changeBusinessUserRole(businessId: Business["id"], userId: string, role: UserBusinessRole): Promise<BusinessUser> {
+  async changeBusinessUserRole(businessId: Business["id"], businessUserId: string, role: UserBusinessRole): Promise<BusinessUser> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/businesses/${businessId}/users/${userId}`;
+    const url = `${apiEndpointAddress}/businesses/${businessId}/users/${businessUserId}`;
     const json = await throwExpected(
       async () => fetch.patch(url, { role }),
       {
         400: error => new BadRequestException(error?.body.message),
-        422: error => new UnprocessableEntityException(error?.body.message),
         401: error => new UnprocessableEntityException(error?.body.message),
         403: error => new ForbiddenException(error?.body.message),
-        404: error => new NotFoundException(error?.body.message),
       },
     );
 
