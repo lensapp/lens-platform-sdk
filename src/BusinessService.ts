@@ -8,7 +8,7 @@ import {
   ConflictException,
 } from "./exceptions";
 import { BillingPageToken } from "./types/types";
-import { SubscriptionState } from "./UserService";
+import {SubscriptionInfo, SubscriptionState} from "./UserService";
 
 /**
  * "Lens Business ID"
@@ -451,6 +451,25 @@ class BusinessService extends Base {
     );
 
     return (json as unknown) as UsedSeat;
+  }
+
+  /**
+   * Change business subscription seat quantity
+   */
+  async changeBusinessSubscriptionSeatsQuantity({ businessId, businessSubscriptionId, quantity }: { businessId: string; businessSubscriptionId: string; quantity: number }): Promise<SubscriptionInfo> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessId}/subscriptions/${businessSubscriptionId}`;
+    const json = await throwExpected(
+      async () => fetch.patch(url, { quantity }),
+      {
+        404: error => new NotFoundException(error?.body.message),
+        400: error => new BadRequestException(error?.body.message),
+        403: () => new ForbiddenException(`Modification of subscription for business ${businessId} is forbidden`),
+        422: error => new UnprocessableEntityException(error?.body.message),
+      },
+    );
+
+    return (json as unknown) as SubscriptionInfo;
   }
 
   /**
