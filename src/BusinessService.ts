@@ -8,7 +8,7 @@ import {
   ConflictException,
 } from "./exceptions";
 import { BillingPageToken } from "./types/types";
-import {SubscriptionInfo, SubscriptionState} from "./UserService";
+import { SubscriptionInfo, SubscriptionState } from "./UserService";
 
 /**
  * "Lens Business ID"
