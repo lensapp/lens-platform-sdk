@@ -371,6 +371,7 @@ class BusinessService extends Base {
       {
         403: error => new ForbiddenException(error?.body.message),
         404: error => new NotFoundException(error?.body.message),
+        422: error => new NotFoundException(error?.body.message),
       },
     );
   }
