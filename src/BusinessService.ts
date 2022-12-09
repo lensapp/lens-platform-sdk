@@ -417,7 +417,7 @@ class BusinessService extends Base {
    */
   async activateBusinessUserSubscription({ businessId, businessSubscriptionId, businessInvitationId, username }: { businessId: string; businessSubscriptionId: string; businessInvitationId: string; username: string }): Promise<UsedSeat> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/businesses/${businessId}/subscriptions`;
+    const url = `${apiEndpointAddress}/businesses/${businessId}/subscription-seats`;
     const json = await throwExpected(
       async () => fetch.post(url, {
         invitationId: businessInvitationId,
@@ -440,7 +440,7 @@ class BusinessService extends Base {
    */
   async deActivateBusinessUserSubscription({ businessId, businessSubscriptionId, username }: { businessId: string; businessSubscriptionId: string; username: string }): Promise<UsedSeat> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/businesses/${businessId}/subscriptions/${businessSubscriptionId}`;
+    const url = `${apiEndpointAddress}/businesses/${businessId}/subscription-seats/${businessSubscriptionId}`;
     const json = await throwExpected(
       async () => fetch.patch(url),
       {
