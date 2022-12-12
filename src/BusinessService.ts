@@ -184,6 +184,14 @@ export type BusinessSubscription = {
    * State of the subscription
    */
   state: SubscriptionState;
+
+  /**
+   * Change to subscription from next billing cycle
+   */
+  pendingChange: {
+    activateAt: string | null;
+    quantity: number | null;
+  };
 };
 
 export type BusinessUser = {

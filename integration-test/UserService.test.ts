@@ -229,6 +229,10 @@ describe("UserService", () => {
           accountCode: "f63ed988-017a-4a0f-8486-cc8cf5ec6f32",
           isBusinessAccount: false,
           state: "active",
+          pendingChange: {
+            activateAt: null,
+            quantity: null,
+          },
         },
         {
           currentPeriodEndsAt: expect.any(String),
@@ -244,6 +248,10 @@ describe("UserService", () => {
           accountCode: "f63ed988-017a-4a0f-8486-cc8cf5ec6f32",
           isBusinessAccount: false,
           state: "active",
+          pendingChange: {
+            activateAt: null,
+            quantity: null,
+          },
         }];
         const userSubscriptions = await bobPlatform.client.user.getUserSubscriptions(userBob.username);
         expect(userSubscriptions).toEqual(subscriptions);
@@ -266,6 +274,10 @@ describe("UserService", () => {
           accountCode: "f63ed988-017a-4a0f-8486-cc8cf5ec6f32",
           isBusinessAccount: false,
           state: "active",
+          pendingChange: {
+            activateAt: null,
+            quantity: null,
+          },
         };
         const userSubscription = await bobPlatform.client.user.getUserSubscription(userBob.username, subscription.id);
         expect(userSubscription).toEqual(subscription);
