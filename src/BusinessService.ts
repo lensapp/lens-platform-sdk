@@ -140,7 +140,7 @@ export type UsedSeat = {
      * User's email address
      */
     email: string;
-  };
+  } | null;
 };
 
 export type BusinessSubscription = {
