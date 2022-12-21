@@ -47,6 +47,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - uses: actions/setup-node@v3
+      with:
+        registry-url: "https://npm.pkg.github.com"
     # need this if commit/push in other jobs (versioning)
     - run: git pull
     - run: npm install
