@@ -16,7 +16,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
+    - uses: actions/setup-node@v3
     - run: |
         git config --local user.email "github-action@mirantis.com"
         git config --local user.name "Github Action Bot"
@@ -48,6 +48,8 @@ jobs:
     # need this if commit/push in other jobs (versioning)
     - run: git pull
     - run: npm install
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - run: npm run build:dist
     - run: |
         npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
