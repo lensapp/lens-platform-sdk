@@ -25,12 +25,14 @@ describe("LensPlatformClient", () => {
   it("checks options in constructor", () => {
     // @ts-expect-error
     expect(() => new LensPlatformClient()).toThrow("Options can not be undefined");
-    // @ts-expect-error
     expect(
       () =>
         new LensPlatformClient({
           accessToken: undefined,
           getAccessToken: undefined,
+          keyCloakAddress: "",
+          keycloakRealm: "",
+          apiEndpointAddress: "",
         }),
     ).toThrow("Both accessToken undefined or getAccessToken are undefined");
   });
