@@ -1,6 +1,10 @@
 import { Base } from "./Base";
 import {
-  InternalServerException, InvalidRoleException, NotFoundException, PlatformErrorResponse, RoleAlreadyAssignedException,
+  InternalServerException,
+  InvalidRoleException,
+  NotFoundException,
+  PlatformErrorResponse,
+  RoleAlreadyAssignedException,
   SpaceNotFoundException,
   throwExpected,
   UnprocessableEntityException,
@@ -37,6 +41,7 @@ const getNotFoundException = (error: PlatformErrorResponse | undefined, userName
   }
 
   const message = error?.body.message;
+
   if (typeof message === "string" && message.includes("Space not found")) {
     return new SpaceNotFoundException();
   }
@@ -50,14 +55,11 @@ class UserRolesService extends Base {
 
     const url = `${apiEndpointAddress}/spaces/${spaceName}/users/${userName}/role`;
 
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        404: error => getNotFoundException(error, userName),
-      },
-    );
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: (error) => getNotFoundException(error, userName),
+    });
 
-    const result = (json as unknown) as UserSpaceTeamEntity;
+    const result = json as unknown as UserSpaceTeamEntity;
 
     // TeamEntityKind on client are Roles. Map TeamEntityKind to Roles.
     return {
@@ -73,27 +75,25 @@ class UserRolesService extends Base {
     // Roles on the API side are TeamEntityKind. Map Roles to TeamEntityKind.
     const teamRole = rolesToTeamEntityKindMap[role];
 
-    const json = await throwExpected(
-      async () => fetch.patch(url, { role: teamRole }),
-      {
-        404: error => getNotFoundException(error, userName),
-        422(error) {
-          const message = error?.body.message;
-          if (typeof message === "string" && message.includes("Role should be")) {
-            return new InvalidRoleException(role);
-          }
+    const json = await throwExpected(async () => fetch.patch(url, { role: teamRole }), {
+      404: (error) => getNotFoundException(error, userName),
+      422(error) {
+        const message = error?.body.message;
 
-          if (typeof message === "string" && message.includes("User is already assign")) {
-            return new RoleAlreadyAssignedException(role, userName);
-          }
+        if (typeof message === "string" && message.includes("Role should be")) {
+          return new InvalidRoleException(role);
+        }
 
-          return new UnprocessableEntityException();
-        },
-        500: () => new InternalServerException(),
+        if (typeof message === "string" && message.includes("User is already assign")) {
+          return new RoleAlreadyAssignedException(role, userName);
+        }
+
+        return new UnprocessableEntityException();
       },
-    );
+      500: () => new InternalServerException(),
+    });
 
-    const result = (json as unknown) as UserSpaceTeamEntity;
+    const result = json as unknown as UserSpaceTeamEntity;
 
     // TeamEntityKind on client are Roles. Map TeamEntityKind to Roles.
     return {

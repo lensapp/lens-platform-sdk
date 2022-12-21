@@ -3,19 +3,27 @@ import type { MapToEntity } from "./types/types";
 import type { Except } from "type-fest";
 
 // State of the DevCluster CRD
-export type DevClusterCrdState = "Provisioning" | "Reprovisioning" | "Starting" | "Running" | "Stopping" | "Stopped" | "Terminating" | "Terminated";
+export type DevClusterCrdState =
+  | "Provisioning"
+  | "Reprovisioning"
+  | "Starting"
+  | "Running"
+  | "Stopping"
+  | "Stopped"
+  | "Terminating"
+  | "Terminated";
 
 // Possible status.phase of the K8sCluster in the backend
 // This can be any CrdState and the others listed here.
 // UI can in addition show "deleting", "connecting", "connected", "disconnected" as per typing in Lens.
 export type Phase =
-  Lowercase<DevClusterCrdState> |
+  | Lowercase<DevClusterCrdState>
   // Initial state is empty
-  "" |
-  "initializing" |
-  "available" |
-  "failed" |
-  "tunneling";
+  | ""
+  | "initializing"
+  | "available"
+  | "failed"
+  | "tunneling";
 
 /**
  *

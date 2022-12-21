@@ -73,43 +73,72 @@ interface DecodedAccessToken {
 type RequestLibrary = typeof axios;
 type KeyOfRequestLibrary = keyof RequestLibrary;
 type RequestOptions = AxiosRequestConfig;
-const requestLibraryMethods: KeyOfRequestLibrary[] = ["get", "post", "put", "patch", "head", "delete"];
+const requestLibraryMethods: KeyOfRequestLibrary[] = [
+  "get",
+  "post",
+  "put",
+  "patch",
+  "head",
+  "delete",
+];
 
 /**
  * Function to determine if func is a function of the request library for making a request
  */
 const isRequestLibraryFunction = (
-  func: any, key: KeyOfRequestLibrary,
-): func is (RequestLibrary)["get"] |
-(RequestLibrary)["post"] |
-(RequestLibrary)["put"] |
-(RequestLibrary)["patch"] |
-(RequestLibrary)["head"] |
-(RequestLibrary)["delete"] =>
-  typeof func === "function" && requestLibraryMethods.includes(key);
+  func: any,
+  key: KeyOfRequestLibrary,
+): func is
+  | RequestLibrary["get"]
+  | RequestLibrary["post"]
+  | RequestLibrary["put"]
+  | RequestLibrary["patch"]
+  | RequestLibrary["head"]
+  | RequestLibrary["delete"] => typeof func === "function" && requestLibraryMethods.includes(key);
 
 class LensPlatformClient {
   accessToken: LensPlatformClientOptions["accessToken"];
+
   getAccessToken: LensPlatformClientOptions["getAccessToken"];
+
   keyCloakAddress: LensPlatformClientOptions["keyCloakAddress"];
+
   keycloakRealm: LensPlatformClientOptions["keycloakRealm"];
+
   apiEndpointAddress: LensPlatformClientOptions["apiEndpointAddress"];
+
   httpAdapter: LensPlatformClientOptions["httpAdapter"];
+
   logLevel: LensPlatformClientOptions["logLevel"];
+
   proxyConfigs: LensPlatformClientOptions["proxyConfigs"];
+
   httpAgent: LensPlatformClientOptions["httpAgent"];
+
   httpsAgent: LensPlatformClientOptions["httpsAgent"];
+
   logger: pino.Logger;
+
   user: UserService;
+
   space: SpaceService;
+
   roles: UserRolesService;
+
   team: TeamService;
+
   plan: PlanService;
+
   billingPageToken: BillingPageTokenService;
+
   business: BusinessService;
+
   permission: PermissionsService;
+
   invitation: InvitationService;
+
   openIDConnect: OpenIdConnect;
+
   defaultHeaders: RequestHeaders | undefined;
 
   constructor(options: LensPlatformClientOptions) {
@@ -117,7 +146,8 @@ class LensPlatformClient {
       throw new Error(`Options can not be ${options}`);
     }
 
-    const { accessToken, getAccessToken, httpAdapter, proxyConfigs, httpAgent, httpsAgent } = options;
+    const { accessToken, getAccessToken, httpAdapter, proxyConfigs, httpAgent, httpsAgent } =
+      options;
 
     if (!accessToken && !getAccessToken) {
       throw new Error(`Both accessToken ${accessToken} or getAccessToken are ${getAccessToken}`);
@@ -150,7 +180,10 @@ class LensPlatformClient {
   }
 
   async getToken(url?: string) {
-    const token = this.getAccessToken && typeof this.getAccessToken === "function" ? await this.getAccessToken(url) : this.accessToken;
+    const token =
+      this.getAccessToken && typeof this.getAccessToken === "function"
+        ? await this.getAccessToken(url)
+        : this.accessToken;
 
     return token;
   }
@@ -201,6 +234,7 @@ class LensPlatformClient {
 
               if (headers) {
                 const clone = { ...options };
+
                 delete clone.headers;
                 restOptions = clone;
               } else {
@@ -229,14 +263,19 @@ class LensPlatformClient {
               };
 
               logger.debug(`request arguments ${JSON.stringify(requestOptions)}`);
-              const response = await (hasBody ? prop(url, requestBody, requestOptions) : prop(url, requestOptions));
+              const response = await (hasBody
+                ? prop(url, requestBody, requestOptions)
+                : prop(url, requestOptions));
 
               // Body as JavaScript plain object
               const body: unknown = response.data;
 
               // Print HTTP response info in developer console
-              logger.debug(`${key?.toUpperCase()} ${(response)?.status} ${(response)?.statusText} ${url} `);
+              logger.debug(
+                `${key?.toUpperCase()} ${response?.status} ${response?.statusText} ${url} `,
+              );
               logger.debug(`response body: ${body}`);
+
               return body;
             } catch (error: unknown) {
               // @ts-expect-error

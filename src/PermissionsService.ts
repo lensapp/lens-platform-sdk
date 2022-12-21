@@ -23,10 +23,15 @@ export class PermissionsService extends Base {
    * @returns boolean
    * @throws "Could not get role for space with no teams" exception
    */
-  canSpace(action: Actions, forSpace: Space | SpaceEntity, forUserId: string, forRevokeInvitation?: {
-    invitationId: string;
-    invitationIdsCreatedByUserId: string[];
-  }) {
+  canSpace(
+    action: Actions,
+    forSpace: Space | SpaceEntity,
+    forUserId: string,
+    forRevokeInvitation?: {
+      invitationId: string;
+      invitationIdsCreatedByUserId: string[];
+    },
+  ) {
     return this.permissions.canSpace(action, forSpace, forUserId, forRevokeInvitation);
   }
 
@@ -40,7 +45,13 @@ export class PermissionsService extends Base {
    * @returns
    */
   // eslint-disable-next-line max-params
-  canTeam(action: TeamActions, space: Space | SpaceEntity, team: Team | TeamEntity, forUserId: string, targetUserId?: string) {
+  canTeam(
+    action: TeamActions,
+    space: Space | SpaceEntity,
+    team: Team | TeamEntity,
+    forUserId: string,
+    targetUserId?: string,
+  ) {
     return this.permissions.canTeam(action, space, team, forUserId, targetUserId);
   }
 
@@ -53,7 +64,12 @@ export class PermissionsService extends Base {
    * @returns boolean
    * @throws "Could not get role for space with no teams" exception
    */
-  canK8sCluster(action: K8sClusterActions, forSpace: Space | SpaceEntity, forK8sCluster: K8sCluster | K8sClusterEntity, forUserId: string) {
+  canK8sCluster(
+    action: K8sClusterActions,
+    forSpace: Space | SpaceEntity,
+    forK8sCluster: K8sCluster | K8sClusterEntity,
+    forUserId: string,
+  ) {
     return this.permissions.canK8sCluster(action, forSpace, forK8sCluster, forUserId);
   }
 

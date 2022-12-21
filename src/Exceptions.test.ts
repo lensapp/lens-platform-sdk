@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-conditional-expect */
 import nock from "nock";
 import LensPlatformClient from "./LensPlatformClient";
 import { minimumOptions as options, apiEndpointAddress } from "./LensPlatformClient.test";
@@ -22,7 +23,10 @@ describe(".users.*", () => {
 
   beforeAll(() => {
     nock(apiEndpointAddress).get(`/users/${invalidUserName}`).reply(404, plaform404response);
-    nock(apiEndpointAddress).get(`/users/${brokenUserName}`).reply(500, plaform500response).persist();
+    nock(apiEndpointAddress)
+      .get(`/users/${brokenUserName}`)
+      .reply(500, plaform500response)
+      .persist();
     nock(apiEndpointAddress).get(`/users/${username}`).reply(200, userResponse);
   });
 

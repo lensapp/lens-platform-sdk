@@ -7,14 +7,13 @@ export class TestPlatform {
   public fakeToken?: string;
   public readonly client: LensPlatformClient;
 
-  constructor(
-    private readonly accessToken: string
-  ) {
+  constructor(private readonly accessToken: string) {
     this.client = new LensPlatformClient({
-      getAccessToken: async () => Promise.resolve(this.fakeToken ? this.fakeToken : this.accessToken),
+      getAccessToken: async () =>
+        Promise.resolve(this.fakeToken ? this.fakeToken : this.accessToken),
       keyCloakAddress: config.keyCloakAddress,
       keycloakRealm: config.keycloakRealm,
-      apiEndpointAddress: config.apiEndpointAddress
+      apiEndpointAddress: config.apiEndpointAddress,
     });
   }
 }
@@ -24,18 +23,18 @@ export const testPlatformFactory = async (username: string, password: string) =>
     client: {
       id: config.keycloakClientId,
       // Client secret not needed for Direct Access Grant / Resource Owner Password Credentials Grant
-      secret: "<client-secret>"
+      secret: "<client-secret>",
     },
     auth: {
       tokenHost: config.tokenHost,
-      tokenPath: "/auth/realms/lensCloud/protocol/openid-connect/token"
-    }
+      tokenPath: "/auth/realms/lensCloud/protocol/openid-connect/token",
+    },
   });
 
   const tokenParams = {
     username: username,
     password: password,
-    scope: "openid"
+    scope: "openid",
   };
 
   const accessToken = (await client.getToken(tokenParams)).token.access_token as string;

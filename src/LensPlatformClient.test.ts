@@ -2,7 +2,8 @@ import LensPlatformClient from "./LensPlatformClient";
 import axios from "axios";
 
 // A random jwt from https://www.jsonwebtoken.io/
-export const accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImp0aSI6ImI4Y2RmMmRjLTA3ZmUtNDc5Ny1iOWZkLThmYjlmYTMyZGMyZiIsImlhdCI6MTYxODQ4Mjc3OCwiZXhwIjoxNjE4NDg2Mzc4fQ.h9jJveiwYLPDIX3ZIqB-06QH6CLTDVKToSfWJnwRAgg";
+export const accessToken =
+  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImp0aSI6ImI4Y2RmMmRjLTA3ZmUtNDc5Ny1iOWZkLThmYjlmYTMyZGMyZiIsImlhdCI6MTYxODQ4Mjc3OCwiZXhwIjoxNjE4NDg2Mzc4fQ.h9jJveiwYLPDIX3ZIqB-06QH6CLTDVKToSfWJnwRAgg";
 export const apiEndpointAddress = "http://api.endpoint";
 export const minimumOptions = {
   accessToken, // The access token for apis
@@ -24,28 +25,32 @@ describe("LensPlatformClient", () => {
   it("checks options in constructor", () => {
     // @ts-expect-error
     expect(() => new LensPlatformClient()).toThrow("Options can not be undefined");
-    // @ts-expect-error
-    expect(() => new LensPlatformClient({
-      accessToken: undefined,
-      getAccessToken: undefined,
-    })).toThrow("Both accessToken undefined or getAccessToken are undefined");
+    expect(
+      () =>
+        new LensPlatformClient({
+          accessToken: undefined,
+          getAccessToken: undefined,
+          keyCloakAddress: "",
+          keycloakRealm: "",
+          apiEndpointAddress: "",
+        }),
+    ).toThrow("Both accessToken undefined or getAccessToken are undefined");
   });
 
   it("can `new LensPlatformClient` with minimum (but valid) options", () => {
-    expect(
-      () => new LensPlatformClient(minimumOptions),
-    ).not.toThrow();
+    expect(() => new LensPlatformClient(minimumOptions)).not.toThrow();
   });
 
   it(".authHeader", () => {
     const lensPlatformClient = new LensPlatformClient(minimumOptions);
+
     expect(lensPlatformClient.authHeader).toEqual({
       Authorization: `Bearer ${accessToken}`,
     });
   });
 
   describe("proxied version of fetch", () => {
-    it(("adds Authorization header"), async () => {
+    it("adds Authorization header", async () => {
       const expectedHeaders = { Authorization: `Bearer ${accessToken}` };
       const lensPlatformClient = new LensPlatformClient({
         ...minimumOptions,
@@ -68,14 +73,14 @@ describe("LensPlatformClient", () => {
       } catch {
         // Do not handle exceptions
       } finally {
-        spies.forEach(spy => {
+        spies.forEach((spy) => {
           expect(spy).toBeCalledWith(apiEndpointAddress, { headers: expectedHeaders });
           spy.mockRestore();
         });
       }
     });
 
-    it(("doesn't add Authorization header if no token"), async () => {
+    it("doesn't add Authorization header if no token", async () => {
       const lensPlatformClient = new LensPlatformClient({
         ...minimumOptions,
         accessToken: "",
@@ -95,7 +100,7 @@ describe("LensPlatformClient", () => {
       }
     });
 
-    it(("adds Authorization header with body"), async () => {
+    it("adds Authorization header with body", async () => {
       const expectedHeaders = { Authorization: `Bearer ${accessToken}` };
       const lensPlatformClient = new LensPlatformClient({
         ...minimumOptions,
@@ -118,14 +123,14 @@ describe("LensPlatformClient", () => {
       } catch {
         // Do not handle exceptions
       } finally {
-        spies.forEach(spy => {
+        spies.forEach((spy) => {
           expect(spy).toBeCalledWith(apiEndpointAddress, undefined, { headers: expectedHeaders });
           spy.mockRestore();
         });
       }
     });
 
-    it(("merged request options"), async () => {
+    it("merged request options", async () => {
       const extraOptions = { withCredentials: true };
       const expectedHeaders = { Authorization: `Bearer ${accessToken}` };
       const lensPlatformClient = new LensPlatformClient({
@@ -139,6 +144,7 @@ describe("LensPlatformClient", () => {
       ];
 
       const _fetch = lensPlatformClient.fetch;
+
       try {
         await Promise.all([
           _fetch.get(apiEndpointAddress, extraOptions),
@@ -148,14 +154,17 @@ describe("LensPlatformClient", () => {
       } catch {
         // Do not handle exceptions
       } finally {
-        spies.forEach(spy => {
-          expect(spy).toBeCalledWith(apiEndpointAddress, { headers: expectedHeaders, ...extraOptions });
+        spies.forEach((spy) => {
+          expect(spy).toBeCalledWith(apiEndpointAddress, {
+            headers: expectedHeaders,
+            ...extraOptions,
+          });
           spy.mockRestore();
         });
       }
     });
 
-    it(("merged request options with body"), async () => {
+    it("merged request options with body", async () => {
       const extraOptions = { withCredentials: true };
       const expectedHeaders = { Authorization: `Bearer ${accessToken}` };
       const lensPlatformClient = new LensPlatformClient({
@@ -169,6 +178,7 @@ describe("LensPlatformClient", () => {
       ];
 
       const _fetch = lensPlatformClient.fetch;
+
       try {
         await Promise.all([
           _fetch.post(apiEndpointAddress, undefined, extraOptions),
@@ -178,17 +188,24 @@ describe("LensPlatformClient", () => {
       } catch {
         // Do not handle exceptions
       } finally {
-        spies.forEach(spy => {
-          expect(spy).toBeCalledWith(apiEndpointAddress, undefined, { headers: expectedHeaders, ...extraOptions });
+        spies.forEach((spy) => {
+          expect(spy).toBeCalledWith(apiEndpointAddress, undefined, {
+            headers: expectedHeaders,
+            ...extraOptions,
+          });
           spy.mockRestore();
         });
       }
     });
 
-    it(("merged headers"), async () => {
+    it("merged headers", async () => {
       const defaultHeaders = { "X-Consumer-Id": "xx-yy-zz" };
       const extraHeader = { "X-An-Example": "Header" };
-      const expectedHeaders = { Authorization: `Bearer ${accessToken}`, ...extraHeader, ...defaultHeaders };
+      const expectedHeaders = {
+        Authorization: `Bearer ${accessToken}`,
+        ...extraHeader,
+        ...defaultHeaders,
+      };
       const lensPlatformClient = new LensPlatformClient({
         ...minimumOptions,
         ...{
@@ -213,17 +230,21 @@ describe("LensPlatformClient", () => {
       } catch {
         // Do not handle exceptions
       } finally {
-        spies.forEach(spy => {
+        spies.forEach((spy) => {
           expect(spy).toBeCalledWith(apiEndpointAddress, { headers: expectedHeaders });
           spy.mockRestore();
         });
       }
     });
 
-    it(("merged headers with body"), async () => {
+    it("merged headers with body", async () => {
       const defaultHeaders = { "X-Consumer-Id": "xx-yy-zz" };
       const extraHeader = { "X-An-Example": "Header" };
-      const expectedHeaders = { Authorization: `Bearer ${accessToken}`, ...extraHeader, ...defaultHeaders };
+      const expectedHeaders = {
+        Authorization: `Bearer ${accessToken}`,
+        ...extraHeader,
+        ...defaultHeaders,
+      };
       const lensPlatformClient = new LensPlatformClient({
         ...minimumOptions,
         ...{
@@ -248,14 +269,14 @@ describe("LensPlatformClient", () => {
       } catch {
         // Do not handle exceptions
       } finally {
-        spies.forEach(spy => {
+        spies.forEach((spy) => {
           expect(spy).toBeCalledWith(apiEndpointAddress, {}, { headers: expectedHeaders });
           spy.mockRestore();
         });
       }
     });
 
-    it(("merged headers and request options at the same time"), async () => {
+    it("merged headers and request options at the same time", async () => {
       const extraHeader = { "X-An-Example": "Header" };
       const extraOption = { json: { an: "example_extra_option" } };
       const lensPlatformClient = new LensPlatformClient({
@@ -279,7 +300,7 @@ describe("LensPlatformClient", () => {
       } catch {
         // Do not handle exceptions
       } finally {
-        spies.forEach(spy => {
+        spies.forEach((spy) => {
           expect(spy).toBeCalledWith(apiEndpointAddress, {
             headers: {
               ...extraHeader,
@@ -292,7 +313,7 @@ describe("LensPlatformClient", () => {
       }
     });
 
-    it(("merged headers and request options at the same time with body"), async () => {
+    it("merged headers and request options at the same time with body", async () => {
       const extraHeader = { "X-An-Example": "Header" };
       const extraOption = { json: { an: "example_extra_option" } };
       const lensPlatformClient = new LensPlatformClient({
@@ -316,14 +337,18 @@ describe("LensPlatformClient", () => {
       } catch {
         // Do not handle exceptions
       } finally {
-        spies.forEach(spy => {
-          expect(spy).toBeCalledWith(apiEndpointAddress, { a: 1 }, {
-            headers: {
-              ...extraHeader,
-              ...{ Authorization: `Bearer ${accessToken}` },
+        spies.forEach((spy) => {
+          expect(spy).toBeCalledWith(
+            apiEndpointAddress,
+            { a: 1 },
+            {
+              headers: {
+                ...extraHeader,
+                ...{ Authorization: `Bearer ${accessToken}` },
+              },
+              ...extraOption,
             },
-            ...extraOption,
-          });
+          );
           spy.mockRestore();
         });
       }

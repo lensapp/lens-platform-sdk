@@ -41,8 +41,9 @@ describe("UserService", () => {
     it("rejects requests with invalid tokens", async () => {
       bobPlatform.fakeToken = "fake token";
 
-      return expect(bobPlatform.client.user.getOne({ username: userBob.username }))
-        .rejects.toThrowError(UnauthorizedException);
+      return expect(
+        bobPlatform.client.user.getOne({ username: userBob.username }),
+      ).rejects.toThrowError(UnauthorizedException);
     });
 
     it("can get itself", async () => {
@@ -54,8 +55,9 @@ describe("UserService", () => {
     it("throws NotFoundException if user is missing", async () => {
       const username = "abcdef-12345-missing-" + rng();
 
-      return expect(bobPlatform.client.user.getOne({ username }))
-        .rejects.toThrowError(NotFoundException);
+      return expect(bobPlatform.client.user.getOne({ username })).rejects.toThrowError(
+        NotFoundException,
+      );
     });
   });
 
@@ -63,8 +65,9 @@ describe("UserService", () => {
     it("rejects requests with invalid tokens", async () => {
       bobPlatform.fakeToken = "fake token";
 
-      return expect(bobPlatform.client.user.updateOne(userBob.username, {}))
-        .rejects.toThrowError(UnauthorizedException);
+      return expect(bobPlatform.client.user.updateOne(userBob.username, {})).rejects.toThrowError(
+        UnauthorizedException,
+      );
     });
 
     it("can update itself", async () => {
@@ -75,41 +78,42 @@ describe("UserService", () => {
     it("throws ForbiddenException when trying to modify unrelated users", async () => {
       const username = "abcdef-12345-missing-" + rng();
 
-      return expect(bobPlatform.client.user.updateOne(username, {}))
-        .rejects.toThrowError(ForbiddenException);
+      return expect(bobPlatform.client.user.updateOne(username, {})).rejects.toThrowError(
+        ForbiddenException,
+      );
     });
 
-    it("throws UsernameAlreadyExistsException when trying to change username to existing user's", async () => expect(bobPlatform.client.user.updateOne(userBob.username, {
-      username: userAlice.username,
-    })).rejects.toThrowError(UsernameAlreadyExistsException));
+    it("throws UsernameAlreadyExistsException when trying to change username to existing user's", async () =>
+      expect(
+        bobPlatform.client.user.updateOne(userBob.username, {
+          username: userAlice.username,
+        }),
+      ).rejects.toThrowError(UsernameAlreadyExistsException));
   });
 
   describe("getMany", () => {
     it("rejects requests with invalid tokens", async () => {
       bobPlatform.fakeToken = "fake token";
 
-      return expect(bobPlatform.client.user.getMany())
-        .rejects.toThrowError(UnauthorizedException);
+      return expect(bobPlatform.client.user.getMany()).rejects.toThrowError(UnauthorizedException);
     });
 
     it("can get 0 users", async () => {
-      const users = await bobPlatform.client.user.getMany("filter=username||$eq||missingfoobarusername");
+      const users = await bobPlatform.client.user.getMany(
+        "filter=username||$eq||missingfoobarusername",
+      );
       expect(users.length).toEqual(0);
     });
 
     it("rejects bad requests", async () =>
-      expect(
-        bobPlatform.client.user.getMany(),
-      ).rejects.toThrowError(BadRequestException),
-    );
+      expect(bobPlatform.client.user.getMany()).rejects.toThrowError(BadRequestException));
   });
 
   describe("getSelf", () => {
     it("rejects requests with invalid tokens", async () => {
       bobPlatform.fakeToken = "fake token";
 
-      return expect(bobPlatform.client.user.getSelf())
-        .rejects.toThrow();
+      return expect(bobPlatform.client.user.getSelf()).rejects.toThrow();
     });
 
     it("can get self", async () => {
@@ -126,7 +130,10 @@ describe("UserService", () => {
           const license = {
             subscriptionId: userSteve.subscriptionId!,
           };
-          await stevePlatform.client.user.deactivateSubscription({ username: userSteve.username, license });
+          await stevePlatform.client.user.deactivateSubscription({
+            username: userSteve.username,
+            license,
+          });
         } catch (_: unknown) {}
       });
 
@@ -135,8 +142,9 @@ describe("UserService", () => {
           subscriptionId: userSteve.subscriptionId!,
           type: "pro",
         };
-        return expect(stevePlatform.client.user.activateSubscription({ username: "FAKE_USER", license }))
-          .rejects.toThrowError(ForbiddenException);
+        return expect(
+          stevePlatform.client.user.activateSubscription({ username: "FAKE_USER", license }),
+        ).rejects.toThrowError(ForbiddenException);
       });
 
       it.skip("rejects requests with invalid subscriptionId", async () => {
@@ -145,8 +153,9 @@ describe("UserService", () => {
           type: "pro",
         };
 
-        return expect(stevePlatform.client.user.activateSubscription({ username: userSteve.username, license }))
-          .rejects.toThrowError(NotFoundException);
+        return expect(
+          stevePlatform.client.user.activateSubscription({ username: userSteve.username, license }),
+        ).rejects.toThrowError(NotFoundException);
       });
 
       it.skip("rejects requests for already existing subscriptions", async () => {
@@ -155,9 +164,13 @@ describe("UserService", () => {
           type: "pro",
         };
 
-        await stevePlatform.client.user.activateSubscription({ username: userSteve.username, license });
-        return expect(stevePlatform.client.user.activateSubscription({ username: userSteve.username, license }))
-          .rejects.toThrowError(ConflictException);
+        await stevePlatform.client.user.activateSubscription({
+          username: userSteve.username,
+          license,
+        });
+        return expect(
+          stevePlatform.client.user.activateSubscription({ username: userSteve.username, license }),
+        ).rejects.toThrowError(ConflictException);
       });
 
       it.skip("returns the activated license", async () => {
@@ -166,7 +179,10 @@ describe("UserService", () => {
           type: "pro",
         };
 
-        const result = await stevePlatform.client.user.activateSubscription({ username: userSteve.username, license });
+        const result = await stevePlatform.client.user.activateSubscription({
+          username: userSteve.username,
+          license,
+        });
 
         expect(result).toEqual(license);
       });
@@ -180,7 +196,10 @@ describe("UserService", () => {
             subscriptionId: userAdam.subscriptionId!,
             type: "pro",
           };
-          await adamPlatform.client.user.activateSubscription({ username: userAdam.username, license });
+          await adamPlatform.client.user.activateSubscription({
+            username: userAdam.username,
+            license,
+          });
         } catch (_: unknown) {}
       });
 
@@ -191,69 +210,86 @@ describe("UserService", () => {
             subscriptionId: userAdam.subscriptionId!,
             type: "pro",
           };
-          await adamPlatform.client.user.deactivateSubscription({ username: userAdam.username, license });
+          await adamPlatform.client.user.deactivateSubscription({
+            username: userAdam.username,
+            license,
+          });
         } catch (_: unknown) {}
       });
 
       it.skip("rejects requests with invalid username", async () => {
         adamPlatform.fakeToken = undefined;
 
-        return expect(adamPlatform.client.user.deactivateSubscription({ username: "FAKE_USER", license: { subscriptionId: userAdam.subscriptionId! } }))
-          .rejects.toThrowError(ForbiddenException);
+        return expect(
+          adamPlatform.client.user.deactivateSubscription({
+            username: "FAKE_USER",
+            license: { subscriptionId: userAdam.subscriptionId! },
+          }),
+        ).rejects.toThrowError(ForbiddenException);
       });
 
       it.skip("rejects requests with invalid subscriptionId", async () =>
-        expect(adamPlatform.client.user.deactivateSubscription({ username: userAdam.username, license: { subscriptionId: "FAKE_SUBSCRIPTION" } }))
-          .rejects.toThrowError(NotFoundException),
-      );
+        expect(
+          adamPlatform.client.user.deactivateSubscription({
+            username: userAdam.username,
+            license: { subscriptionId: "FAKE_SUBSCRIPTION" },
+          }),
+        ).rejects.toThrowError(NotFoundException));
 
       it.skip("returns undefined after subscription deactivation", async () =>
-        expect(adamPlatform.client.user.deactivateSubscription({ username: userAdam.username, license: { subscriptionId: userAdam.subscriptionId! } }))
-          .resolves.toBeUndefined(),
-      );
+        expect(
+          adamPlatform.client.user.deactivateSubscription({
+            username: userAdam.username,
+            license: { subscriptionId: userAdam.subscriptionId! },
+          }),
+        ).resolves.toBeUndefined());
     });
 
     describe("Get user subscriptions", () => {
       it("Should get list of subscriptions", async () => {
-        const subscriptions = [{
-          currentPeriodEndsAt: expect.any(String),
-          currentPeriodStartedAt: expect.any(String),
-          id: "6327929c2cfb8762b99eec44ddb3c3c4",
-          planCode: "pro-yearly",
-          planName: "Pro",
-          seats: 1,
-          trialEndsAt: null,
-          trialStartedAt: null,
-          usedSeats: [],
-          companyName: "sdgfdgdfg",
-          accountCode: "f63ed988-017a-4a0f-8486-cc8cf5ec6f32",
-          isBusinessAccount: false,
-          state: "active",
-          pendingChange: {
-            activateAt: null,
-            quantity: null,
+        const subscriptions = [
+          {
+            currentPeriodEndsAt: expect.any(String),
+            currentPeriodStartedAt: expect.any(String),
+            id: "6327929c2cfb8762b99eec44ddb3c3c4",
+            planCode: "pro-yearly",
+            planName: "Pro",
+            seats: 1,
+            trialEndsAt: null,
+            trialStartedAt: null,
+            usedSeats: [],
+            companyName: "sdgfdgdfg",
+            accountCode: "f63ed988-017a-4a0f-8486-cc8cf5ec6f32",
+            isBusinessAccount: false,
+            state: "active",
+            pendingChange: {
+              activateAt: null,
+              quantity: null,
+            },
           },
-        },
-        {
-          currentPeriodEndsAt: expect.any(String),
-          currentPeriodStartedAt: expect.any(String),
-          id: "6264c96770f423f8980c7d45569dc21a",
-          planCode: "pro-monthly",
-          planName: "Pro",
-          seats: 1,
-          trialEndsAt: null,
-          trialStartedAt: null,
-          usedSeats: [],
-          companyName: "sdgfdgdfg",
-          accountCode: "f63ed988-017a-4a0f-8486-cc8cf5ec6f32",
-          isBusinessAccount: false,
-          state: "active",
-          pendingChange: {
-            activateAt: null,
-            quantity: null,
+          {
+            currentPeriodEndsAt: expect.any(String),
+            currentPeriodStartedAt: expect.any(String),
+            id: "6264c96770f423f8980c7d45569dc21a",
+            planCode: "pro-monthly",
+            planName: "Pro",
+            seats: 1,
+            trialEndsAt: null,
+            trialStartedAt: null,
+            usedSeats: [],
+            companyName: "sdgfdgdfg",
+            accountCode: "f63ed988-017a-4a0f-8486-cc8cf5ec6f32",
+            isBusinessAccount: false,
+            state: "active",
+            pendingChange: {
+              activateAt: null,
+              quantity: null,
+            },
           },
-        }];
-        const userSubscriptions = await bobPlatform.client.user.getUserSubscriptions(userBob.username);
+        ];
+        const userSubscriptions = await bobPlatform.client.user.getUserSubscriptions(
+          userBob.username,
+        );
         expect(userSubscriptions).toEqual(subscriptions);
       });
     });
@@ -279,7 +315,10 @@ describe("UserService", () => {
             quantity: null,
           },
         };
-        const userSubscription = await bobPlatform.client.user.getUserSubscription(userBob.username, subscription.id);
+        const userSubscription = await bobPlatform.client.user.getUserSubscription(
+          userBob.username,
+          subscription.id,
+        );
         expect(userSubscription).toEqual(subscription);
       });
     });
@@ -287,9 +326,9 @@ describe("UserService", () => {
 
   describe("getBillingPageToken", () => {
     it("rejects requests with invalid username", async () =>
-      expect(erinPlatform.client.user.getBillingPageToken("FAKE_USER"))
-        .rejects.toThrowError(ForbiddenException),
-    );
+      expect(erinPlatform.client.user.getBillingPageToken("FAKE_USER")).rejects.toThrowError(
+        ForbiddenException,
+      ));
 
     it("returns the billing page token", async () => {
       const token = await erinPlatform.client.user.getBillingPageToken(userErin.username);
@@ -300,12 +339,15 @@ describe("UserService", () => {
 
   describe("getBillingPageTokenBySubscriptionId", () => {
     it("rejects requests with invalid username", async () =>
-      expect(erinPlatform.client.user.getBillingPageTokenBySubscriptionId("FAKE_USER", "foo-bar"))
-        .rejects.toThrowError(ForbiddenException),
-    );
+      expect(
+        erinPlatform.client.user.getBillingPageTokenBySubscriptionId("FAKE_USER", "foo-bar"),
+      ).rejects.toThrowError(ForbiddenException));
 
     it("returns the billing page token for subscription", async () => {
-      const token = await bobPlatform.client.user.getBillingPageTokenBySubscriptionId(userBob.username, "6327929c2cfb8762b99eec44ddb3c3c4");
+      const token = await bobPlatform.client.user.getBillingPageTokenBySubscriptionId(
+        userBob.username,
+        "6327929c2cfb8762b99eec44ddb3c3c4",
+      );
       expect(token).toHaveProperty("hostedLoginToken");
       expect(typeof token.hostedLoginToken).toBe("string");
     });
@@ -313,9 +355,9 @@ describe("UserService", () => {
 
   describe("getBillingInfo", () => {
     it("rejects requests with invalid username", async () =>
-      expect(bobPlatform.client.user.getUserBillingInformation("FAKE_USER"))
-        .rejects.toThrowError(ForbiddenException),
-    );
+      expect(bobPlatform.client.user.getUserBillingInformation("FAKE_USER")).rejects.toThrowError(
+        ForbiddenException,
+      ));
 
     it("returns the billing information", async () => {
       const billingInfo = {
@@ -339,7 +381,9 @@ describe("UserService", () => {
           lastTwo: null,
         },
       };
-      const billingInformation = await bobPlatform.client.user.getUserBillingInformation(userBob.username);
+      const billingInformation = await bobPlatform.client.user.getUserBillingInformation(
+        userBob.username,
+      );
       expect(billingInformation).toEqual(billingInfo);
     });
   });

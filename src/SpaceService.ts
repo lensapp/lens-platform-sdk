@@ -51,7 +51,10 @@ export interface Space {
   catalogApi?: CatalogAPI;
 }
 
-export type SpaceEntity = Except<MapToEntity<Space>, "teams" | "invitations" | "invitationDomains" | "catalogApi"> & {
+export type SpaceEntity = Except<
+  MapToEntity<Space>,
+  "teams" | "invitations" | "invitationDomains" | "catalogApi"
+> & {
   teams?: TeamEntity[];
   invitations?: InvitationEntity[];
   invitationDomains?: InvitationDomainEntity[];
@@ -75,14 +78,11 @@ class SpaceService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}${queryString ? `/?${queryString}` : ""}`;
 
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        404: () => new SpaceNotFoundException(name),
-      },
-    );
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: () => new SpaceNotFoundException(name),
+    });
 
-    return (json as unknown) as Space;
+    return json as unknown as Space;
   }
 
   /**
@@ -92,11 +92,9 @@ class SpaceService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces${queryString ? `/?${queryString}` : ""}`;
 
-    const json = await throwExpected(
-      async () => fetch.get(url),
-    );
+    const json = await throwExpected(async () => fetch.get(url));
 
-    return (json as unknown) as Space[];
+    return json as unknown as Space[];
   }
 
   /**
@@ -106,14 +104,11 @@ class SpaceService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces`;
 
-    const json = await throwExpected(
-      async () => fetch.post(url, space),
-      {
-        422: () => new SpaceNameReservedException(space.name),
-      },
-    );
+    const json = await throwExpected(async () => fetch.post(url, space), {
+      422: () => new SpaceNameReservedException(space.name),
+    });
 
-    return (json as unknown) as Space;
+    return json as unknown as Space;
   }
 
   /**
@@ -125,14 +120,11 @@ class SpaceService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/features`;
 
-    const json = await throwExpected(
-      async () => fetch.post(url, { feature, users }),
-      {
-        404: () => new NotFoundException(),
-      },
-    );
+    const json = await throwExpected(async () => fetch.post(url, { feature, users }), {
+      404: () => new NotFoundException(),
+    });
 
-    return (json as unknown) as Record<string, unknown>;
+    return json as unknown as Record<string, unknown>;
   }
 
   /**
@@ -140,18 +132,18 @@ class SpaceService extends Base {
    * @param feature - Feature remove add
    * @param users - Array of usernames or email addresses
    */
-  async removeSpaceFeature(feature: SpaceFeature, users: string[]): Promise<Record<string, unknown>> {
+  async removeSpaceFeature(
+    feature: SpaceFeature,
+    users: string[],
+  ): Promise<Record<string, unknown>> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/features/remove`;
 
-    const json = await throwExpected(
-      async () => fetch.delete(url, { data: { feature, users } }),
-      {
-        404: () => new NotFoundException(),
-      },
-    );
+    const json = await throwExpected(async () => fetch.delete(url, { data: { feature, users } }), {
+      404: () => new NotFoundException(),
+    });
 
-    return (json as unknown) as Record<string, unknown>;
+    return json as unknown as Record<string, unknown>;
   }
 
   /**
@@ -161,15 +153,12 @@ class SpaceService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${spaceName}`;
 
-    const json = await throwExpected(
-      async () => fetch.patch(url, space),
-      {
-        500: () => new TokenNotFoundException(),
-        422: () => new SpaceNameReservedException(space.name),
-      },
-    );
+    const json = await throwExpected(async () => fetch.patch(url, space), {
+      500: () => new TokenNotFoundException(),
+      422: () => new SpaceNameReservedException(space.name),
+    });
 
-    return (json as unknown) as Space;
+    return json as unknown as Space;
   }
 
   /**
@@ -179,13 +168,10 @@ class SpaceService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}`;
 
-    await throwExpected(
-      async () => fetch.delete(url),
-      {
-        500: () => new TokenNotFoundException(),
-        404: () => new SpaceNotFoundException(name),
-      },
-    );
+    await throwExpected(async () => fetch.delete(url), {
+      500: () => new TokenNotFoundException(),
+      404: () => new SpaceNotFoundException(name),
+    });
   }
 
   /**
@@ -194,19 +180,19 @@ class SpaceService extends Base {
   async getBoredSecret({
     name,
     clusterId,
-  }: { name: string; clusterId: string }): Promise<{ token: string }> {
+  }: {
+    name: string;
+    clusterId: string;
+  }): Promise<{ token: string }> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters/${clusterId}/bored-secret`;
 
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        // TODO: differentiate between space cluster and secret not being found
-        404: () => new SpaceNotFoundException(name),
-      },
-    );
+    const json = await throwExpected(async () => fetch.get(url), {
+      // TODO: differentiate between space cluster and secret not being found
+      404: () => new SpaceNotFoundException(name),
+    });
 
-    return (json as unknown) as { token: string };
+    return json as unknown as { token: string };
   }
 
   /**
@@ -215,26 +201,27 @@ class SpaceService extends Base {
   async getClusterToken({
     name,
     clusterId,
-  }: { name: string; clusterId: string }): Promise<{ token: string }> {
+  }: {
+    name: string;
+    clusterId: string;
+  }): Promise<{ token: string }> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters/${clusterId}/token`;
 
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        // TODO: differentiate between space, cluster, user and token not being found
-        404(error) {
-          const message = error?.body.message;
-          if (typeof message === "string" && message.includes("Space ")) {
-            return new SpaceNotFoundException(name);
-          }
+    const json = await throwExpected(async () => fetch.get(url), {
+      // TODO: differentiate between space, cluster, user and token not being found
+      404(error) {
+        const message = error?.body.message;
 
-          return new ClusterNotFoundException(clusterId);
-        },
+        if (typeof message === "string" && message.includes("Space ")) {
+          return new SpaceNotFoundException(name);
+        }
+
+        return new ClusterNotFoundException(clusterId);
       },
-    );
+    });
 
-    return (json as unknown) as { token: string };
+    return json as unknown as { token: string };
   }
 
   /**
@@ -244,12 +231,11 @@ class SpaceService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters`;
 
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      { 404: () => new SpaceNotFoundException(name) },
-    );
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: () => new SpaceNotFoundException(name),
+    });
 
-    return (json as unknown) as K8sCluster[];
+    return json as unknown as K8sCluster[];
   }
 
   /**
@@ -259,91 +245,105 @@ class SpaceService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/security/invitation-domains`;
 
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        404: () => new SpaceNotFoundException(name),
-      },
-    );
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: () => new SpaceNotFoundException(name),
+    });
 
-    return (json as unknown) as InvitationDomain[];
+    return json as unknown as InvitationDomain[];
   }
 
   /**
    * Add one invitation domain in a Space by space name
    */
-  async addInvitationDomain({ name, domain }: { name: Space["name"]; domain: InvitationDomain["domain"] }): Promise<InvitationDomain> {
+  async addInvitationDomain({
+    name,
+    domain,
+  }: {
+    name: Space["name"];
+    domain: InvitationDomain["domain"];
+  }): Promise<InvitationDomain> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/security/invitation-domains`;
 
     const json = await throwExpected(
-      async () => fetch.post(url, {
-        domain,
-      }),
+      async () =>
+        fetch.post(url, {
+          domain,
+        }),
       {
         404: () => new SpaceNotFoundException(name),
       },
     );
 
-    return (json as unknown) as InvitationDomain;
+    return json as unknown as InvitationDomain;
   }
 
   /**
    * Delete one invitation domain in a Space by space name and invitation domain id
    */
-  async deleteInvitationDomain({ name, invitationDomainId }: { name: Space["name"]; invitationDomainId: InvitationDomain["id"] }): Promise<void> {
+  async deleteInvitationDomain({
+    name,
+    invitationDomainId,
+  }: {
+    name: Space["name"];
+    invitationDomainId: InvitationDomain["id"];
+  }): Promise<void> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/security/invitation-domains/${invitationDomainId}`;
 
-    await throwExpected(
-      async () => fetch.delete(url),
-      {
-        // Space or InvitationDomain missing
-        404: () => new NotFoundException(),
-      },
-    );
+    await throwExpected(async () => fetch.delete(url), {
+      // Space or InvitationDomain missing
+      404: () => new NotFoundException(),
+    });
   }
 
   /**
    * Get one cluster by cluster id in one space by space name
    */
-  async getOneCluster({ clusterId, name }: { clusterId: string; name: string }): Promise<K8sCluster> {
+  async getOneCluster({
+    clusterId,
+    name,
+  }: {
+    clusterId: string;
+    name: string;
+  }): Promise<K8sCluster> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters/${clusterId}`;
 
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        404(error) {
-          const message = error?.body.message;
-          if (typeof message === "string" && message.includes("Space ")) {
-            return new SpaceNotFoundException(name);
-          }
+    const json = await throwExpected(async () => fetch.get(url), {
+      404(error) {
+        const message = error?.body.message;
 
-          return new ClusterNotFoundException(clusterId);
-        },
+        if (typeof message === "string" && message.includes("Space ")) {
+          return new SpaceNotFoundException(name);
+        }
+
+        return new ClusterNotFoundException(clusterId);
       },
-    );
+    });
 
-    return (json as unknown) as K8sCluster;
+    return json as unknown as K8sCluster;
   }
 
   /**
    * Create a cluster in one space by space name
    */
-  async createOneCluster({ cluster, name }: { cluster: K8sCluster; name: string }): Promise<K8sCluster> {
+  async createOneCluster({
+    cluster,
+    name,
+  }: {
+    cluster: K8sCluster;
+    name: string;
+  }): Promise<K8sCluster> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters`;
 
-    const json = await throwExpected(
-      async () => fetch.post(url, cluster),
-      {
-        404: () => new SpaceNotFoundException(name),
-        422: () => new SpaceHasTooManyClustersException(name),
-      },
-    );
+    const json = await throwExpected(async () => fetch.post(url, cluster), {
+      404: () => new SpaceNotFoundException(name),
+      422: () => new SpaceHasTooManyClustersException(name),
+    });
 
-    return (json as unknown) as K8sCluster;
+    return json as unknown as K8sCluster;
   }
 
   /**
@@ -353,15 +353,12 @@ class SpaceService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${cluster.space?.name}/k8sclusters/${cluster.id}`;
 
-    const json = await throwExpected(
-      async () => fetch.patch(url, cluster),
-      {
-        // TODO: differentiate between space and cluster not being found
-        404: () => new SpaceNotFoundException(cluster.space?.name ?? "undefined"),
-      },
-    );
+    const json = await throwExpected(async () => fetch.patch(url, cluster), {
+      // TODO: differentiate between space and cluster not being found
+      404: () => new SpaceNotFoundException(cluster.space?.name ?? "undefined"),
+    });
 
-    return (json as unknown) as K8sCluster;
+    return json as unknown as K8sCluster;
   }
 
   /**
@@ -371,15 +368,12 @@ class SpaceService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${cluster.space?.name}/k8sclusters/${cluster.id}`;
 
-    const json = await throwExpected(
-      async () => fetch.put(url, cluster),
-      {
-        // TODO: differentiate between space and cluster not being found
-        404: () => new SpaceNotFoundException(cluster.space?.name ?? "undefined"),
-      },
-    );
+    const json = await throwExpected(async () => fetch.put(url, cluster), {
+      // TODO: differentiate between space and cluster not being found
+      404: () => new SpaceNotFoundException(cluster.space?.name ?? "undefined"),
+    });
 
-    return (json as unknown) as K8sCluster;
+    return json as unknown as K8sCluster;
   }
 
   /**
@@ -389,14 +383,11 @@ class SpaceService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters/${clusterId}`;
 
-    await throwExpected(
-      async () => fetch.delete(url),
-      {
-        // TODO: differentiate between space and cluster not being found,
-        // improve error handling here overall
-        404: () => new SpaceNotFoundException(name),
-      },
-    );
+    await throwExpected(async () => fetch.delete(url), {
+      // TODO: differentiate between space and cluster not being found,
+      // improve error handling here overall
+      404: () => new SpaceNotFoundException(name),
+    });
   }
 
   /**
@@ -407,20 +398,18 @@ class SpaceService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/users/${username}`;
 
-    await throwExpected(
-      async () => fetch.delete(url),
-      {
-        404(error) {
-          const message = error?.body?.message;
-          if (typeof message === "string" && message.includes(name)) {
-            return new SpaceNotFoundException(name);
-          }
+    await throwExpected(async () => fetch.delete(url), {
+      404(error) {
+        const message = error?.body?.message;
 
-          return new UserNameNotFoundException(username);
-        },
-        422: () => new CantRemoveOwnerFromSpaceException(username),
+        if (typeof message === "string" && message.includes(name)) {
+          return new SpaceNotFoundException(name);
+        }
+
+        return new UserNameNotFoundException(username);
       },
-    );
+      422: () => new CantRemoveOwnerFromSpaceException(username),
+    });
   }
 
   /**
@@ -430,11 +419,9 @@ class SpaceService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${name}/plan`;
 
-    const json = await throwExpected(
-      async () => fetch.get(url),
-    );
+    const json = await throwExpected(async () => fetch.get(url));
 
-    return (json as unknown) as BillingPlan;
+    return json as unknown as BillingPlan;
   }
 
   /**
@@ -446,7 +433,7 @@ class SpaceService extends Base {
 
     const json = await fetch.delete(url);
 
-    return (json as unknown) as BillingPlan;
+    return json as unknown as BillingPlan;
   }
 }
 

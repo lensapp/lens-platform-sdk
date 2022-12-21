@@ -1,6 +1,6 @@
 // Map each property to ToType for any property name in Keys
 export type MapPropsToType<Type, Keys extends keyof Type, ToType> = {
-  [Property in keyof Type]: Property extends Keys ? ToType : Type[Property]
+  [Property in keyof Type]: Property extends Keys ? ToType : Type[Property];
 };
 
 // Map each property to Date for any property name in Keys

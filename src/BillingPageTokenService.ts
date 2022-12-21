@@ -1,5 +1,10 @@
 import { Base } from "./Base";
-import { ForbiddenException, SpaceNotFoundException, throwExpected, InternalServerException } from "./exceptions";
+import {
+  ForbiddenException,
+  SpaceNotFoundException,
+  throwExpected,
+  InternalServerException,
+} from "./exceptions";
 
 export class BillingPageTokenService extends Base {
   /**
@@ -14,15 +19,13 @@ export class BillingPageTokenService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/spaces/${spaceName}/billing-page-token`;
 
-    const token = await throwExpected(
-      async () => fetch.get(url),
-      {
-        404: () => new SpaceNotFoundException(spaceName),
-        403: () => new ForbiddenException("Token can only be acquired by space owners and admins"),
-        500: response => new InternalServerException(response?.body?.message ?? "Could not retrieve token"),
-      },
-    );
+    const token = await throwExpected(async () => fetch.get(url), {
+      404: () => new SpaceNotFoundException(spaceName),
+      403: () => new ForbiddenException("Token can only be acquired by space owners and admins"),
+      500: (response) =>
+        new InternalServerException(response?.body?.message ?? "Could not retrieve token"),
+    });
 
-    return (token as unknown) as string;
+    return token as unknown as string;
   }
 }

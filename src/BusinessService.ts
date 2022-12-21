@@ -161,11 +161,13 @@ export type BusinessSubscription = {
    */
   isTrial: boolean;
   /**
-   * Current billing period started at (Recurly subscription["currentPeriodStartedAt"] in ISO format. e.g. 2022-06-28T08:13:06.000Z)
+   * Current billing period started at (Recurly subscription["currentPeriodStartedAt"] in ISO format.
+   * e.g. 2022-06-28T08:13:06.000Z)
    */
   currentPeriodStartedAt: string | null;
   /**
-   * Current billing period ends at (Recurly subscription["currentPeriodEndsAt"] in ISO format, e.g. 2022-06-28T08:13:06.000Z)
+   * Current billing period ends at (Recurly subscription["currentPeriodEndsAt"] in ISO format,
+   * e.g. 2022-06-28T08:13:06.000Z)
    */
   currentPeriodEndsAt: string | null;
   /**
@@ -247,7 +249,10 @@ export type BusinessUser = {
 
 export type UserBusinessRole = "Administrator" | "Member";
 export type BusinessInvitationState = "pending" | "active";
-export type BusinessUpdate = Omit<Business, "id" | "createdAt" | "updatedAt" | "businessUsers" | "external">;
+export type BusinessUpdate = Omit<
+  Business,
+  "id" | "createdAt" | "updatedAt" | "businessUsers" | "external"
+>;
 export type BusinessInvitation = {
   /**
    * The business invitation ID
@@ -290,14 +295,11 @@ class BusinessService extends Base {
   async getMany(): Promise<Business[]> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses`;
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        403: error => new ForbiddenException(error?.body.message),
-      },
-    );
+    const json = await throwExpected(async () => fetch.get(url), {
+      403: (error) => new ForbiddenException(error?.body.message),
+    });
 
-    return (json as unknown) as Business[];
+    return json as unknown as Business[];
   }
 
   /**
@@ -306,33 +308,31 @@ class BusinessService extends Base {
   async getOne(id: Business["id"]): Promise<Business> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}`;
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        404: error => new NotFoundException(error?.body.message),
-        403: error => new ForbiddenException(error?.body.message),
-      },
-    );
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: (error) => new NotFoundException(error?.body.message),
+      403: (error) => new ForbiddenException(error?.body.message),
+    });
 
-    return (json as unknown) as Business;
+    return json as unknown as Business;
   }
 
   /**
    * Create a new business ("Lens Business ID").
    */
-  async createOne(business: Omit<Business, "id" | "createdAt" | "updatedAt" | "businessUsers" | "external"> & { id?: string }): Promise<Business> {
+  async createOne(
+    business: Omit<Business, "id" | "createdAt" | "updatedAt" | "businessUsers" | "external"> & {
+      id?: string;
+    },
+  ): Promise<Business> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses`;
-    const json = await throwExpected(
-      async () => fetch.post(url, business),
-      {
-        400: error => new BadRequestException(error?.body.message),
-        422: error => new UnprocessableEntityException(error?.body.message),
-        403: error => new ForbiddenException(error?.body.message),
-      },
-    );
+    const json = await throwExpected(async () => fetch.post(url, business), {
+      400: (error) => new BadRequestException(error?.body.message),
+      422: (error) => new UnprocessableEntityException(error?.body.message),
+      403: (error) => new ForbiddenException(error?.body.message),
+    });
 
-    return (json as unknown) as Business;
+    return json as unknown as Business;
   }
 
   /**
@@ -341,17 +341,14 @@ class BusinessService extends Base {
   async updateOne(id: string, business: BusinessUpdate): Promise<Business> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}`;
-    const json = await throwExpected(
-      async () => fetch.patch(url, business),
-      {
-        400: error => new BadRequestException(error?.body.message),
-        422: error => new UnprocessableEntityException(error?.body.message),
-        401: error => new UnprocessableEntityException(error?.body.message),
-        403: error => new ForbiddenException(error?.body.message),
-      },
-    );
+    const json = await throwExpected(async () => fetch.patch(url, business), {
+      400: (error) => new BadRequestException(error?.body.message),
+      422: (error) => new UnprocessableEntityException(error?.body.message),
+      401: (error) => new UnprocessableEntityException(error?.body.message),
+      403: (error) => new ForbiddenException(error?.body.message),
+    });
 
-    return (json as unknown) as Business;
+    return json as unknown as Business;
   }
 
   /**
@@ -360,12 +357,10 @@ class BusinessService extends Base {
   async deleteOne(id: Business["id"]): Promise<void> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}`;
-    await throwExpected(
-      async () => fetch.delete(url),
-      {
-        403: error => new ForbiddenException(error?.body.message),
-      },
-    );
+
+    await throwExpected(async () => fetch.delete(url), {
+      403: (error) => new ForbiddenException(error?.body.message),
+    });
   }
 
   /**
@@ -374,32 +369,31 @@ class BusinessService extends Base {
   async deleteBusinessUser(businessId: Business["id"], businessUserId: string): Promise<void> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${businessId}/users/${businessUserId}`;
-    await throwExpected(
-      async () => fetch.delete(url),
-      {
-        403: error => new ForbiddenException(error?.body.message),
-        404: error => new NotFoundException(error?.body.message),
-        422: error => new NotFoundException(error?.body.message),
-      },
-    );
+
+    await throwExpected(async () => fetch.delete(url), {
+      403: (error) => new ForbiddenException(error?.body.message),
+      404: (error) => new NotFoundException(error?.body.message),
+      422: (error) => new NotFoundException(error?.body.message),
+    });
   }
 
   /**
    * Change existing business user role
    */
-  async changeBusinessUserRole(businessId: Business["id"], businessUserId: string, role: UserBusinessRole): Promise<BusinessUser> {
+  async changeBusinessUserRole(
+    businessId: Business["id"],
+    businessUserId: string,
+    role: UserBusinessRole,
+  ): Promise<BusinessUser> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${businessId}/users/${businessUserId}`;
-    const json = await throwExpected(
-      async () => fetch.patch(url, { role }),
-      {
-        400: error => new BadRequestException(error?.body.message),
-        401: error => new UnprocessableEntityException(error?.body.message),
-        403: error => new ForbiddenException(error?.body.message),
-      },
-    );
+    const json = await throwExpected(async () => fetch.patch(url, { role }), {
+      400: (error) => new BadRequestException(error?.body.message),
+      401: (error) => new UnprocessableEntityException(error?.body.message),
+      403: (error) => new ForbiddenException(error?.body.message),
+    });
 
-    return (json as unknown) as BusinessUser;
+    return json as unknown as BusinessUser;
   }
 
   /**
@@ -408,77 +402,100 @@ class BusinessService extends Base {
   async getSubscriptions(id: Business["id"]): Promise<BusinessSubscription[]> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}/subscriptions`;
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        400: error => new BadRequestException(error?.body.message),
-        404: error => new NotFoundException(error?.body.message),
-        403: error => new ForbiddenException(error?.body.message),
-      },
-    );
+    const json = await throwExpected(async () => fetch.get(url), {
+      400: (error) => new BadRequestException(error?.body.message),
+      404: (error) => new NotFoundException(error?.body.message),
+      403: (error) => new ForbiddenException(error?.body.message),
+    });
 
-    return (json as unknown) as BusinessSubscription[];
+    return json as unknown as BusinessSubscription[];
   }
 
   /**
    * Activate user business subscription seat
    */
-  async activateBusinessUserSubscription({ businessId, businessSubscriptionId, businessInvitationId, username }: { businessId: string; businessSubscriptionId: string; businessInvitationId: string; username: string }): Promise<UsedSeat> {
+  async activateBusinessUserSubscription({
+    businessId,
+    businessSubscriptionId,
+    businessInvitationId,
+    username,
+  }: {
+    businessId: string;
+    businessSubscriptionId: string;
+    businessInvitationId: string;
+    username: string;
+  }): Promise<UsedSeat> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${businessId}/subscription-seats`;
     const json = await throwExpected(
-      async () => fetch.post(url, {
-        invitationId: businessInvitationId,
-        subscriptionId: businessSubscriptionId,
-      }),
+      async () =>
+        fetch.post(url, {
+          invitationId: businessInvitationId,
+          subscriptionId: businessSubscriptionId,
+        }),
       {
-        404: error => new NotFoundException(error?.body.message),
-        400: error => new BadRequestException(error?.body.message),
-        403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
-        422: error => new UnprocessableEntityException(error?.body.message),
+        404: (error) => new NotFoundException(error?.body.message),
+        400: (error) => new BadRequestException(error?.body.message),
+        403: () =>
+          new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
+        422: (error) => new UnprocessableEntityException(error?.body.message),
       },
     );
 
-    return (json as unknown) as UsedSeat;
+    return json as unknown as UsedSeat;
   }
 
   /**
    * Deactivate user business subscription seat
    * Request user has to be an owner of the subscription seat or Business Administrator
    */
-  async deActivateBusinessUserSubscription({ businessId, businessSubscriptionId, username }: { businessId: string; businessSubscriptionId: string; username: string }): Promise<UsedSeat> {
+  async deActivateBusinessUserSubscription({
+    businessId,
+    businessSubscriptionId,
+    username,
+  }: {
+    businessId: string;
+    businessSubscriptionId: string;
+    username: string;
+  }): Promise<UsedSeat> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${businessId}/subscription-seats/${businessSubscriptionId}`;
-    const json = await throwExpected(
-      async () => fetch.patch(url),
-      {
-        404: error => new NotFoundException(error?.body.message),
-        400: error => new BadRequestException(error?.body.message),
-        403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
-        422: error => new UnprocessableEntityException(error?.body.message),
-      },
-    );
+    const json = await throwExpected(async () => fetch.patch(url), {
+      404: (error) => new NotFoundException(error?.body.message),
+      400: (error) => new BadRequestException(error?.body.message),
+      403: () =>
+        new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
+      422: (error) => new UnprocessableEntityException(error?.body.message),
+    });
 
-    return (json as unknown) as UsedSeat;
+    return json as unknown as UsedSeat;
   }
 
   /**
    * Change business subscription seat quantity
    */
-  async changeBusinessSubscriptionSeatsQuantity({ businessId, businessSubscriptionId, quantity }: { businessId: string; businessSubscriptionId: string; quantity: number }): Promise<SubscriptionInfo> {
+  async changeBusinessSubscriptionSeatsQuantity({
+    businessId,
+    businessSubscriptionId,
+    quantity,
+  }: {
+    businessId: string;
+    businessSubscriptionId: string;
+    quantity: number;
+  }): Promise<SubscriptionInfo> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${businessId}/subscriptions/${businessSubscriptionId}`;
-    const json = await throwExpected(
-      async () => fetch.patch(url, { quantity }),
-      {
-        404: error => new NotFoundException(error?.body.message),
-        400: error => new BadRequestException(error?.body.message),
-        403: () => new ForbiddenException(`Modification of subscription for business ${businessId} is forbidden`),
-        422: error => new UnprocessableEntityException(error?.body.message),
-      },
-    );
+    const json = await throwExpected(async () => fetch.patch(url, { quantity }), {
+      404: (error) => new NotFoundException(error?.body.message),
+      400: (error) => new BadRequestException(error?.body.message),
+      403: () =>
+        new ForbiddenException(
+          `Modification of subscription for business ${businessId} is forbidden`,
+        ),
+      422: (error) => new UnprocessableEntityException(error?.body.message),
+    });
 
-    return (json as unknown) as SubscriptionInfo;
+    return json as unknown as SubscriptionInfo;
   }
 
   /**
@@ -487,15 +504,12 @@ class BusinessService extends Base {
   async getUsers(id: Business["id"]): Promise<BusinessUser[]> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}/users`;
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        404: error => new NotFoundException(error?.body.message),
-        403: error => new ForbiddenException(error?.body.message),
-      },
-    );
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: (error) => new NotFoundException(error?.body.message),
+      403: (error) => new ForbiddenException(error?.body.message),
+    });
 
-    return (json as unknown) as BusinessUser[];
+    return json as unknown as BusinessUser[];
   }
 
   /**
@@ -504,22 +518,25 @@ class BusinessService extends Base {
   async getInvitations(id: Business["id"]): Promise<BusinessInvitation[]> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}/invitations`;
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        403: error => new ForbiddenException(error?.body.message),
-      },
-    );
+    const json = await throwExpected(async () => fetch.get(url), {
+      403: (error) => new ForbiddenException(error?.body.message),
+    });
 
-    return (json as unknown) as BusinessInvitation[];
+    return json as unknown as BusinessInvitation[];
   }
 
   /**
-   * Create a new invitation for a user to join a business, optionally assigning them to a subscription by given subscriptionId.
+   * Create a new invitation for a user to join a business, optionally assigning them to a
+   * subscription by given subscriptionId.
    *
    * @remarks inviter has to be the administrator of the business
    */
-  async createInvitation(id: Business["id"], email: string, subscriptionId?: string, role = "Member"): Promise<{
+  async createInvitation(
+    id: Business["id"],
+    email: string,
+    subscriptionId?: string,
+    role = "Member",
+  ): Promise<{
     id: BusinessInvitation["id"];
     email: BusinessInvitation["email"];
     subscriptionId: BusinessInvitation["subscriptionId"];
@@ -527,18 +544,15 @@ class BusinessService extends Base {
   }> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}/invitations`;
-    const json = await throwExpected(
-      async () => fetch.post(url, { email, subscriptionId, role }),
-      {
-        400: error => new BadRequestException(error?.body.message),
-        409: error => new ConflictException(error?.body.message),
-        422: error => new UnprocessableEntityException(error?.body.message),
-        404: error => new NotFoundException(error?.body.message),
-        403: error => new ForbiddenException(error?.body.message),
-      },
-    );
+    const json = await throwExpected(async () => fetch.post(url, { email, subscriptionId, role }), {
+      400: (error) => new BadRequestException(error?.body.message),
+      409: (error) => new ConflictException(error?.body.message),
+      422: (error) => new UnprocessableEntityException(error?.body.message),
+      404: (error) => new NotFoundException(error?.body.message),
+      403: (error) => new ForbiddenException(error?.body.message),
+    });
 
-    return (json as unknown) as {
+    return json as unknown as {
       id: BusinessInvitation["id"];
       email: BusinessInvitation["email"];
       subscriptionId: BusinessInvitation["subscriptionId"];
@@ -549,46 +563,38 @@ class BusinessService extends Base {
   /**
    * Accept an invitation to join a business.
    */
-  async acceptInvitation(
-    id: Business["id"],
-    invitationId: BusinessInvitation["id"],
-  ) {
+  async acceptInvitation(id: Business["id"], invitationId: BusinessInvitation["id"]) {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}/invitations/${invitationId}`;
     const json = await throwExpected(
-      async () => fetch.patch(url, {
-        state: "active",
-      }),
+      async () =>
+        fetch.patch(url, {
+          state: "active",
+        }),
       {
-        400: error => new BadRequestException(error?.body.message),
-        422: error => new UnprocessableEntityException(error?.body.message),
-        404: error => new NotFoundException(error?.body.message),
-        403: error => new ForbiddenException(error?.body.message),
+        400: (error) => new BadRequestException(error?.body.message),
+        422: (error) => new UnprocessableEntityException(error?.body.message),
+        404: (error) => new NotFoundException(error?.body.message),
+        403: (error) => new ForbiddenException(error?.body.message),
       },
     );
 
-    return (json as unknown) as BusinessInvitation;
+    return json as unknown as BusinessInvitation;
   }
 
   /**
    * Delete business invitation
    */
-  async deleteInvitation(
-    id: Business["id"],
-    invitationId: BusinessInvitation["id"],
-  ) {
+  async deleteInvitation(id: Business["id"], invitationId: BusinessInvitation["id"]) {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}/invitations/${invitationId}`;
-    const json = await throwExpected(
-      async () => fetch.delete(url),
-      {
-        400: error => new BadRequestException(error?.body.message),
-        404: error => new NotFoundException(error?.body.message),
-        403: error => new ForbiddenException(error?.body.message),
-      },
-    );
+    const json = await throwExpected(async () => fetch.delete(url), {
+      400: (error) => new BadRequestException(error?.body.message),
+      404: (error) => new NotFoundException(error?.body.message),
+      403: (error) => new ForbiddenException(error?.body.message),
+    });
 
-    return (json as unknown) as BusinessInvitation;
+    return json as unknown as BusinessInvitation;
   }
 
   /**
@@ -599,16 +605,14 @@ class BusinessService extends Base {
   async getBillingPageToken(id: Business["id"]): Promise<BillingPageToken> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}/billing-page-token`;
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        404: error => new NotFoundException(error?.body.message),
-        403: () => new ForbiddenException(`Getting the billing page token for businessId ${id} is forbidden`),
-        422: error => new UnprocessableEntityException(error?.body.message),
-      },
-    );
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: (error) => new NotFoundException(error?.body.message),
+      403: () =>
+        new ForbiddenException(`Getting the billing page token for businessId ${id} is forbidden`),
+      422: (error) => new UnprocessableEntityException(error?.body.message),
+    });
 
-    return (json as unknown) as BillingPageToken;
+    return json as unknown as BillingPageToken;
   }
 }
 
