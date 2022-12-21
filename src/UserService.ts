@@ -234,7 +234,6 @@ export type Address = {
    * Country, 2-letter ISO 3166-1 alpha-2 code.
    */
   country: string | null;
-
 };
 
 export type BillingInfo = {
@@ -273,6 +272,7 @@ export interface ActivationCodeData {
 class UserService extends Base {
   async getUsername() {
     const token = await this.lensPlatformClient.getDecodedAccessToken();
+
     if (!token?.preferred_username) {
       throw new LensSDKException(null, "no access token or no preferred_username");
     }
@@ -283,40 +283,37 @@ class UserService extends Base {
   async getOne({ username }: { username: string }, queryString?: string): Promise<UserWithEmail> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}${queryString ? `?${queryString}` : ""}`;
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      { 404: () => new NotFoundException(`User ${username} not found`) },
-    );
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: () => new NotFoundException(`User ${username} not found`),
+    });
 
-    return (json as unknown) as UserWithEmail;
+    return json as unknown as UserWithEmail;
   }
 
   async getMany(queryString?: string): Promise<User[]> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users${queryString ? `?${queryString}` : ""}`;
-    const json = await throwExpected(
-      async () => fetch.get(url),
-    );
+    const json = await throwExpected(async () => fetch.get(url));
 
-    return (json as unknown) as User[];
+    return json as unknown as User[];
   }
 
   /**
    * Update user
    */
-  async updateOne(username: string, user: User & { attributes?: UserAttributes } & { password?: string } & { email?: string }): Promise<User> {
+  async updateOne(
+    username: string,
+    user: User & { attributes?: UserAttributes } & { password?: string } & { email?: string },
+  ): Promise<User> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}`;
-    const json = await throwExpected(
-      async () => fetch.patch(url, user),
-      {
-        404: () => new NotFoundException(`User ${username} not found`),
-        403: () => new ForbiddenException(`Modification of user ${username} is forbidden`),
-        409: () => new UsernameAlreadyExistsException(),
-      },
-    );
+    const json = await throwExpected(async () => fetch.patch(url, user), {
+      404: () => new NotFoundException(`User ${username} not found`),
+      403: () => new ForbiddenException(`Modification of user ${username} is forbidden`),
+      409: () => new UsernameAlreadyExistsException(),
+    });
 
-    return (json as unknown) as User;
+    return json as unknown as User;
   }
 
   async getSelf(): Promise<UserWithEmail> {
@@ -325,7 +322,7 @@ class UserService extends Base {
     if (decodedAccessToken?.preferred_username) {
       const json = await this.getOne({ username: decodedAccessToken?.preferred_username });
 
-      return (json as unknown) as UserWithEmail;
+      return json as unknown as UserWithEmail;
     }
 
     throw new Error(`jwt.preferred_username is ${decodedAccessToken?.preferred_username}`);
@@ -335,246 +332,261 @@ class UserService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}`;
 
-    await throwExpected(
-      async () => fetch.delete(url),
-      {
-        500(error) {
-          const message = error?.body.message;
+    await throwExpected(async () => fetch.delete(url), {
+      500(error) {
+        const message = error?.body.message;
 
-          if (typeof message === "string") {
-            if (message.includes("Token")) {
-              return new TokenNotFoundException();
-            }
-
-            if (message.includes("User")) {
-              return new UserNameNotFoundException(username);
-            }
+        if (typeof message === "string") {
+          if (message.includes("Token")) {
+            return new TokenNotFoundException();
           }
 
-          return new LensSDKException(
-            500,
-            `Unexpected exception [Lens Platform SDK]: ${error?.body.message}`,
-            error,
-          );
-        },
-        404: () => new UserNameNotFoundException(username),
-        422: error => new UnprocessableEntityException(error?.body.message),
+          if (message.includes("User")) {
+            return new UserNameNotFoundException(username);
+          }
+        }
+
+        return new LensSDKException(
+          500,
+          `Unexpected exception [Lens Platform SDK]: ${error?.body.message}`,
+          error,
+        );
       },
-    );
+      404: () => new UserNameNotFoundException(username),
+      422: (error) => new UnprocessableEntityException(error?.body.message),
+    });
   }
 
   async getUserSubscriptions(username: string): Promise<SubscriptionInfo[]> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/subscriptions`;
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        404: error => new NotFoundException(error?.body.message),
-        403: () => new ForbiddenException(`Access to user ${username} is forbidden`),
-      },
-    );
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: (error) => new NotFoundException(error?.body.message),
+      403: () => new ForbiddenException(`Access to user ${username} is forbidden`),
+    });
 
-    return (json as unknown) as SubscriptionInfo[];
+    return json as unknown as SubscriptionInfo[];
   }
 
   async getUserSubscriptionsSeats(username: string): Promise<SubscriptionSeat[]> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/subscription-seats`;
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        404: error => new NotFoundException(error?.body.message),
-        403: () => new ForbiddenException(`Access to user ${username} is forbidden`),
-      },
-    );
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: (error) => new NotFoundException(error?.body.message),
+      403: () => new ForbiddenException(`Access to user ${username} is forbidden`),
+    });
 
-    return (json as unknown) as SubscriptionSeat[];
+    return json as unknown as SubscriptionSeat[];
   }
 
   async getUserSubscription(username: string, subscriptionId: string): Promise<SubscriptionInfo> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/subscriptions/${subscriptionId}`;
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        404: error => new NotFoundException(error?.body.message),
-        403: () => new ForbiddenException(`Access to user ${username} is forbidden`),
-      },
-    );
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: (error) => new NotFoundException(error?.body.message),
+      403: () => new ForbiddenException(`Access to user ${username} is forbidden`),
+    });
 
-    return (json as unknown) as SubscriptionInfo;
+    return json as unknown as SubscriptionInfo;
   }
 
-  async activateSubscription({ username, license }: { username: string; license: License }): Promise<License> {
+  async activateSubscription({
+    username,
+    license,
+  }: {
+    username: string;
+    license: License;
+  }): Promise<License> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/subscriptions`;
-    const json = await throwExpected(
-      async () => fetch.post(url, license),
-      {
-        404(error) {
-          const message = error?.body.message;
+    const json = await throwExpected(async () => fetch.post(url, license), {
+      404(error) {
+        const message = error?.body.message;
 
-          if (typeof message === "string") {
-            if (message.includes("User")) {
-              return new UserNameNotFoundException(username);
-            }
+        if (typeof message === "string") {
+          if (message.includes("User")) {
+            return new UserNameNotFoundException(username);
           }
+        }
 
-          return new NotFoundException(`Recurly subscription ${license.subscriptionId} not found`);
-        },
-        409: error => new SubscriptionAlreadyExistsException(error?.body.message ?? `Subscription for user ${username} already exists`),
-        400: error => new BadRequestException(error?.body.message),
-        403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
-        422: error => new UnprocessableEntityException(error?.body.message),
+        return new NotFoundException(`Recurly subscription ${license.subscriptionId} not found`);
       },
-    );
+      409: (error) =>
+        new SubscriptionAlreadyExistsException(
+          error?.body.message ?? `Subscription for user ${username} already exists`,
+        ),
+      400: (error) => new BadRequestException(error?.body.message),
+      403: () =>
+        new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
+      422: (error) => new UnprocessableEntityException(error?.body.message),
+    });
 
-    return (json as unknown) as License;
+    return json as unknown as License;
   }
 
-  async activateSubscriptionSeat({ username, license }: { username: string; license: License }): Promise<License> {
+  async activateSubscriptionSeat({
+    username,
+    license,
+  }: {
+    username: string;
+    license: License;
+  }): Promise<License> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/subscription-seats`;
-    const json = await throwExpected(
-      async () => fetch.post(url, license),
-      {
-        404(error) {
-          const message = error?.body.message;
+    const json = await throwExpected(async () => fetch.post(url, license), {
+      404(error) {
+        const message = error?.body.message;
 
-          if (typeof message === "string") {
-            if (message.includes("User")) {
-              return new UserNameNotFoundException(username);
-            }
+        if (typeof message === "string") {
+          if (message.includes("User")) {
+            return new UserNameNotFoundException(username);
           }
+        }
 
-          return new NotFoundException(`Recurly subscription ${license.subscriptionId} not found`);
-        },
-        409: error => new SubscriptionAlreadyExistsException(error?.body.message ?? `Subscription seat for user ${username} already exists`),
-        400: error => new BadRequestException(error?.body.message),
-        403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
-        422: error => new UnprocessableEntityException(error?.body.message),
+        return new NotFoundException(`Recurly subscription ${license.subscriptionId} not found`);
       },
-    );
+      409: (error) =>
+        new SubscriptionAlreadyExistsException(
+          error?.body.message ?? `Subscription seat for user ${username} already exists`,
+        ),
+      400: (error) => new BadRequestException(error?.body.message),
+      403: () =>
+        new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
+      422: (error) => new UnprocessableEntityException(error?.body.message),
+    });
 
-    return (json as unknown) as License;
+    return json as unknown as License;
   }
 
-  async getSubscriptionSeatOfflineActivationCode({ username, subscriptionSeatId, activationCodeData }: { username: string; subscriptionSeatId: string; activationCodeData: ActivationCodeData }): Promise<OfflineActivationCode | null> {
+  async getSubscriptionSeatOfflineActivationCode({
+    username,
+    subscriptionSeatId,
+    activationCodeData,
+  }: {
+    username: string;
+    subscriptionSeatId: string;
+    activationCodeData: ActivationCodeData;
+  }): Promise<OfflineActivationCode | null> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/subscription-seats/${subscriptionSeatId}/activation-code`;
-    const json = await throwExpected(
-      async () => fetch.post(url, activationCodeData),
-      {
-        404(error) {
-          const message = error?.body.message;
+    const json = await throwExpected(async () => fetch.post(url, activationCodeData), {
+      404(error) {
+        const message = error?.body.message;
 
-          if (typeof message === "string") {
-            if (message.includes("User")) {
-              return new UserNameNotFoundException(username);
-            }
+        if (typeof message === "string") {
+          if (message.includes("User")) {
+            return new UserNameNotFoundException(username);
           }
+        }
 
-          return new NotFoundException(`Subscription seat ${subscriptionSeatId} not found`);
-        },
-        400: error => new BadRequestException(error?.body.message),
-        403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
-        422: error => new UnprocessableEntityException(error?.body.message),
+        return new NotFoundException(`Subscription seat ${subscriptionSeatId} not found`);
       },
-    );
+      400: (error) => new BadRequestException(error?.body.message),
+      403: () =>
+        new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
+      422: (error) => new UnprocessableEntityException(error?.body.message),
+    });
 
-    return (json as unknown) as OfflineActivationCode;
+    return json as unknown as OfflineActivationCode;
   }
 
-  async deactivateSubscription({ username, license }: { username: string; license: Pick<License, "subscriptionId"> }): Promise<void> {
+  async deactivateSubscription({
+    username,
+    license,
+  }: {
+    username: string;
+    license: Pick<License, "subscriptionId">;
+  }): Promise<void> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/subscriptions/${license.subscriptionId}`;
-    await throwExpected(
-      async () => fetch.delete(url),
-      {
-        404(error) {
-          const message = error?.body.message;
 
-          if (typeof message === "string") {
-            if (message.includes("User")) {
-              return new UserNameNotFoundException(username);
-            }
+    await throwExpected(async () => fetch.delete(url), {
+      404(error) {
+        const message = error?.body.message;
+
+        if (typeof message === "string") {
+          if (message.includes("User")) {
+            return new UserNameNotFoundException(username);
           }
+        }
 
-          return new NotFoundException(`Recurly subscription ${license.subscriptionId} not found`);
-        },
-        403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
-        400: () => new BadRequestException(),
-        422: error => new UnprocessableEntityException(error?.body.message),
+        return new NotFoundException(`Recurly subscription ${license.subscriptionId} not found`);
       },
-    );
+      403: () =>
+        new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
+      400: () => new BadRequestException(),
+      422: (error) => new UnprocessableEntityException(error?.body.message),
+    });
   }
 
-  async deactivateSubscriptionSeat({ username, license }: { username: string; license: Pick<License, "subscriptionId"> }): Promise<void> {
+  async deactivateSubscriptionSeat({
+    username,
+    license,
+  }: {
+    username: string;
+    license: Pick<License, "subscriptionId">;
+  }): Promise<void> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/subscription-seats/${license.subscriptionId}`;
-    await throwExpected(
-      async () => fetch.delete(url),
-      {
-        404(error) {
-          const message = error?.body.message;
 
-          if (typeof message === "string") {
-            if (message.includes("User")) {
-              return new UserNameNotFoundException(username);
-            }
+    await throwExpected(async () => fetch.delete(url), {
+      404(error) {
+        const message = error?.body.message;
+
+        if (typeof message === "string") {
+          if (message.includes("User")) {
+            return new UserNameNotFoundException(username);
           }
+        }
 
-          return new NotFoundException(`Recurly subscription ${license.subscriptionId} not found`);
-        },
-        403: () => new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
-        400: () => new BadRequestException(),
-        422: error => new UnprocessableEntityException(error?.body.message),
+        return new NotFoundException(`Recurly subscription ${license.subscriptionId} not found`);
       },
-    );
+      403: () =>
+        new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
+      400: () => new BadRequestException(),
+      422: (error) => new UnprocessableEntityException(error?.body.message),
+    });
   }
 
   async getBillingPageToken(username: string): Promise<BillingPageToken> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/billing-page-token`;
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        404: () => new NotFoundException(`User ${username} not found`),
-        403: () => new ForbiddenException(`Getting the billing page token for ${username} is forbidden`),
-        422: error => new UnprocessableEntityException(error?.body.message),
-      },
-    );
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: () => new NotFoundException(`User ${username} not found`),
+      403: () =>
+        new ForbiddenException(`Getting the billing page token for ${username} is forbidden`),
+      422: (error) => new UnprocessableEntityException(error?.body.message),
+    });
 
-    return (json as unknown) as BillingPageToken;
+    return json as unknown as BillingPageToken;
   }
 
-  async getBillingPageTokenBySubscriptionId(username: string, subscriptionId: string): Promise<BillingPageToken> {
+  async getBillingPageTokenBySubscriptionId(
+    username: string,
+    subscriptionId: string,
+  ): Promise<BillingPageToken> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/subscriptions/${subscriptionId}/billing-page-token`;
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        404: () => new NotFoundException(`User ${username} not found`),
-        403: () => new ForbiddenException(`Getting the billing page token for ${username} is forbidden`),
-        422: error => new UnprocessableEntityException(error?.body.message),
-      },
-    );
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: () => new NotFoundException(`User ${username} not found`),
+      403: () =>
+        new ForbiddenException(`Getting the billing page token for ${username} is forbidden`),
+      422: (error) => new UnprocessableEntityException(error?.body.message),
+    });
 
-    return (json as unknown) as BillingPageToken;
+    return json as unknown as BillingPageToken;
   }
 
   async getUserBillingInformation(username: string): Promise<BillingInfo> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/billing`;
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        404: () => new NotFoundException(`User ${username} not found`),
-        403: () => new ForbiddenException(`Getting the billing information for ${username} is forbidden`),
-      },
-    );
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: () => new NotFoundException(`User ${username} not found`),
+      403: () =>
+        new ForbiddenException(`Getting the billing information for ${username} is forbidden`),
+    });
 
-    return (json as unknown) as BillingInfo;
+    return json as unknown as BillingInfo;
   }
 
   /**
@@ -584,15 +596,12 @@ class UserService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const username = await this.getUsername();
     const url = `${apiEndpointAddress}/users/${username}/emails`;
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        401: error => new UnauthorizedException(error?.body?.message),
-        404: error => new NotFoundException(error?.body?.message),
-      },
-    );
+    const json = await throwExpected(async () => fetch.get(url), {
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
 
-    return (json as unknown) as Record<string, "verified" | "unverified" | "primary">;
+    return json as unknown as Record<string, "verified" | "unverified" | "primary">;
   }
 
   /**
@@ -603,16 +612,13 @@ class UserService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const username = await this.getUsername();
     const url = `${apiEndpointAddress}/users/${username}/emails`;
-    const json = await throwExpected(
-      async () => fetch.post(url, emails),
-      {
-        400: error => new BadRequestException(error?.body?.message),
-        401: error => new UnauthorizedException(error?.body?.message),
-        422: error => new UnprocessableEntityException(error?.body?.message),
-      },
-    );
+    const json = await throwExpected(async () => fetch.post(url, emails), {
+      400: (error) => new BadRequestException(error?.body?.message),
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      422: (error) => new UnprocessableEntityException(error?.body?.message),
+    });
 
-    return (json as unknown) as string[];
+    return json as unknown as string[];
   }
 
   /**
@@ -622,14 +628,12 @@ class UserService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const username = await this.getUsername();
     const url = `${apiEndpointAddress}/users/${username}/emails`;
-    await throwExpected(
-      async () => fetch.delete(url, { data: emails }),
-      {
-        400: error => new BadRequestException(error?.body?.message),
-        401: error => new UnauthorizedException(error?.body?.message),
-        422: error => new UnprocessableEntityException(error?.body?.message),
-      },
-    );
+
+    await throwExpected(async () => fetch.delete(url, { data: emails }), {
+      400: (error) => new BadRequestException(error?.body?.message),
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      422: (error) => new UnprocessableEntityException(error?.body?.message),
+    });
   }
 
   /**
@@ -639,13 +643,11 @@ class UserService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const username = await this.getUsername();
     const url = `${apiEndpointAddress}/users/${username}/emails/send-verification`;
-    await throwExpected(
-      async () => fetch.put(url, { email }),
-      {
-        400: error => new BadRequestException(error?.body?.message),
-        401: error => new UnauthorizedException(error?.body?.message),
-      },
-    );
+
+    await throwExpected(async () => fetch.put(url, { email }), {
+      400: (error) => new BadRequestException(error?.body?.message),
+      401: (error) => new UnauthorizedException(error?.body?.message),
+    });
   }
 
   /**
@@ -654,19 +656,18 @@ class UserService extends Base {
   async verifySecondaryEmail(token: string) {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const decoded = decode<{ username: string; email: string }>(token);
+
     if (!decoded.username) {
       throw new LensSDKException(null, "Invalid token");
     }
 
     const url = `${apiEndpointAddress}/users/${decoded.username}/emails/verification`;
-    await throwExpected(
-      async () => fetch.post(url, { token }),
-      {
-        400: error => new BadRequestException(error?.body?.message),
-        401: error => new UnauthorizedException(error?.body?.message),
-        422: error => new UnprocessableEntityException(error?.body?.message),
-      },
-    );
+
+    await throwExpected(async () => fetch.post(url, { token }), {
+      400: (error) => new BadRequestException(error?.body?.message),
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      422: (error) => new UnprocessableEntityException(error?.body?.message),
+    });
   }
 
   /**
@@ -676,28 +677,23 @@ class UserService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const username = await this.getUsername();
     const url = `${apiEndpointAddress}/users/${username}/emails`;
-    await throwExpected(
-      async () => fetch.patch(url, { email }),
-      {
-        400: error => new BadRequestException(error?.body?.message),
-        401: error => new UnauthorizedException(error?.body?.message),
-        422: error => new UnprocessableEntityException(error?.body?.message),
-      },
-    );
+
+    await throwExpected(async () => fetch.patch(url, { email }), {
+      400: (error) => new BadRequestException(error?.body?.message),
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      422: (error) => new UnprocessableEntityException(error?.body?.message),
+    });
   }
 
   async confirmPersonalLicenseEligibility(username: string) {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/confirm-personal-eligibility`;
 
-    await throwExpected(
-      async () => fetch.post(url, { username }),
-      {
-        400: error => new BadRequestException(error?.body?.message),
-        401: error => new UnauthorizedException(error?.body?.message),
-        404: () => new NotFoundException(`User ${username} not found`),
-      },
-    );
+    await throwExpected(async () => fetch.post(url, { username }), {
+      400: (error) => new BadRequestException(error?.body?.message),
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      404: () => new NotFoundException(`User ${username} not found`),
+    });
   }
 
   getUserFullName(user: User): string {

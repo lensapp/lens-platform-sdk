@@ -4,11 +4,16 @@ import { minimumOptions as options, apiEndpointAddress } from "./LensPlatformCli
 
 describe(".user.*", () => {
   const username = "test-username";
-  nock(apiEndpointAddress).get("/users").reply(200, [{
-    id: "test-id",
-    username,
-    fullname: "test fullname",
-  }]);
+
+  nock(apiEndpointAddress)
+    .get("/users")
+    .reply(200, [
+      {
+        id: "test-id",
+        username,
+        fullname: "test fullname",
+      },
+    ]);
   nock(apiEndpointAddress).get(`/users/${username}`).reply(200, {
     id: "test-id",
     username,
@@ -42,8 +47,7 @@ describe(".user.*", () => {
   });
 
   it("can call updateOne without email", async () => {
-    await lensPlatformClient.user.updateOne(username, {
-    });
+    await lensPlatformClient.user.updateOne(username, {});
   });
 
   it("can call deleteOne", async () => {

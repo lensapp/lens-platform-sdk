@@ -1,7 +1,10 @@
 import type { Except } from "type-fest";
 import { Base } from "./Base";
 import {
-  CantRemoveLastTeamUser, SpaceNotFoundException, throwExpected, UserNameNotFoundException,
+  CantRemoveLastTeamUser,
+  SpaceNotFoundException,
+  throwExpected,
+  UserNameNotFoundException,
 } from "./exceptions";
 import type { Space, SpaceEntity } from "./SpaceService";
 import type { MapToEntity } from "./types/types";
@@ -53,7 +56,7 @@ class TeamService extends Base {
 
     const json = await fetch.get(url);
 
-    return (json as unknown) as Team;
+    return json as unknown as Team;
   }
 
   /**
@@ -65,7 +68,7 @@ class TeamService extends Base {
 
     const json = await fetch.get(url);
 
-    return (json as unknown) as Team[];
+    return json as unknown as Team[];
   }
 
   /**
@@ -77,7 +80,7 @@ class TeamService extends Base {
 
     const json = await fetch.post(url, team);
 
-    return (json as unknown) as Team;
+    return json as unknown as Team;
   }
 
   /**
@@ -99,7 +102,7 @@ class TeamService extends Base {
 
     const json = await fetch.post(url, { username });
 
-    return (json as unknown) as Team;
+    return json as unknown as Team;
   }
 
   /**
@@ -109,20 +112,20 @@ class TeamService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/teams/${id}/users/${username}`;
 
-    const json = await throwExpected(
-      async () => fetch.delete(url), {
-        404(error) {
-          const message = error?.body.message;
-          if (typeof message === "string" && message.includes("Space not found")) {
-            return new SpaceNotFoundException();
-          }
+    const json = await throwExpected(async () => fetch.delete(url), {
+      404(error) {
+        const message = error?.body.message;
 
-          return new UserNameNotFoundException(username);
-        },
-        422: () => new CantRemoveLastTeamUser(),
-      });
+        if (typeof message === "string" && message.includes("Space not found")) {
+          return new SpaceNotFoundException();
+        }
 
-    return (json as unknown) as Team;
+        return new UserNameNotFoundException(username);
+      },
+      422: () => new CantRemoveLastTeamUser(),
+    });
+
+    return json as unknown as Team;
   }
 }
 

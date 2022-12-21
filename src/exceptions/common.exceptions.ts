@@ -13,6 +13,7 @@ export class LensSDKException extends Error implements LensPlatformExceptionData
   ) {
     super(message);
     Object.setPrototypeOf(this, LensSDKException.prototype);
+
     if (Error.captureStackTrace !== undefined) {
       Error.captureStackTrace(this, LensSDKException);
     }

@@ -120,9 +120,16 @@ export class Permissions {
    * @returns
    */
   // eslint-disable-next-line max-params
-  canTeam(action: TeamActions, space: Space | SpaceEntity, team: Team | TeamEntity, forUserId: string, targetUserId?: string) {
+  canTeam(
+    action: TeamActions,
+    space: Space | SpaceEntity,
+    team: Team | TeamEntity,
+    forUserId: string,
+    targetUserId?: string,
+  ) {
     const role = this.getRole(space, forUserId);
     const isAdminOrOwner = [Roles.Owner, Roles.Admin].includes(role);
+
     switch (action) {
       case TeamActions.AddUser: {
         if (!this.canSpace(Actions.PatchTeam, space, forUserId)) {
@@ -155,7 +162,11 @@ export class Permissions {
         }
 
         // Prevent removing creator of Personal Space from the Owner team
-        if (team.kind === "Owner" && space.kind === "Personal" && space.createdById === targetUserId) {
+        if (
+          team.kind === "Owner" &&
+          space.kind === "Personal" &&
+          space.createdById === targetUserId
+        ) {
           return false;
         }
 
@@ -189,7 +200,12 @@ export class Permissions {
    * @returns boolean
    * @throws "Could not get role for space with no teams" exception
    */
-  canK8sCluster(action: K8sClusterActions, forSpace: Space | SpaceEntity, forK8sCluster: K8sCluster | K8sClusterEntity, forUserId: string) {
+  canK8sCluster(
+    action: K8sClusterActions,
+    forSpace: Space | SpaceEntity,
+    forK8sCluster: K8sCluster | K8sClusterEntity,
+    forUserId: string,
+  ) {
     let canI = false;
     const isOwnerAdmin = [Roles.Owner, Roles.Admin].includes(this.getRole(forSpace, forUserId));
 
@@ -197,13 +213,16 @@ export class Permissions {
       // Check if user can access the K8sCluster assuming the Space is accessible
       // DevCluster K8sClusters can only be accessed by the creator or Admin/Owner
       case K8sClusterActions.AccessK8sCluster:
-        canI = !isDevCluster(forK8sCluster) || isOwnerAdmin || forK8sCluster.createdById === forUserId;
+        canI =
+          !isDevCluster(forK8sCluster) || isOwnerAdmin || forK8sCluster.createdById === forUserId;
         break;
       // Check if user can patch the K8sCluster assuming the Space is accessible
       // DevCluster K8sClusters can only be patched by the creator or Admin/Owner
       case K8sClusterActions.PatchK8sCluster:
-        canI = !isDevCluster(forK8sCluster) || isOwnerAdmin || forK8sCluster.createdById === forUserId;
+        canI =
+          !isDevCluster(forK8sCluster) || isOwnerAdmin || forK8sCluster.createdById === forUserId;
         break;
+
       // Admin, Owner or K8sCluster creator can delete it
       case K8sClusterActions.DeleteK8sCluster: {
         canI = isOwnerAdmin || forK8sCluster.createdById === forUserId;
@@ -243,15 +262,19 @@ export class Permissions {
       throw new Error("Could not get role for space with no teams");
     }
 
-    if (this.getOwnerTeams(space).filter((team: Team) => this.isUserInTeam(team, forUserId)).length) {
+    if (
+      this.getOwnerTeams(space).filter((team: Team) => this.isUserInTeam(team, forUserId)).length
+    ) {
       return Roles.Owner;
     }
 
-    if (this.getAdminTeams(space).filter((team: Team) => this.isUserInTeam(team, forUserId)).length) {
+    if (
+      this.getAdminTeams(space).filter((team: Team) => this.isUserInTeam(team, forUserId)).length
+    ) {
       return Roles.Admin;
     }
 
-    if (space.users?.map(user => user.id).includes(forUserId)) {
+    if (space.users?.map((user) => user.id).includes(forUserId)) {
       return Roles.Member;
     }
 
@@ -281,23 +304,28 @@ export class Permissions {
       return false;
     }
 
-    return Boolean(team.users.find(u => u.id === userId));
+    return Boolean(team.users.find((u) => u.id === userId));
   };
 
-  protected canPatchOrRevokeInvitation = (forRevokeInvitation: RevokeInvitation | undefined, role: Roles) => {
+  protected canPatchOrRevokeInvitation = (
+    forRevokeInvitation: RevokeInvitation | undefined,
+    role: Roles,
+  ) => {
     const isAdminOrOwner = [Roles.Owner, Roles.Admin].includes(role);
+
     if (isAdminOrOwner) {
       return true;
     }
 
     if (
       // If there is an invitationId to be revoked
-      forRevokeInvitation?.invitationId
+      forRevokeInvitation?.invitationId &&
       // If this user has created more than one invitation
-      && forRevokeInvitation?.invitationIdsCreatedByUserId?.length > 0
+      forRevokeInvitation?.invitationIdsCreatedByUserId?.length > 0 &&
       // If invitation to revoke was created by userId
-      && forRevokeInvitation?.invitationIdsCreatedByUserId.find(
-        invitationIdCreatedByUserId => invitationIdCreatedByUserId === forRevokeInvitation?.invitationId,
+      forRevokeInvitation?.invitationIdsCreatedByUserId.find(
+        (invitationIdCreatedByUserId) =>
+          invitationIdCreatedByUserId === forRevokeInvitation?.invitationId,
       )
     ) {
       return true;

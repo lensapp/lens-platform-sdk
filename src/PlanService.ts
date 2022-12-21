@@ -14,13 +14,19 @@ class PlanService extends Base {
   /**
    * Get one plan by space name
    */
-  async getOne({ name, queryString }: { name: string; queryString?: string }): Promise<BillingPlan> {
+  async getOne({
+    name,
+    queryString,
+  }: {
+    name: string;
+    queryString?: string;
+  }): Promise<BillingPlan> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/plans/${name}${queryString ? `/?${queryString}` : ""}`;
 
     const json = await fetch.get(url);
 
-    return (json as unknown) as BillingPlan;
+    return json as unknown as BillingPlan;
   }
 }
 

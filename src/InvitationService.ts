@@ -63,14 +63,11 @@ class InvitationService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/invitations/${id}${queryString ? `?${queryString}` : ""}`;
 
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        404: () => new NotFoundException(),
-      },
-    );
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: () => new NotFoundException(),
+    });
 
-    return (json as unknown) as Invitation;
+    return json as unknown as Invitation;
   }
 
   /**
@@ -80,14 +77,11 @@ class InvitationService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/invitations/by-key/${key}`;
 
-    const json = await throwExpected(
-      async () => fetch.get(url),
-      {
-        404: () => new NotFoundException(),
-      },
-    );
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: () => new NotFoundException(),
+    });
 
-    return (json as unknown) as Invitation;
+    return json as unknown as Invitation;
   }
 
   /**
@@ -98,7 +92,7 @@ class InvitationService extends Base {
     const url = `${apiEndpointAddress}/invitations`;
     const json = await fetch.get(url);
 
-    return (json as unknown) as Invitation[];
+    return json as unknown as Invitation[];
   }
 
   /**
@@ -108,29 +102,26 @@ class InvitationService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/invitations`;
 
-    const json = await throwExpected(
-      async () => fetch.post(url, invitation),
-      {
-        404: () => new SpaceNotFoundException(`id: ${invitation.spaceId}`),
-        422(e) {
-          const msg: string = e?.body.message ?? "";
+    const json = await throwExpected(async () => fetch.post(url, invitation), {
+      404: () => new SpaceNotFoundException(`id: ${invitation.spaceId}`),
+      422(e) {
+        const msg: string = e?.body.message ?? "";
 
-          if (msg.includes("is already in space")) {
-            return new UserAlreadyExistsException(invitation.invitedUsername);
-          }
+        if (msg.includes("is already in space")) {
+          return new UserAlreadyExistsException(invitation.invitedUsername);
+        }
 
-          if (msg.includes("pending invitation")) {
-            return new PendingInvitationException(invitation.invitedUsername);
-          }
+        if (msg.includes("pending invitation")) {
+          return new PendingInvitationException(invitation.invitedUsername);
+        }
 
-          if (msg.includes("email missing")) {
-            return new EmailMissingException();
-          }
+        if (msg.includes("email missing")) {
+          return new EmailMissingException();
+        }
 
-          return new PastExpiryException();
-        },
+        return new PastExpiryException();
       },
-    );
+    });
 
     return json as Invitation & { weblink?: string };
   }
@@ -142,21 +133,19 @@ class InvitationService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/invitations/${invitation.id}`;
 
-    const json = await throwExpected(
-      async () => fetch.patch(url, invitation),
-      {
-        403(error) {
-          const message = error?.body?.message;
-          if (typeof message === "string" && message.includes("your email address domain")) {
-            return new InvalidEmailDomainException(error?.body?.message);
-          }
+    const json = await throwExpected(async () => fetch.patch(url, invitation), {
+      403(error) {
+        const message = error?.body?.message;
 
-          return new ForbiddenException(error?.body?.message);
-        },
+        if (typeof message === "string" && message.includes("your email address domain")) {
+          return new InvalidEmailDomainException(error?.body?.message);
+        }
+
+        return new ForbiddenException(error?.body?.message);
       },
-    );
+    });
 
-    return (json as unknown) as Invitation;
+    return json as unknown as Invitation;
   }
 }
 

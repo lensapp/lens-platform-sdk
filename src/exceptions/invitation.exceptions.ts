@@ -9,14 +9,14 @@ export class PastExpiryException extends UnprocessableEntityException {
 
 export class UserAlreadyExistsException extends UnprocessableEntityException {
   constructor(userName?: string) {
-    super(`User${userName ? " " + userName : ""} already exists in space`);
+    super(`User${userName ? ` ${userName}` : ""} already exists in space`);
     Object.setPrototypeOf(this, UserAlreadyExistsException.prototype);
   }
 }
 
 export class PendingInvitationException extends UnprocessableEntityException {
   constructor(userName?: string) {
-    super(`User${userName ? " " + userName : ""} already has a pending invitation to this space`);
+    super(`User${userName ? ` ${userName}` : ""} already has a pending invitation to this space`);
     Object.setPrototypeOf(this, PendingInvitationException.prototype);
   }
 }
@@ -30,7 +30,8 @@ export class EmailMissingException extends UnprocessableEntityException {
 
 export class InvalidEmailDomainException extends ForbiddenException {
   // The message is e.g.:
-  // "Sorry, your email address domain example.com is not authorized to join this Space. Please contact your Space Administrator."
+  // "Sorry, your email address domain example.com is not authorized to join this Space.
+  // Please contact your Space Administrator."
   constructor(message?: string) {
     super(message);
     Object.setPrototypeOf(this, InvalidEmailDomainException.prototype);

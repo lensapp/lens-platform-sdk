@@ -36,5 +36,5 @@ export const config = {
   keycloakClientId: "lens-extension",
   keycloakRealm: getEnvironmentalVariable("KEYCLOAK_REALM"),
   apiEndpointAddress: getEnvironmentalVariable("API_ENDPOINT_ADDRESS"),
-  tokenHost: getEnvironmentalVariable("TOKEN_HOST")
+  tokenHost: getEnvironmentalVariable("TOKEN_HOST"),
 };
