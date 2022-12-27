@@ -245,6 +245,11 @@ export type BusinessUser = {
    * The users ID in business
    */
   businessUserId?: string;
+
+  /**
+   * The timestemp of the user's last usage of Lens (lens-cloud-extension)
+   */
+  lastAccess?: number;
 };
 
 export type UserBusinessRole = "Administrator" | "Member";
