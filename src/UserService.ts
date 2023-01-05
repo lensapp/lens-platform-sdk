@@ -256,6 +256,10 @@ export interface ActivationCodeData {
   refreshToken: string;
 }
 
+export type UploadAvatarResponse = {
+  uri: string;
+};
+
 /**
  *
  * The class for consuming all `user` resources.
@@ -619,6 +623,29 @@ class UserService extends Base {
     });
 
     return json as unknown as string[];
+  }
+
+  /**
+   * Upload user avatar
+   * @param avatar: HTML form file input value
+   */
+  async uploadAvatar(avatar: File): Promise<UploadAvatarResponse> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const username = await this.getUsername();
+    const url = `${apiEndpointAddress}/users/${username}/avatar`;
+    const formData = new FormData();
+
+    formData.append("avatar", avatar);
+    formData.append("fileName", avatar.name);
+
+    const json = await throwExpected(async () => fetch.post(url, formData), {
+      400: (error) => new BadRequestException(error?.body?.message),
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
+
+    return json as unknown as UploadAvatarResponse;
   }
 
   /**
