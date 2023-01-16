@@ -8,7 +8,7 @@ import {
   ConflictException,
 } from "./exceptions";
 import { BillingPageToken } from "./types/types";
-import { SubscriptionInfo, SubscriptionState } from "./UserService";
+import { SubscriptionInfo, SubscriptionState, UserAttributes } from "./UserService";
 
 /**
  * "Lens Business ID"
@@ -250,6 +250,11 @@ export type BusinessUser = {
    * The timestemp of the user's last usage of Lens (lens-cloud-extension)
    */
   lastAccess?: number;
+
+  /**
+   * The public user's attributes
+   */
+  userAttributes?: UserAttributes[];
 };
 
 export type UserBusinessRole = "Administrator" | "Member";
