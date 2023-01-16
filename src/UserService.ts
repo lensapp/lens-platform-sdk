@@ -16,6 +16,13 @@ import {
 } from "./exceptions";
 import { BillingPageToken, License } from "./types/types";
 
+export type UserAttribute = {
+  id: string;
+  userId: string;
+  value: string;
+  name: string;
+};
+
 /**
  *
  * @remarks
@@ -29,12 +36,7 @@ export interface User {
   fullname?: string;
   firstName?: string;
   lastName?: string;
-  userAttributes?: Array<{
-    id: string;
-    userId: string;
-    value: string;
-    name: string;
-  }>;
+  userAttributes?: Array<UserAttribute>;
 }
 
 export type UserWithEmail = User & { email: string };

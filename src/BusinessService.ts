@@ -8,7 +8,7 @@ import {
   ConflictException,
 } from "./exceptions";
 import { BillingPageToken } from "./types/types";
-import { SubscriptionInfo, SubscriptionState, UserAttributes } from "./UserService";
+import { SubscriptionInfo, SubscriptionState, UserAttribute } from "./UserService";
 
 /**
  * "Lens Business ID"
@@ -254,7 +254,7 @@ export type BusinessUser = {
   /**
    * The public user's attributes
    */
-  userAttributes?: UserAttributes[];
+  userAttributes?: UserAttribute[];
 };
 
 export type UserBusinessRole = "Administrator" | "Member";
