@@ -262,6 +262,17 @@ export type UploadAvatarResponse = {
   uri: string;
 };
 
+export interface Invoice {
+  date: Date | null;
+  number: string | null;
+  planCode: string | null;
+  total: number | null;
+  subtotal: number | null;
+  state: string | null;
+  currency: string | null;
+  billingInfo: BillingInfo | null;
+}
+
 /**
  *
  * The class for consuming all `user` resources.
@@ -593,6 +604,17 @@ class UserService extends Base {
     });
 
     return json as unknown as BillingInfo;
+  }
+
+  async getUserInvoices(username: string): Promise<Invoice[]> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/users/${username}/invoices`;
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: () => new NotFoundException(`User ${username} not found`),
+      403: () => new ForbiddenException(`Getting the invoices for ${username} is forbidden`),
+    });
+
+    return json as unknown as Invoice[];
   }
 
   /**
