@@ -266,8 +266,14 @@ export type UserBusinessRole = "Administrator" | "Member";
 export type BusinessInvitationState = "pending" | "active";
 export type BusinessUpdate = Omit<
   Business,
+  "id" | "createdAt" | "updatedAt" | "businessUsers" | "external" | "businessIdLiteSubscriptionId"
+>;
+
+export type DisableBusinessLightActivationLink = Omit<
+  Business,
   "id" | "createdAt" | "updatedAt" | "businessUsers" | "external"
 >;
+
 export type BusinessInvitation = {
   /**
    * The business invitation ID
@@ -335,7 +341,15 @@ class BusinessService extends Base {
    * Create a new business ("Lens Business ID").
    */
   async createOne(
-    business: Omit<Business, "id" | "createdAt" | "updatedAt" | "businessUsers" | "external"> & {
+    business: Omit<
+      Business,
+      | "id"
+      | "createdAt"
+      | "updatedAt"
+      | "businessUsers"
+      | "external"
+      | "businessIdLiteSubscriptionId"
+    > & {
       id?: string;
     },
   ): Promise<Business> {
@@ -354,6 +368,25 @@ class BusinessService extends Base {
    * Update an existing business ("Lens Business ID").
    */
   async updateOne(id: string, business: BusinessUpdate): Promise<Business> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${id}`;
+    const json = await throwExpected(async () => fetch.patch(url, business), {
+      400: (error) => new BadRequestException(error?.body.message),
+      422: (error) => new UnprocessableEntityException(error?.body.message),
+      401: (error) => new UnprocessableEntityException(error?.body.message),
+      403: (error) => new ForbiddenException(error?.body.message),
+    });
+
+    return json as unknown as Business;
+  }
+
+  /**
+   * Disable business light activation link
+   */
+  async disableBusinessLightActivationLink(
+    id: string,
+    business: DisableBusinessLightActivationLink,
+  ): Promise<Business> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}`;
     const json = await throwExpected(async () => fetch.patch(url, business), {
