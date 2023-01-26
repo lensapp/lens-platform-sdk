@@ -74,6 +74,11 @@ export type Business = {
    * The department name of the business
    */
   department: string;
+
+  /**
+   * Recurly subscription ID for businesses migrated from Recurly.
+   */
+  businessIdLiteSubscriptionId: string | null;
 };
 
 /**
