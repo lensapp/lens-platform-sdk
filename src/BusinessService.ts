@@ -6,9 +6,10 @@ import {
   BadRequestException,
   NotFoundException,
   ConflictException,
+  UnauthorizedException,
 } from "./exceptions";
 import { BillingPageToken } from "./types/types";
-import { SubscriptionInfo, SubscriptionState, UserAttribute } from "./UserService";
+import { SubscriptionInfo, SubscriptionState, User, UserAttribute } from "./UserService";
 
 /**
  * "Lens Business ID"
@@ -302,6 +303,42 @@ export type BusinessInvitation = {
    * The userId that creates the invitation.
    */
   createdById: string;
+};
+
+export type BusinessHierarchyInvitationState = "pending" | "accepted" | "rejected" | "canceled";
+export type BusinessHierarchyInvitation = {
+  /**
+   * The id of the invitation.
+   */
+  id: string;
+  /**
+   * The invitation state.
+   */
+  state: BusinessHierarchyInvitationState;
+  /**
+   * The parent LBID id.
+   */
+  parentBusinessId: Business["id"];
+  /**
+   * The user id of the user who created the invitation
+   */
+  createdById: User["id"];
+  /**
+   * The date the invitation was created.
+   */
+  createdAt: string;
+  /**
+   * The date the invitation was updated.
+   */
+  updatedAt: string;
+  /**
+   * The token for joining as a child LBID.
+   */
+  token: string;
+  /**
+   * The date the invitation will expire.
+   */
+  expiryTime: string | null;
 };
 
 class BusinessService extends Base {
@@ -653,6 +690,163 @@ class BusinessService extends Base {
     });
 
     return json as unknown as BillingPageToken;
+  }
+
+  /**
+   * List all children LBIDs of a LBID.
+   *
+   * @remarks user has to be the administrator of the business.
+   */
+  async getChildren(id: Business["id"]): Promise<Business[]> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${id}/businesses`;
+    const json = await throwExpected(async () => fetch.get(url), {
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
+
+    return json as unknown as Business[];
+  }
+
+  /**
+   * Remove all children LBIDs of a LBID.
+   *
+   * @remarks user has to be the administrator of the business.
+   */
+  async removeAllChildren(id: Business["id"]) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${id}/businesses`;
+
+    await throwExpected(async () => fetch.delete(url), {
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
+  }
+
+  /**
+   * Remove one child LBID of a LBID.
+   *
+   * @remarks user has to be the administrator of the business.
+   * @returns the remaining children LBIDs.
+   */
+  async removeOneChild(parentId: Business["id"], childId: Business["id"]): Promise<Business[]> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${parentId}/businesses/${childId}`;
+    const json = await throwExpected(async () => fetch.delete(url), {
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
+
+    return json as unknown as Business[];
+  }
+
+  /**
+   * Get the parent LBID of a LBID.
+   *
+   * @remarks One LBID can only have one parent.
+   * @remarks user has to be the administrator of the business.
+   */
+  async getParent(id: Business["id"]): Promise<Business> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${id}/parent`;
+    const json = await throwExpected(async () => fetch.get(url), {
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
+
+    return json as unknown as Business;
+  }
+
+  /**
+   * Remove the parent LBID of a LBID.
+   *
+   * @remarks user has to be the administrator of the business.
+   */
+  async removeParent(id: Business["id"]) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${id}/parent`;
+
+    await throwExpected(async () => fetch.delete(url), {
+      400: (error) => new BadRequestException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
+  }
+
+  /**
+   * Create a new 'hierarchy' invitation for a LBID to join another LBID as child account.
+   *
+   * @remarks should be used by parent LBID admins.
+   */
+  async createChildInvitation(parentId: Business["id"], expiryTime?: Date) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${parentId}/hierarchies/invitations`;
+    const json = await throwExpected(
+      async () => fetch.post(url, expiryTime ? { expiryTime } : {}),
+      {
+        403: (error) => new ForbiddenException(error?.body?.message),
+        409: (error) => new ConflictException(error?.body?.message),
+        422: (error) => new UnprocessableEntityException(error?.body?.message),
+      },
+    );
+
+    return json as unknown as BusinessHierarchyInvitation;
+  }
+
+  /**
+   * List all 'hierarchy' invitations by LBID id.
+   *
+   * @remarks should be used by parent LBID admins.
+   */
+  async getManyChildrenInvitation(parentId: Business["id"]) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${parentId}/hierarchies/invitations`;
+    const json = await throwExpected(async () => fetch.get(url), {
+      403: (error) => new ForbiddenException(error?.body?.message),
+    });
+
+    return json as unknown as BusinessHierarchyInvitation[];
+  }
+
+  /**
+   * Update 'hierarchy' invitations by the invitation id and the LBID id.
+   *
+   * @remarks should be used by parent LBID admins.
+   */
+  async updateOneChildInvitation(parentId: Business["id"], state: "canceled") {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${parentId}/hierarchies/invitations`;
+    const json = await throwExpected(async () => fetch.patch(url, { state }), {
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+      422: (error) => new UnprocessableEntityException(error?.body?.message),
+    });
+
+    return json as unknown as BusinessHierarchyInvitation[];
+  }
+
+  /**
+   * Accept or reject the 'hierarchy' invitation by `token`.
+   *
+   * @remarks should be used by child LBID admins.
+   */
+  async acceptChildInvitation(
+    childId: Business["id"],
+    state: "accepted" | "rejected",
+    token: BusinessHierarchyInvitation["token"],
+  ) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${childId}/hierarchies/invitations`;
+    const json = await throwExpected(async () => fetch.patch(url, { state, token }), {
+      400: (error) => new BadRequestException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+      409: (error) => new ConflictException(error?.body?.message),
+      422: (error) => new UnprocessableEntityException(error?.body?.message),
+    });
+
+    return json as unknown as BusinessHierarchyInvitation & { state: "accepted" | "rejected" };
   }
 }
 
