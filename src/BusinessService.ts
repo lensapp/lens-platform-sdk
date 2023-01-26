@@ -378,9 +378,7 @@ class BusinessService extends Base {
   /**
    * Disable business light activation link
    */
-  async disableBusinessLightActivationLink(
-    id: string,
-  ): Promise<Business> {
+  async disableBusinessLightActivationLink(id: string): Promise<Business> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}/activation-link`;
     const json = await throwExpected(async () => fetch.patch(url), {
