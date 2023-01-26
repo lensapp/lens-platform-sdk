@@ -78,7 +78,7 @@ export type Business = {
   /**
    * Recurly subscription ID for businesses migrated from Recurly.
    */
-  businessIdLiteSubscriptionId: string | null;
+  businessIdLiteSubscriptionId: string | null | undefined;
 };
 
 /**
