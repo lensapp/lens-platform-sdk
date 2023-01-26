@@ -337,7 +337,7 @@ export type BusinessHierarchyInvitation = {
   /**
    * The date the invitation will expire.
    */
-  expiryTime: string;
+  expiryTime: string | null;
 };
 
 class BusinessService extends Base {
