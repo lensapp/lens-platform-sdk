@@ -269,11 +269,6 @@ export type BusinessUpdate = Omit<
   "id" | "createdAt" | "updatedAt" | "businessUsers" | "external" | "businessIdLiteSubscriptionId"
 >;
 
-export type DisableBusinessLightActivationLink = Omit<
-  Business,
-  "id" | "createdAt" | "updatedAt" | "businessUsers" | "external"
->;
-
 export type BusinessInvitation = {
   /**
    * The business invitation ID
