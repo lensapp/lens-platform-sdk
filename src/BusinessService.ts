@@ -9,7 +9,7 @@ import {
   UnauthorizedException,
 } from "./exceptions";
 import { BillingPageToken } from "./types/types";
-import { SubscriptionInfo, SubscriptionState, User, UserAttribute } from "./UserService";
+import { Invoice, SubscriptionInfo, SubscriptionState, User, UserAttribute } from "./UserService";
 
 /**
  * "Lens Business ID"
@@ -847,6 +847,21 @@ class BusinessService extends Base {
     });
 
     return json as unknown as BusinessHierarchyInvitation & { state: "accepted" | "rejected" };
+  }
+
+  /**
+   * List all invoices for a business
+   *
+   */
+  async getBusinessInvoices(businessId: string): Promise<Invoice[]> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessId}/invoices`;
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: () => new NotFoundException(`Business ${businessId} not found`),
+      403: () => new ForbiddenException(`Getting the invoices for ${businessId} is forbidden`),
+    });
+
+    return json as unknown as Invoice[];
   }
 }
 
