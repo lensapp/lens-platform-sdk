@@ -823,7 +823,7 @@ class BusinessService extends Base {
       422: (error) => new UnprocessableEntityException(error?.body?.message),
     });
 
-    return json as unknown as BusinessHierarchyInvitation[];
+    return json as unknown as BusinessHierarchyInvitation;
   }
 
   /**

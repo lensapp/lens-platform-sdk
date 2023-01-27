@@ -23,6 +23,8 @@ import type {
   UserBusinessRole,
   BusinessInvitationState,
   BusinessUser,
+  BusinessHierarchyInvitation,
+  BusinessHierarchyInvitationState,
 } from "./BusinessService";
 
 export * from "./exceptions";
@@ -53,6 +55,8 @@ export type {
   UserBusinessRole,
   BusinessInvitationState,
   BusinessUser,
+  BusinessHierarchyInvitation,
+  BusinessHierarchyInvitationState,
 };
 export type { LensPlatformClientType, LensPlatformClientOptions };
 export { LensPlatformClient, Roles, Actions, K8sClusterActions, Permissions, TeamActions };
