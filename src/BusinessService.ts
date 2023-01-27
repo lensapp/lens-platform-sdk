@@ -836,9 +836,13 @@ class BusinessService extends Base {
    *
    * @remarks should be used by parent LBID admins.
    */
-  async updateOneChildInvitation(parentId: Business["id"], state: "canceled") {
+  async updateOneChildInvitation(
+    parentId: Business["id"],
+    invitationId: BusinessHierarchyInvitation["id"],
+    state: "canceled",
+  ) {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/businesses/${parentId}/hierarchies/invitations`;
+    const url = `${apiEndpointAddress}/businesses/${parentId}/hierarchies/invitations/${invitationId}`;
     const json = await throwExpected(async () => fetch.patch(url, { state }), {
       401: (error) => new UnauthorizedException(error?.body?.message),
       404: (error) => new NotFoundException(error?.body?.message),
