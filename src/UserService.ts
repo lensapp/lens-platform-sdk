@@ -664,6 +664,8 @@ class UserService extends Base {
 
     const json = await throwExpected(async () => fetch.post(url, formData), {
       400: (error) => new BadRequestException(error?.body?.message),
+      413: () =>
+        new BadRequestException("Image size is too big. Image size should be less than 3MB."),
       401: (error) => new UnauthorizedException(error?.body?.message),
       403: (error) => new ForbiddenException(error?.body?.message),
       404: (error) => new NotFoundException(error?.body?.message),
