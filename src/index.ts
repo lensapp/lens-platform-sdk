@@ -1,7 +1,7 @@
 import type { BillingPlan } from "./BillingPlan";
 import type { InvitationDomain, InvitationDomainEntity } from "./InvitationDomain";
 import type { Invitation, InvitationEntity } from "./InvitationService";
-import type { DevClusterCrdState, K8sCluster, K8sClusterEntity, Phase } from "./K8sCluster";
+import type { K8sCluster, K8sClusterEntity, Phase } from "./K8sCluster";
 import type { LensPlatformClientOptions, LensPlatformClientType } from "./LensPlatformClient";
 import LensPlatformClient from "./LensPlatformClient";
 import type { OpenIdConnectUserInfo } from "./OpenIdConnect";
@@ -44,7 +44,6 @@ export type {
   K8sClusterEntity,
   InvitationEntity,
   InvitationDomainEntity,
-  DevClusterCrdState,
   Phase,
   SubscriptionInfo,
   SubscriptionSeat,
