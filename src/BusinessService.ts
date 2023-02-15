@@ -422,17 +422,16 @@ class BusinessService extends Base {
   /**
    * Disable business light activation link
    */
-  async disableBusinessLightActivationLink(id: string): Promise<Business> {
+  async disableBusinessLightActivationLink(id: string): Promise<void> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}/activation-link`;
-    const json = await throwExpected(async () => fetch.patch(url), {
+
+    await throwExpected(async () => fetch.delete(url), {
       400: (error) => new BadRequestException(error?.body.message),
       422: (error) => new UnprocessableEntityException(error?.body.message),
       401: (error) => new UnprocessableEntityException(error?.body.message),
       403: (error) => new ForbiddenException(error?.body.message),
     });
-
-    return json as unknown as Business;
   }
 
   /**

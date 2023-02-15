@@ -53,7 +53,7 @@ describe("UserService", () => {
     });
 
     it("throws NotFoundException if user is missing", async () => {
-      const username = "abcdef-12345-missing-" + rng();
+      const username = `abcdef-12345-missing-${rng()}`;
 
       return expect(bobPlatform.client.user.getOne({ username })).rejects.toThrowError(
         NotFoundException,
@@ -72,11 +72,12 @@ describe("UserService", () => {
 
     it("can update itself", async () => {
       const user = await bobPlatform.client.user.updateOne(userBob.username, {});
+
       expect(user.username).toEqual(userBob.username);
     });
 
     it("throws ForbiddenException when trying to modify unrelated users", async () => {
-      const username = "abcdef-12345-missing-" + rng();
+      const username = `abcdef-12345-missing-${rng()}`;
 
       return expect(bobPlatform.client.user.updateOne(username, {})).rejects.toThrowError(
         ForbiddenException,
@@ -102,6 +103,7 @@ describe("UserService", () => {
       const users = await bobPlatform.client.user.getMany(
         "filter=username||$eq||missingfoobarusername",
       );
+
       expect(users.length).toEqual(0);
     });
 
@@ -118,6 +120,7 @@ describe("UserService", () => {
 
     it("can get self", async () => {
       const user = await bobPlatform.client.user.getSelf();
+
       expect(user.username).toEqual(userBob.username);
     });
   });
@@ -130,6 +133,7 @@ describe("UserService", () => {
           const license = {
             subscriptionId: userSteve.subscriptionId!,
           };
+
           await stevePlatform.client.user.deactivateSubscription({
             username: userSteve.username,
             license,
@@ -142,6 +146,7 @@ describe("UserService", () => {
           subscriptionId: userSteve.subscriptionId!,
           type: "pro",
         };
+
         return expect(
           stevePlatform.client.user.activateSubscription({ username: "FAKE_USER", license }),
         ).rejects.toThrowError(ForbiddenException);
@@ -168,6 +173,7 @@ describe("UserService", () => {
           username: userSteve.username,
           license,
         });
+
         return expect(
           stevePlatform.client.user.activateSubscription({ username: userSteve.username, license }),
         ).rejects.toThrowError(ConflictException);
@@ -196,6 +202,7 @@ describe("UserService", () => {
             subscriptionId: userAdam.subscriptionId!,
             type: "pro",
           };
+
           await adamPlatform.client.user.activateSubscription({
             username: userAdam.username,
             license,
@@ -210,6 +217,7 @@ describe("UserService", () => {
             subscriptionId: userAdam.subscriptionId!,
             type: "pro",
           };
+
           await adamPlatform.client.user.deactivateSubscription({
             username: userAdam.username,
             license,
@@ -290,6 +298,7 @@ describe("UserService", () => {
         const userSubscriptions = await bobPlatform.client.user.getUserSubscriptions(
           userBob.username,
         );
+
         expect(userSubscriptions).toEqual(subscriptions);
       });
     });
@@ -319,6 +328,7 @@ describe("UserService", () => {
           userBob.username,
           subscription.id,
         );
+
         expect(userSubscription).toEqual(subscription);
       });
     });
@@ -332,6 +342,7 @@ describe("UserService", () => {
 
     it("returns the billing page token", async () => {
       const token = await erinPlatform.client.user.getBillingPageToken(userErin.username);
+
       expect(token).toHaveProperty("hostedLoginToken");
       expect(typeof token.hostedLoginToken).toBe("string");
     });
@@ -348,6 +359,7 @@ describe("UserService", () => {
         userBob.username,
         "6327929c2cfb8762b99eec44ddb3c3c4",
       );
+
       expect(token).toHaveProperty("hostedLoginToken");
       expect(typeof token.hostedLoginToken).toBe("string");
     });
@@ -379,11 +391,13 @@ describe("UserService", () => {
           expMonth: 12,
           expYear: 2023,
           lastTwo: null,
+          lastFour: "1111",
         },
       };
       const billingInformation = await bobPlatform.client.user.getUserBillingInformation(
         userBob.username,
       );
+
       expect(billingInformation).toEqual(billingInfo);
     });
   });
