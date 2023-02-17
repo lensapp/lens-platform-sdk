@@ -835,6 +835,21 @@ class BusinessService extends Base {
   }
 
   /**
+   * List all 'hierarchy' invitations by LBID id.
+   *
+   * @remarks should be used by child LBID admins.
+   */
+  async getOneChildrenInvitationByToken(token: BusinessHierarchyInvitation["token"]) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/hierarchies/invitations/by-token/${token}`;
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
+
+    return json as unknown as BusinessHierarchyInvitation & { parentBusinessName: string };
+  }
+
+  /**
    * Update 'hierarchy' invitations by the invitation id and the LBID id.
    *
    * @remarks should be used by parent LBID admins.
