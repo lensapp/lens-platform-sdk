@@ -162,6 +162,10 @@ export type BusinessSubscription = {
    */
   id: string;
   /**
+   * Subscription ID
+   */
+  shortSubscriptionId: string | null;
+  /**
    * Subscribed plan name (Recurly `subscription["plan"]["name"]`, e.g. "Pro")
    */
   planName: string;
