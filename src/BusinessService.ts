@@ -841,7 +841,7 @@ class BusinessService extends Base {
    */
   async getOneChildrenInvitationByToken(token: BusinessHierarchyInvitation["token"]) {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/businesses/hierarchies/invitations/by-token/${token}`;
+    const url = `${apiEndpointAddress}/businesses/hierarchies/invitations?token=${token}`;
     const json = await throwExpected(async () => fetch.get(url), {
       404: (error) => new NotFoundException(error?.body?.message),
     });
