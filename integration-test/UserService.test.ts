@@ -10,6 +10,7 @@ import {
   ConflictException,
 } from "../src/exceptions";
 import { License } from "../src/types/types";
+import { testAvatar } from "./avatar";
 
 jest.setTimeout(10000);
 
@@ -81,7 +82,7 @@ describe("UserService", () => {
     it("can get avatar", async () => {
       const avatarBase64 = await bobPlatform.client.user.getAvatar(userBob.username);
 
-      expect(avatarBase64).toEqual("");
+      expect(avatarBase64).toEqual(testAvatar);
     });
   });
 

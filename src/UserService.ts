@@ -657,17 +657,17 @@ class UserService extends Base {
   async getAvatar(username: string) {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/avatar`;
-    const response = await throwExpected(
+    const buffer = await throwExpected(
       async () =>
         fetch.get(url, {
           responseType: "arraybuffer",
-        }),
+        }) as Promise<Buffer>,
       {
         404: (error) => new NotFoundException(error?.body?.message),
       },
     );
 
-    return Buffer.from(response.data, "binary").toString("base64");
+    return buffer.toString("base64");
   }
 
   /**
