@@ -29,6 +29,8 @@ jobs:
       API_ENDPOINT_ADDRESS: ${{ secrets.API_ENDPOINT_ADDRESS }}
       TOKEN_HOST: ${{ secrets.TOKEN_HOST }}
     strategy:
+      max-parallel: 1
+      fail-fast: false
       matrix:
         node-version: [16, 18]
     steps:
