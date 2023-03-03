@@ -651,6 +651,26 @@ class UserService extends Base {
   }
 
   /**
+   * Fetch the avatar image as base64-encoded string
+   * @param username
+   */
+  async getAvatar(username: string) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/users/${username}/avatar`;
+    const buffer = await throwExpected(
+      async () =>
+        fetch.get(url, {
+          responseType: "arraybuffer",
+        }) as Promise<Buffer>,
+      {
+        404: (error) => new NotFoundException(error?.body?.message),
+      },
+    );
+
+    return buffer.toString("base64");
+  }
+
+  /**
    * Upload user avatar
    * @param avatar: HTML form file input value
    */

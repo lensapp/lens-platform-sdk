@@ -10,6 +10,7 @@ import {
   ConflictException,
 } from "../src/exceptions";
 import { License } from "../src/types/types";
+import { testAvatar } from "./avatar";
 
 jest.setTimeout(10000);
 
@@ -58,6 +59,30 @@ describe("UserService", () => {
       return expect(bobPlatform.client.user.getOne({ username })).rejects.toThrowError(
         NotFoundException,
       );
+    });
+  });
+
+  describe("getAvatar", () => {
+    it("rejects requests with invalid tokens", async () => {
+      bobPlatform.fakeToken = "fake token";
+
+      return expect(bobPlatform.client.user.getAvatar(userBob.username)).rejects.toThrowError(
+        UnauthorizedException,
+      );
+    });
+
+    it("throws NotFoundException if user is missing", async () => {
+      const username = `abcdef-12345-missing-${rng()}`;
+
+      return expect(bobPlatform.client.user.getAvatar(username)).rejects.toThrowError(
+        NotFoundException,
+      );
+    });
+
+    it("can get avatar", async () => {
+      const avatarBase64 = await bobPlatform.client.user.getAvatar(userBob.username);
+
+      expect(avatarBase64).toEqual(testAvatar);
     });
   });
 
