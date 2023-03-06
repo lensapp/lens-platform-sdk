@@ -14,6 +14,7 @@ import { UserRolesService } from "./UserRolesService";
 import http from "http";
 import https from "https";
 import { LensDesktopKubeService } from "./LensDesktopKubeService";
+import { SSOService } from "./SSOService";
 
 // Axios defaults to xhr adapter if XMLHttpRequest is available.
 // LensPlatformClient supports using the http adapter if httpAdapter
@@ -144,6 +145,8 @@ class LensPlatformClient {
 
   defaultHeaders: RequestHeaders | undefined;
 
+  sso: SSOService;
+
   constructor(options: LensPlatformClientOptions) {
     if (!options) {
       throw new Error(`Options can not be ${options}`);
@@ -180,6 +183,7 @@ class LensPlatformClient {
     this.invitation = new InvitationService(this);
     this.billingPageToken = new BillingPageTokenService(this);
     this.business = new BusinessService(this);
+    this.sso = new SSOService(this);
     this.openIDConnect = new OpenIdConnect(this);
   }
 
