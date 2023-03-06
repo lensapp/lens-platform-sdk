@@ -360,14 +360,23 @@ export interface BusinessSSOWithIDPDetails extends SSO {
 }
 
 export interface SSOSettingsDTO {
-  // SSO Identity Provider SinOn URL
+  /**
+   * SSO Identity Provider SinOn URL
+   */
   singleSignOnServiceUrl: string;
-  // idpEntityId - The Entity ID, provided by SSO provider, that is used to uniquely identify.
-  // this SAML Service Provider (from Keycloak docs)
+  /**
+   * idpEntityId - The Entity ID, provided by SSO provider, that is used to uniquely identify.
+   * this SAML Service Provider (from Keycloak docs)
+   */
   idpEntityId: string;
-  // IDP certificate
+  /**
+   * IDP certificate
+   */
   certificate: string;
-  // Login URL prefix. Used as a unique subdomain, for business SSO sing in page. Allowed /^[a-z-]+$/;
+  /**
+   * Login URL prefix. Used as a unique subdomain, for business SSO sing in page.
+   * Allowed /^[a-z-]+$/;
+   */
   loginUrlPrefix: string;
 }
 
