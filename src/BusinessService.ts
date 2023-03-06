@@ -17,7 +17,7 @@ import {
   User,
   UserAttribute,
 } from "./UserService";
-import {SSO} from "./SSOService";
+import { SSO } from "./SSOService";
 
 /**
  * "Lens Business ID"
