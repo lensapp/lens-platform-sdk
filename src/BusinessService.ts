@@ -17,6 +17,7 @@ import {
   User,
   UserAttribute,
 } from "./UserService";
+import {SSO} from "./SSOService";
 
 /**
  * "Lens Business ID"
@@ -351,11 +352,6 @@ export type BusinessHierarchyInvitation = {
    */
   expiryTime: string | null;
 };
-
-export interface SSO {
-  identityProviderID: string;
-  loginUrlPrefix: string;
-}
 
 export interface BusinessSSOWithIDPDetails extends SSO {
   singleSignOnServiceUrl: string | null;
