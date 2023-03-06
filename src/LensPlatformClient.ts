@@ -13,6 +13,7 @@ import decode from "jwt-decode";
 import { UserRolesService } from "./UserRolesService";
 import http from "http";
 import https from "https";
+import { LensDesktopKubeService } from "./LensDesktopKubeService";
 
 // Axios defaults to xhr adapter if XMLHttpRequest is available.
 // LensPlatformClient supports using the http adapter if httpAdapter
@@ -121,6 +122,8 @@ class LensPlatformClient {
 
   user: UserService;
 
+  lensDesktopKube: LensDesktopKubeService;
+
   space: SpaceService;
 
   roles: UserRolesService;
@@ -168,6 +171,7 @@ class LensPlatformClient {
     this.defaultHeaders = options.defaultHeaders ?? {};
 
     this.user = new UserService(this);
+    this.lensDesktopKube = new LensDesktopKubeService(this);
     this.space = new SpaceService(this);
     this.roles = new UserRolesService(this);
     this.team = new TeamService(this);
