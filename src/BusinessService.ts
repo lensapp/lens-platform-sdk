@@ -352,6 +352,24 @@ export type BusinessHierarchyInvitation = {
   expiryTime: string | null;
 };
 
+export interface SSO {
+  identityProviderID: string;
+  loginUrlPrefix: string;
+}
+
+export interface BusinessSSOWithIDPDetails extends SSO {
+  singleSignOnServiceUrl: string | null;
+  idpEntityId: string | null;
+  business: Business;
+}
+
+export interface SSOSettingsDTO {
+  singleSignOnServiceUrl: string;
+  idpEntityId: string;
+  certificate: string;
+  loginUrlPrefix: string;
+}
+
 class BusinessService extends Base {
   /**
    * Lists business entities ("Lens Business ID") that the authenticated user has explicit permissions to access.
@@ -908,6 +926,52 @@ class BusinessService extends Base {
     });
 
     return json as unknown as Invoice[];
+  }
+
+  /**
+   * Get business SSO details
+   *
+   */
+  async getBusinessSSO(businessId: Business["id"]): Promise<BusinessSSOWithIDPDetails> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessId}/sso`;
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: () => new NotFoundException(`Business ${businessId} not found`),
+      403: () => new ForbiddenException(`Getting the SSO for ${businessId} is forbidden`),
+    });
+
+    return json as unknown as BusinessSSOWithIDPDetails;
+  }
+
+  /**
+   * Create business SSO
+   *
+   */
+  async createBusinessSSO(businessID: Business["id"], ssoSettings: BusinessSSOWithIDPDetails) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessID}/sso`;
+    const json = await throwExpected(async () => fetch.post(url, ssoSettings), {
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new ForbiddenException(error?.body?.message),
+      409: (error) => new ConflictException(error?.body?.message),
+    });
+
+    return json as unknown as BusinessSSOWithIDPDetails;
+  }
+
+  /**
+   * Delete business SSO
+   *
+   */
+  async removeBusinessSSO(id: Business["id"]) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${id}/sso`;
+
+    await throwExpected(async () => fetch.delete(url), {
+      400: (error) => new BadRequestException(error?.body?.message),
+      403: (error) => new BadRequestException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
   }
 }
 
