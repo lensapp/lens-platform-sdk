@@ -356,13 +356,18 @@ export type BusinessHierarchyInvitation = {
 export interface BusinessSSOWithIDPDetails extends SSO {
   singleSignOnServiceUrl: string | null;
   idpEntityId: string | null;
-  business: Business;
+  business?: Business;
 }
 
 export interface SSOSettingsDTO {
+  // SSO Identity Provider SinOn URL
   singleSignOnServiceUrl: string;
+  // idpEntityId - The Entity ID, provided by SSO provider, that is used to uniquely identify.
+  // this SAML Service Provider (from Keycloak docs)
   idpEntityId: string;
+  // IDP certificate
   certificate: string;
+  // Login URL prefix. Used as a unique subdomain, for business SSO sing in page. Allowed /^[a-z-]+$/;
   loginUrlPrefix: string;
 }
 
@@ -943,7 +948,10 @@ class BusinessService extends Base {
    * Create business SSO
    *
    */
-  async createBusinessSSO(businessID: Business["id"], ssoSettings: BusinessSSOWithIDPDetails) {
+  async createBusinessSSO(
+    businessID: Business["id"],
+    ssoSettings: SSOSettingsDTO,
+  ): Promise<BusinessSSOWithIDPDetails> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${businessID}/sso`;
     const json = await throwExpected(async () => fetch.post(url, ssoSettings), {
