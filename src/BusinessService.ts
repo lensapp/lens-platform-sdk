@@ -965,7 +965,8 @@ class BusinessService extends Base {
     const url = `${apiEndpointAddress}/businesses/${businessID}/sso`;
     const json = await throwExpected(async () => fetch.post(url, ssoSettings), {
       403: (error) => new ForbiddenException(error?.body?.message),
-      404: (error) => new ForbiddenException(error?.body?.message),
+      400: (error) => new BadRequestException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
       409: (error) => new ConflictException(error?.body?.message),
     });
 
@@ -982,7 +983,7 @@ class BusinessService extends Base {
 
     await throwExpected(async () => fetch.delete(url), {
       400: (error) => new BadRequestException(error?.body?.message),
-      403: (error) => new BadRequestException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
       404: (error) => new NotFoundException(error?.body?.message),
     });
   }
