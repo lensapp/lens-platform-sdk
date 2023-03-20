@@ -353,12 +353,6 @@ export type BusinessHierarchyInvitation = {
   expiryTime: string | null;
 };
 
-export interface BusinessSSOWithIDPDetails extends SSO {
-  singleSignOnServiceUrl: string | null;
-  idpEntityId: string | null;
-  business?: Business;
-}
-
 export interface SSOSettingsDTO {
   /**
    * SSO Identity Provider SinOn URL
@@ -378,6 +372,44 @@ export interface SSOSettingsDTO {
    * Allowed /^[a-z-]+$/;
    */
   loginUrlPrefix: string;
+}
+
+export enum SSOType {
+  SAML = "saml",
+  OIDC = "oidc",
+}
+
+export interface BusinessSsoSamlDto {
+  singleSignOnServiceUrl: string;
+
+  idpEntityId: string;
+
+  certificate: string;
+
+  type: SSOType.SAML;
+}
+
+export interface BusinessSsoOidcDto {
+  clientId: string;
+
+  clientSecret: string;
+
+  tokenUrl: string;
+
+  authorizationUrl: string;
+
+  type: SSOType.OIDC;
+}
+
+export interface BusinessSSOWithIDPDetails extends SSO {
+  business?: Business;
+  config: BusinessSsoSamlDto | BusinessSsoOidcDto;
+}
+
+export interface BusinessSsoDto {
+  loginUrlPrefix: string;
+
+  config: BusinessSsoSamlDto | BusinessSsoOidcDto;
 }
 
 class BusinessService extends Base {
@@ -959,7 +991,7 @@ class BusinessService extends Base {
    */
   async createBusinessSSO(
     businessID: Business["id"],
-    ssoSettings: SSOSettingsDTO,
+    ssoSettings: BusinessSsoDto,
   ): Promise<BusinessSSOWithIDPDetails> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${businessID}/sso`;
