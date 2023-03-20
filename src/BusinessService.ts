@@ -353,7 +353,12 @@ export type BusinessHierarchyInvitation = {
   expiryTime: string | null;
 };
 
-export interface SSOSettingsDTO {
+export enum SSOType {
+  SAML = "saml",
+  OIDC = "oidc",
+}
+
+export interface BusinessSsoSamlDto {
   /**
    * SSO Identity Provider SinOn URL
    */
@@ -368,36 +373,34 @@ export interface SSOSettingsDTO {
    */
   certificate: string;
   /**
-   * Login URL prefix. Used as a unique subdomain, for business SSO sing in page.
-   * Allowed /^[a-z-]+$/;
+   * SAML SSO type
    */
-  loginUrlPrefix: string;
-}
-
-export enum SSOType {
-  SAML = "saml",
-  OIDC = "oidc",
-}
-
-export interface BusinessSsoSamlDto {
-  singleSignOnServiceUrl: string;
-
-  idpEntityId: string;
-
-  certificate: string;
-
   type: SSOType.SAML;
 }
 
 export interface BusinessSsoOidcDto {
+  /**
+   * OIDC client ID
+   */
   clientId: string;
 
+  /**
+   * OIDC client secret
+   */
   clientSecret: string;
 
+  /**
+   * Identity Provider Token URL
+   */
   tokenUrl: string;
 
+  /**
+   * SSO SinOn URL
+   */
   authorizationUrl: string;
-
+  /**
+   * OIDC SSO type
+   */
   type: SSOType.OIDC;
 }
 
@@ -407,8 +410,15 @@ export interface BusinessSSOWithIDPDetails extends SSO {
 }
 
 export interface BusinessSsoDto {
+  /**
+   * Login prefix URL or email domain.
+   * Only letters, digits and '-' allowed".
+   */
   loginUrlPrefix: string;
 
+  /**
+   * SSO config object.
+   */
   config: BusinessSsoSamlDto | BusinessSsoOidcDto;
 }
 
