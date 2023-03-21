@@ -26,11 +26,12 @@ import type {
   BusinessHierarchyInvitation,
   BusinessHierarchyInvitationState,
   BusinessSsoDto,
-  SSOType,
   BusinessSSOWithIDPDetails,
   BusinessSsoSamlDto,
   BusinessSsoOidcDto,
 } from "./BusinessService";
+
+import { SSOType } from "./BusinessService";
 
 export * from "./exceptions";
 export type {
@@ -63,12 +64,11 @@ export type {
   BusinessHierarchyInvitation,
   BusinessHierarchyInvitationState,
   BusinessSsoDto,
-  SSOType,
   BusinessSSOWithIDPDetails,
   BusinessSsoSamlDto,
   BusinessSsoOidcDto,
 };
 export type { LensPlatformClientType, LensPlatformClientOptions };
-export { LensPlatformClient, Roles, Actions, K8sClusterActions, Permissions, TeamActions };
+export { LensPlatformClient, Roles, Actions, K8sClusterActions, Permissions, TeamActions, SSOType };
 
 export * as Constants from "./data";
