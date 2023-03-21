@@ -25,6 +25,11 @@ import type {
   BusinessUser,
   BusinessHierarchyInvitation,
   BusinessHierarchyInvitationState,
+  BusinessSsoDto,
+  SSOType,
+  BusinessSSOWithIDPDetails,
+  BusinessSsoSamlDto,
+  BusinessSsoOidcDto,
 } from "./BusinessService";
 
 export * from "./exceptions";
@@ -57,6 +62,11 @@ export type {
   BusinessUser,
   BusinessHierarchyInvitation,
   BusinessHierarchyInvitationState,
+  BusinessSsoDto,
+  SSOType,
+  BusinessSSOWithIDPDetails,
+  BusinessSsoSamlDto,
+  BusinessSsoOidcDto,
 };
 export type { LensPlatformClientType, LensPlatformClientOptions };
 export { LensPlatformClient, Roles, Actions, K8sClusterActions, Permissions, TeamActions };
