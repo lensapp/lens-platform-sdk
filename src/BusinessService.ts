@@ -422,6 +422,16 @@ export interface BusinessSsoDto {
   config: BusinessSsoSamlDto | BusinessSsoOidcDto;
 }
 
+type Parent = Business & {
+  /** The contact email of the LBID Recurly account */
+  email: undefined | null | string;
+};
+
+type Child = Business & {
+  /** The contact email of the LBID Recurly account */
+  email: undefined | null | string;
+};
+
 class BusinessService extends Base {
   /**
    * Lists business entities ("Lens Business ID") that the authenticated user has explicit permissions to access.
@@ -793,7 +803,7 @@ class BusinessService extends Base {
    *
    * @remarks user has to be the administrator of the business.
    */
-  async getChildren(id: Business["id"]): Promise<Business[]> {
+  async getChildren(id: Business["id"]): Promise<Child[]> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}/businesses`;
     const json = await throwExpected(async () => fetch.get(url), {
@@ -801,7 +811,7 @@ class BusinessService extends Base {
       404: (error) => new NotFoundException(error?.body?.message),
     });
 
-    return json as unknown as Business[];
+    return json as unknown as Child[];
   }
 
   /**
@@ -843,7 +853,7 @@ class BusinessService extends Base {
    * @remarks One LBID can only have one parent.
    * @remarks user has to be the administrator of the business.
    */
-  async getParent(id: Business["id"]): Promise<Business> {
+  async getParent(id: Business["id"]): Promise<Parent> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}/parent`;
     const json = await throwExpected(async () => fetch.get(url), {
@@ -851,7 +861,7 @@ class BusinessService extends Base {
       404: (error) => new NotFoundException(error?.body?.message),
     });
 
-    return json as unknown as Business;
+    return json as unknown as Parent;
   }
 
   /**
