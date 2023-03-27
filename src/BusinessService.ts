@@ -29,9 +29,9 @@ export type Business = {
   id: string;
 
   /**
-   * The unique business id name
+   * The unique business url prefix for k8lens app
    */
-  businessID: string | null;
+  businessUrl: string | undefined | null;
 
   /**
    * The business display name.

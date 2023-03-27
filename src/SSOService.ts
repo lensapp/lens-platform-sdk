@@ -1,10 +1,10 @@
 import { Base } from "./Base";
 import { NotFoundException, throwExpected } from "./exceptions";
-import { BusinessSSOWithIDPDetails } from "./BusinessService";
+import { Business, BusinessSSOWithIDPDetails } from "./BusinessService";
 
 export interface SSO {
+  id: string;
   identityProviderID: string;
-  loginUrlPrefix: string;
 }
 
 class SSOService extends Base {
@@ -12,9 +12,9 @@ class SSOService extends Base {
    * Get SSO details
    *
    */
-  async getSSOByLoginUrlPrefix(loginUrlPrefix: SSO["loginUrlPrefix"]): Promise<SSO> {
+  async getSSOByBusinessUrlPrefix(businessUrl: Business["businessUrl"]): Promise<SSO> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/sso?loginUrlPrefix=${loginUrlPrefix}`;
+    const url = `${apiEndpointAddress}/sso?businessUrl=${businessUrl}`;
     const json = await throwExpected(async () => fetch.get(url), {
       404: () => new NotFoundException("SSO not found"),
     });
