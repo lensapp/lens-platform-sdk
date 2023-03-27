@@ -27,8 +27,14 @@ export type Business = {
    * The business id (in uuid format)
    */
   id: string;
+
   /**
-   * The business name.
+   * The unique business id name
+   */
+  businessID: string | null;
+
+  /**
+   * The business display name.
    */
   name: string;
   /**
