@@ -12,9 +12,9 @@ class SSOService extends Base {
    * Get SSO details
    *
    */
-  async getSSOByBusinessUrlPrefix(businessUrl: Business["businessUrl"]): Promise<SSO> {
+  async getSSOByBusinessHandle(handle: Business["handle"]): Promise<SSO> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/sso?businessUrl=${businessUrl}`;
+    const url = `${apiEndpointAddress}/sso?handle=${handle}`;
     const json = await throwExpected(async () => fetch.get(url), {
       404: () => new NotFoundException("SSO not found"),
     });
