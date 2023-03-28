@@ -32,6 +32,14 @@ import type {
 } from "./BusinessService";
 
 import { SSOType } from "./BusinessService";
+import {
+  LensCloudNotification,
+  CloudNotification,
+  cloudNotificationsSchema,
+  lensCloudNotificationsSchema,
+  severityLevels,
+  notificationKind,
+} from "./NotificationService";
 
 export * from "./exceptions";
 export type {
@@ -67,6 +75,12 @@ export type {
   BusinessSSOWithIDPDetails,
   BusinessSsoSamlDto,
   BusinessSsoOidcDto,
+  CloudNotification,
+  cloudNotificationsSchema,
+  LensCloudNotification,
+  lensCloudNotificationsSchema,
+  severityLevels,
+  notificationKind,
 };
 export type { LensPlatformClientType, LensPlatformClientOptions };
 export { LensPlatformClient, Roles, Actions, K8sClusterActions, Permissions, TeamActions, SSOType };
