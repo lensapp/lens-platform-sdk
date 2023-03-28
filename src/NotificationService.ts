@@ -38,13 +38,21 @@ export const severityLevels = ["blocker", "critical", "major", "minor", "low"] a
 export const notificationKind = ["link", "dialog", "text"] as const;
 
 const lensCloudNotificationSchema = z.object({
+  /** optional, if present, only user with ALL (&& operator) the attributes will get this notifications */
   forUserAttributes: z.array(z.string()).optional(),
+  /** the title of the notification */
   title: z.string().min(1).max(120),
+  /** the title of the notification */
   summary: z.string().min(1),
+  /** the severity enum of the notification */
   severity: z.enum(severityLevels),
+  /** the notification kind, text: basic notification, dialog: opens a modal on click, link: open the give .link */
   kind: z.enum(notificationKind),
+  /** to be open when clicks, must start with `https://` or `lens://`(custom protocol handler) */
   link: z.union([z.string().startsWith("https://"), z.string().startsWith("lens://")]).optional(),
+  /** must be a valid html, used to render in the body of the dialog */
   context: z.string().startsWith("<").endsWith(">").optional(),
+  /** the text of the close button of the dialog */
   closeBtnText: z.string().optional(),
 });
 
