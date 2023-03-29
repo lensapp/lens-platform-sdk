@@ -188,7 +188,7 @@ class LensPlatformClient {
     this.business = new BusinessService(this);
     this.sso = new SSOService(this);
     this.openIDConnect = new OpenIdConnect(this);
-    this.notificationService = new NotificationService(this);
+    this.notification = new NotificationService(this);
   }
 
   async getToken(url?: string) {
