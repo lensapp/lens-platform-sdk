@@ -7,6 +7,7 @@ import { InvitationService } from "./InvitationService";
 import { PlanService } from "./PlanService";
 import { BillingPageTokenService } from "./BillingPageTokenService";
 import { BusinessService } from "./BusinessService";
+import { NotificationService } from "./NotificationService";
 import axios, { type AxiosRequestConfig, type AxiosProxyConfig } from "axios";
 import pino from "pino";
 import decode from "jwt-decode";
@@ -137,6 +138,8 @@ class LensPlatformClient {
 
   business: BusinessService;
 
+  notificationService: NotificationService;
+
   permission: PermissionsService;
 
   invitation: InvitationService;
@@ -185,6 +188,7 @@ class LensPlatformClient {
     this.business = new BusinessService(this);
     this.sso = new SSOService(this);
     this.openIDConnect = new OpenIdConnect(this);
+    this.notificationService = new NotificationService(this);
   }
 
   async getToken(url?: string) {
