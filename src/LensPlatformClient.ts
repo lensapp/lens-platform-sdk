@@ -138,7 +138,7 @@ class LensPlatformClient {
 
   business: BusinessService;
 
-  notificationService: NotificationService;
+  notification: NotificationService;
 
   permission: PermissionsService;
 
