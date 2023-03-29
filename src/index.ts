@@ -76,13 +76,20 @@ export type {
   BusinessSsoSamlDto,
   BusinessSsoOidcDto,
   CloudNotification,
-  cloudNotificationsSchema,
   LensCloudNotification,
-  lensCloudNotificationsSchema,
   severityLevels,
   notificationKind,
 };
 export type { LensPlatformClientType, LensPlatformClientOptions };
-export { LensPlatformClient, Roles, Actions, K8sClusterActions, Permissions, TeamActions, SSOType };
-
+export {
+  LensPlatformClient,
+  Roles,
+  Actions,
+  K8sClusterActions,
+  Permissions,
+  TeamActions,
+  SSOType,
+  cloudNotificationsSchema,
+  lensCloudNotificationsSchema,
+};
 export * as Constants from "./data";
