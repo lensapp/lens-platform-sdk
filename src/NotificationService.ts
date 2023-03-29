@@ -79,6 +79,6 @@ export class NotificationService extends Base {
       403: (error) => new ForbiddenException(error?.body.message),
     });
 
-    return z.union([cloudNotificationSchema, lensCloudNotificationSchema]).parse(json);
+    return z.array(z.union([cloudNotificationSchema, lensCloudNotificationSchema])).parse(json);
   }
 }
