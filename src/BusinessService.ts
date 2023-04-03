@@ -422,6 +422,23 @@ export interface BusinessSsoDto {
   config: BusinessSsoSamlDto | BusinessSsoOidcDto;
 }
 
+/**
+ * Lens Business ID Feature
+ */
+export type BusinessFeature = {
+  key: string;
+
+  /**
+   * Human readable name of the feature
+   */
+  name: string;
+
+  /**
+   * Is the feature enabled for the LBID
+   */
+  enabled: boolean;
+};
+
 type Parent = Business & {
   /** The contact email of the LBID Recurly account */
   email: undefined | null | string;
@@ -1038,6 +1055,39 @@ class BusinessService extends Base {
       403: (error) => new ForbiddenException(error?.body?.message),
       404: (error) => new NotFoundException(error?.body?.message),
     });
+  }
+
+  /**
+   * Get list of Lens Business ID features
+   */
+  async getBusinessFeatures(businessID: Business["id"]): Promise<Array<BusinessFeature>> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessID}/features`;
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: (error) => new NotFoundException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+    });
+
+    return json as unknown as Array<BusinessFeature>;
+  }
+
+  /**
+   * Update Lens Business ID features
+   */
+  async updateBusinessFeatures(
+    businessID: Business["id"],
+    features: Array<Pick<BusinessFeature, "key" | "enabled">>,
+  ): Promise<Array<BusinessFeature>> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessID}/features`;
+    const json = await throwExpected(async () => fetch.put(url, features), {
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+      422: (error) => new UnprocessableEntityException(error?.body?.message),
+    });
+
+    return json as unknown as Array<BusinessFeature>;
   }
 }
 
