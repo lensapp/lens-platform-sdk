@@ -800,6 +800,23 @@ class BusinessService extends Base {
   }
 
   /**
+   * Create token for Recurly hosted pages
+   *
+   * @remarks user has to be the administrator of the business
+   */
+  async createBillingPageToken(id: Business["id"]): Promise<BillingPageToken> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${id}/billing-page-token`;
+    const json = await throwExpected(async () => fetch.post(url), {
+      404: (error) => new NotFoundException(error?.body.message),
+      403: (error) => new ForbiddenException(error?.body.message),
+      422: (error) => new UnprocessableEntityException(error?.body.message),
+    });
+
+    return json as unknown as BillingPageToken;
+  }
+
+  /**
    * Get business billing information
    *
    */
