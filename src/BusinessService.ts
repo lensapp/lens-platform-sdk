@@ -596,6 +596,26 @@ class BusinessService extends Base {
   }
 
   /**
+   * Create a new subscription by planCode
+   *
+   * @remarks only use by LBID that has a parent LBID and the parent has valid billing info.
+   */
+  async createSubscription(
+    id: Business["id"],
+    planCode: BusinessSubscription["planCode"],
+  ): Promise<BusinessSubscription> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${id}/subscriptions`;
+    const json = await throwExpected(async () => fetch.post(url, { planCode }), {
+      400: (error) => new BadRequestException(error?.body.message),
+      422: (error) => new NotFoundException(error?.body.message),
+      403: (error) => new ForbiddenException(error?.body.message),
+    });
+
+    return json as unknown as BusinessSubscription;
+  }
+
+  /**
    * Activate user business subscription seat
    */
   async activateBusinessUserSubscription({
