@@ -32,6 +32,10 @@ export type Business = {
    */
   name: string;
   /**
+   * The business handle.
+   */
+  handle: string;
+  /**
    * The business address.
    */
   address: string;
@@ -410,12 +414,6 @@ export interface BusinessSSOWithIDPDetails extends SSO {
 }
 
 export interface BusinessSsoDto {
-  /**
-   * Login prefix URL or email domain.
-   * Only letters, digits and '-' allowed".
-   */
-  loginUrlPrefix: string;
-
   /**
    * SSO config object.
    */
