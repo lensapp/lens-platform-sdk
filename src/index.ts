@@ -29,6 +29,7 @@ import type {
   BusinessSSOWithIDPDetails,
   BusinessSsoSamlDto,
   BusinessSsoOidcDto,
+  businessHandleValidation
 } from "./BusinessService";
 
 import { SSOType } from "./BusinessService";
@@ -91,5 +92,6 @@ export {
   SSOType,
   cloudNotificationsSchema,
   lensCloudNotificationsSchema,
+  businessHandleValidation,
 };
 export * as Constants from "./data";
