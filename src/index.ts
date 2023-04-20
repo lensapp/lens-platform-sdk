@@ -29,7 +29,7 @@ import type {
   BusinessSSOWithIDPDetails,
   BusinessSsoSamlDto,
   BusinessSsoOidcDto,
-  businessHandleValidation
+  businessHandleValidation,
 } from "./BusinessService";
 
 import { SSOType } from "./BusinessService";
