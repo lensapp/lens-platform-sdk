@@ -23,12 +23,13 @@ import { SSO } from "./SSOService";
  * ^: This anchor matches the start of the string.
  * (?!-): Negative lookahead to ensure that the string does not start with a -.
  * [A-Za-z0-9-]: This character set matches any English letter, digit or the - character.
- * {1,13}: This quantifier ensures that there are between 1 and 13 of the previous character set.
+ * {1,14}: This quantifier ensures that there are between 2 and 14 of the previous character set.
+ * So the total length is >=3 and <= 15
  * [A-Za-z0-9]: This matches any English letter or digit.
  * (?<!-): Negative lookbehind to ensure that the string does not end with a -.
  * $: This anchor matches the end of the string.
  */
-export const businessHandleValidation = /^(?!-)[A-Za-z0-9-]{1,13}[A-Za-z0-9](?<!-)$/;
+export const businessHandleValidation = /^(?!-)[A-Za-z0-9-]{2,14}[A-Za-z0-9](?<!-)$/;
 
 /**
  * "Lens Business ID"
