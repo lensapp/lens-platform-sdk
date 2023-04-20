@@ -29,10 +29,9 @@ import type {
   BusinessSSOWithIDPDetails,
   BusinessSsoSamlDto,
   BusinessSsoOidcDto,
-  businessHandleValidation,
 } from "./BusinessService";
 
-import { SSOType } from "./BusinessService";
+import { SSOType, businessHandleValidation } from "./BusinessService";
 import {
   LensCloudNotification,
   CloudNotification,
