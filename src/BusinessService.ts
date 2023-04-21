@@ -615,10 +615,11 @@ class BusinessService extends Base {
   async createSubscription(
     id: Business["id"],
     planCode: BusinessSubscription["planCode"],
+    quantity: number,
   ): Promise<BusinessSubscription> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}/subscriptions`;
-    const json = await throwExpected(async () => fetch.post(url, { planCode }), {
+    const json = await throwExpected(async () => fetch.post(url, { planCode, quantity }), {
       400: (error) => new BadRequestException(error?.body.message),
       422: (error) => new NotFoundException(error?.body.message),
       403: (error) => new ForbiddenException(error?.body.message),
