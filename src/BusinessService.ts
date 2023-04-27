@@ -411,9 +411,25 @@ export interface BusinessSsoOidcDto {
   tokenUrl: string;
 
   /**
-   * SSO SinOn URL
+   * JWKS URL
    */
-  authorizationUrl: string;
+  jwksUrl: string;
+
+  /**
+   * User Info URL
+   */
+  userInfoUrl: string;
+
+  /**
+   * Logout Url
+   */
+  logoutUrl: string;
+
+  /**
+   * Issuer
+   */
+  issuer: string;
+
   /**
    * OIDC SSO type
    */
