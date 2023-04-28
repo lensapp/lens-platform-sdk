@@ -431,6 +431,10 @@ export interface BusinessSsoOidcDto {
   issuer: string;
 
   /**
+   * Authorization URL
+   */
+  authorizationUrl: string;
+  /**
    * OIDC SSO type
    */
   type: SSOType.OIDC;
