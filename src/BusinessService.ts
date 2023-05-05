@@ -177,10 +177,6 @@ export type BusinessSubscription = {
    */
   id: string;
   /**
-   * Subscription ID
-   */
-  shortSubscriptionId: string | null;
-  /**
    * Subscribed plan name (Recurly `subscription["plan"]["name"]`, e.g. "Pro")
    */
   planName: string;
@@ -188,10 +184,6 @@ export type BusinessSubscription = {
    * Subscribed plan code (Recurly `subscription["plan"]["code"]`, e.g. "pro-monthly")
    */
   planCode: string;
-  /**
-   * Is trial subscription
-   */
-  isTrial: boolean;
   /**
    * Current billing period started at (Recurly subscription["currentPeriodStartedAt"] in ISO format.
    * e.g. 2022-06-28T08:13:06.000Z)
@@ -202,10 +194,22 @@ export type BusinessSubscription = {
    * e.g. 2022-06-28T08:13:06.000Z)
    */
   currentPeriodEndsAt: string | null;
+  trialStartedAt: string | null;
+  trialEndsAt: string | null;
+  companyName: string;
+  accountCode: string;
+  /**
+   * State of the subscription
+   */
+  state: SubscriptionState;
   /**
    * Is a business account
    */
-  businessAccount: boolean;
+  isBusinessAccount: boolean;
+  /**
+   * string if the subscription is from a child business
+   */
+  fromChildBusinessId?: Business["id"];
   /**
    * Total number of seats in this subscription, including unassigned and assigned. (Recurly subscription["quantity"])
    */
@@ -215,10 +219,9 @@ export type BusinessSubscription = {
    */
   usedSeats: UsedSeat[];
   /**
-   * State of the subscription
+   * Subscription ID
    */
-  state: SubscriptionState;
-
+  shortSubscriptionId: string | null;
   /**
    * Change to subscription from next billing cycle
    */
