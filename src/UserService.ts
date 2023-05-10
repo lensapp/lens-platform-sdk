@@ -274,6 +274,11 @@ export interface Invoice {
   billingInfo: BillingInfo | null;
 }
 
+export interface LinkedUserAccount {
+  identityProviderAlias: string | undefined;
+  identityProviderDisplayName: string | undefined;
+}
+
 /**
  *
  * The class for consuming all `user` resources.
@@ -631,6 +636,22 @@ class UserService extends Base {
     });
 
     return json as unknown as Record<string, "verified" | "unverified" | "primary">;
+  }
+
+  /**
+   * Get user linked accounts
+   */
+  async getUserLinkedAccounts() {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const username = await this.getUsername();
+    const url = `${apiEndpointAddress}/users/${username}/accounts`;
+    const json = await throwExpected(async () => fetch.get(url), {
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      403: (error) => new UnauthorizedException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
+
+    return json as unknown as LinkedUserAccount[];
   }
 
   /**
