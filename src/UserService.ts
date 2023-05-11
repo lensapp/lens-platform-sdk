@@ -277,7 +277,7 @@ export interface Invoice {
 export interface LinkedUserAccount {
   identityProviderAlias: string | undefined;
   identityProviderDisplayName: string | undefined;
-  userName: string | undefined;
+  username: string | undefined;
 }
 
 /**
