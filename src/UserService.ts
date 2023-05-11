@@ -656,6 +656,22 @@ class UserService extends Base {
   }
 
   /**
+   * Delete user linked account
+   */
+  async deleteUserLinkedAccount(identityProviderAlias: string) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const username = await this.getUsername();
+    const url = `${apiEndpointAddress}/users/${username}/accounts/${identityProviderAlias}`;
+    const json = await throwExpected(async () => fetch.delete(url), {
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      403: (error) => new UnauthorizedException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
+
+    return json as unknown as void;
+  }
+
+  /**
    * Add new secondary email(s) to user's account, newly added email will be unverified
    * and can be promoted to primary later verification.
    */
