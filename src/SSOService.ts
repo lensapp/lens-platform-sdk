@@ -20,28 +20,28 @@ class SSOService extends Base {
    * Get SSO details
    *
    */
-  async getSSOByBusinessHandle(handle: Business["handle"]): Promise<OIDCRemoteConfiguration> {
+  async getSSOByBusinessHandle(handle: Business["handle"]): Promise<SSO> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/sso?handle=${handle}`;
     const json = await throwExpected(async () => fetch.get(url), {
       404: () => new NotFoundException("SSO not found"),
     });
 
-    return json as unknown as OIDCRemoteConfiguration;
+    return json as unknown as BusinessSSOWithIDPDetails;
   }
 
   /**
    * Get OIDC SSO configuration
    *
    */
-  async getSSSOIDCConfiguration(oidcUrl: string): Promise<SSO> {
+  async getRemoteOIODCConfiguration(remoteOidcConfigUrl: string): Promise<OIDCRemoteConfiguration> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/configuration?url=${oidcUrl}`;
+    const url = `${apiEndpointAddress}/configuration?url=${remoteOidcConfigUrl}`;
     const json = await throwExpected(async () => fetch.get(url), {
-      422: () => new NotFoundException("OIDC configuration is not available or invalid"),
+      404: () => new NotFoundException("SSO not found"),
     });
 
-    return json as unknown as BusinessSSOWithIDPDetails;
+    return json as unknown as OIDCRemoteConfiguration;
   }
 }
 
