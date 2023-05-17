@@ -6,6 +6,15 @@ export interface SSO {
   identityProviderID: string;
 }
 
+export interface OIDCRemoteConfiguration {
+  authorizationUrl: string;
+  tokenUrl: string;
+  jwksUrl: string;
+  userInfoUrl: string;
+  issuer: string;
+  logoutUrl: string;
+}
+
 class SSOService extends Base {
   /**
    * Get SSO details
@@ -19,6 +28,20 @@ class SSOService extends Base {
     });
 
     return json as unknown as BusinessSSOWithIDPDetails;
+  }
+
+  /**
+   * Get OIDC SSO configuration
+   *
+   */
+  async getRemoteOIODCConfiguration(remoteOidcConfigUrl: string): Promise<OIDCRemoteConfiguration> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/configuration?url=${remoteOidcConfigUrl}`;
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: () => new NotFoundException("SSO not found"),
+    });
+
+    return json as unknown as OIDCRemoteConfiguration;
   }
 }
 
