@@ -42,6 +42,8 @@ import {
   notificationKind,
 } from "./NotificationService";
 
+import { SSOProviderConnection } from "./SSOService";
+
 export * from "./exceptions";
 export type {
   User,
@@ -81,6 +83,7 @@ export type {
   LensCloudNotification,
   severityLevels,
   notificationKind,
+  SSOProviderConnection,
 };
 export type { LensPlatformClientType, LensPlatformClientOptions };
 export {
