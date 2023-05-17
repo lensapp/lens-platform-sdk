@@ -45,7 +45,7 @@ class SSOService extends Base {
    */
   async getRemoteOIODCConfiguration(remoteOidcConfigUrl: string): Promise<OIDCRemoteConfiguration> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/configuration?url=${remoteOidcConfigUrl}`;
+    const url = `${apiEndpointAddress}/sso/configuration?url=${remoteOidcConfigUrl}`;
     const json = await throwExpected(async () => fetch.get(url), {
       404: () => new NotFoundException("SSO not found"),
     });
@@ -62,7 +62,7 @@ class SSOService extends Base {
     clientId: string,
   ): Promise<SSOProviderConnection> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/account-link?provider=${providerAlias}&clientId=${clientId}`;
+    const url = `${apiEndpointAddress}/sso/account-link?provider=${providerAlias}&clientId=${clientId}`;
     const json = await throwExpected(async () => fetch.get(url), {
       404: () => new NotFoundException("SSO provider found"),
       403: (error) => new ForbiddenException(error?.body.message),
