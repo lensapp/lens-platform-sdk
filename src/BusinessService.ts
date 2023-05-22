@@ -1129,6 +1129,22 @@ class BusinessService extends Base {
   }
 
   /**
+   * Send business SSO activation emails
+   *
+   */
+  async sendBusinessSSOActivationEmail(businessID: Business["id"]): Promise<void> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessID}/sso/activation-email`;
+
+    await throwExpected(async () => fetch.post(url), {
+      403: (error) => new ForbiddenException(error?.body?.message),
+      400: (error) => new BadRequestException(error?.body?.message),
+      422: (error) => new BadRequestException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
+  }
+
+  /**
    * Get list of Lens Business ID features
    */
   async getBusinessFeatures(businessID: Business["id"]): Promise<Array<BusinessFeature>> {
