@@ -1,6 +1,6 @@
 import decode from "jwt-decode";
 import { Base } from "./Base";
-import type { UsedSeat } from "./BusinessService";
+import type { Business, UsedSeat } from "./BusinessService";
 import {
   throwExpected,
   NotFoundException,
@@ -272,6 +272,10 @@ export interface Invoice {
   state: string | null;
   currency: string | null;
   billingInfo: BillingInfo | null;
+  /**
+   * string if the invoice is from a child account of a LBID
+   */
+  fromChildBusinessId?: Business["id"];
 }
 
 export interface LinkedUserAccount {
