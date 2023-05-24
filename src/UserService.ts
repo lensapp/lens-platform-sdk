@@ -1,6 +1,6 @@
 import decode from "jwt-decode";
 import { Base } from "./Base";
-import type { Business, UsedSeat } from "./BusinessService";
+import type { Business, UsedSeat, UserBusinessRole } from "./BusinessService";
 import {
   throwExpected,
   NotFoundException,
@@ -48,6 +48,11 @@ export interface UserAttributes {
 }
 
 export type SubscriptionState = "active" | "canceled" | "expired" | "failed" | "future" | "paused";
+
+export type UserBusinessWithSSOInfo = { role: UserBusinessRole } & Pick<
+  Business,
+  "name" | "handle"
+> & { sso: { id: string; identityProviderID: string } | null };
 
 export type OfflineActivationCode = {
   activationCode: string;
@@ -657,6 +662,22 @@ class UserService extends Base {
     });
 
     return json as unknown as LinkedUserAccount[];
+  }
+
+  /**
+   * Get user businesses
+   */
+  async getUserBusinesses() {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const username = await this.getUsername();
+    const url = `${apiEndpointAddress}/users/${username}/businesses`;
+    const json = await throwExpected(async () => fetch.get(url), {
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      403: (error) => new UnauthorizedException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
+
+    return json as unknown as UserBusinessWithSSOInfo[];
   }
 
   /**

@@ -16,6 +16,7 @@ import type {
   BillingInfo,
   SubscriptionSeat,
   LinkedUserAccount,
+  UserBusinessWithSSOInfo,
 } from "./UserService";
 import type {
   Business,
@@ -50,6 +51,7 @@ export type {
   UserWithEmail,
   UserAttributes,
   LinkedUserAccount,
+  UserBusinessWithSSOInfo,
   Space,
   InvitationDomain,
   Team,
