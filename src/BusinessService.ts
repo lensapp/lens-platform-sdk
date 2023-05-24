@@ -465,6 +465,11 @@ export type BusinessFeature = {
   name: string;
 
   /**
+   * An optional description of the feature
+   */
+  description?: string;
+
+  /**
    * Is the feature enabled for the LBID
    */
   enabled: boolean;
