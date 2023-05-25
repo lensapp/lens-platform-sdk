@@ -1046,13 +1046,13 @@ class BusinessService extends Base {
   }
 
   /**
-   * Accept or reject the 'hierarchy' invitation by `token`.
+   * Accept or reject or confirm the 'hierarchy' invitation by `token`.
    *
    * @remarks should be used by child LBID admins.
    */
   async acceptChildInvitation(
     childId: Business["id"],
-    state: "accepted" | "rejected",
+    state: "accepted" | "rejected" | "confirmed",
     token: BusinessHierarchyInvitation["token"],
   ) {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
@@ -1065,7 +1065,9 @@ class BusinessService extends Base {
       422: (error) => new UnprocessableEntityException(error?.body?.message),
     });
 
-    return json as unknown as BusinessHierarchyInvitation & { state: "accepted" | "rejected" };
+    return json as unknown as BusinessHierarchyInvitation & {
+      state: "accepted" | "rejected" | "confirmed";
+    };
   }
 
   /**
