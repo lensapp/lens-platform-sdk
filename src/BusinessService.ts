@@ -21,13 +21,13 @@ import { SSO } from "./SSOService";
 
 /**
  * ^: This anchor matches the start of the string.
- * [A-Za-z0-9]: This matches any English letter or digit.
- * [A-Za-z0-9-]{2,14}: This character set matches any English letter,
+ * [a-z0-9]: This matches any English letter or digit.
+ * [a-z0-9-]{2,14}: This character set matches any English letter,
  * digit or the - character, and repeats between 3 and 15 times.
- * [A-Za-z0-9]: This matches any English letter or digit.
+ * [a-z0-9]: This matches any English letter or digit.
  * $: This anchor matches the end of the string.
  */
-export const businessHandleValidation = /^[A-Za-z0-9][A-Za-z0-9-]{2,14}[A-Za-z0-9]$/;
+export const businessHandleValidation = /^[a-z0-9][a-z0-9-]{2,14}[a-z0-9]$/;
 
 /**
  * "Lens Business ID"
