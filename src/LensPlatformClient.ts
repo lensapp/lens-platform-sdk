@@ -75,7 +75,11 @@ interface DecodedAccessToken {
 
 type RequestLibrary = typeof axios;
 type KeyOfRequestLibrary = keyof RequestLibrary;
-type RequestOptions = AxiosRequestConfig;
+type RequestOptions = AxiosRequestConfig & {
+  // TODO: Fix `LensPlatformClient` typing, which requires axios 1.x
+  // If true, request is not authenticated with a token
+  unauthenticated?: boolean;
+};
 const requestLibraryMethods: KeyOfRequestLibrary[] = [
   "get",
   "post",
@@ -256,7 +260,11 @@ class LensPlatformClient {
               // Print HTTP request info in developer console
               logger.debug(`${key?.toUpperCase()} ${url}`);
 
-              const token = await getToken(url);
+              let token: string | undefined;
+
+              if (!restOptions?.unauthenticated) {
+                token = await getToken(url);
+              }
 
               const requestHeaders: RequestHeaders = {
                 ...(token ? { Authorization: `Bearer ${token}` } : {}),
