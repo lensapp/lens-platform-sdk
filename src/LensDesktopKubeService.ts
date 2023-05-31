@@ -18,7 +18,9 @@ class LensDesktopKubeService extends Base {
   async getK0sVersions(): Promise<VersionsResponse> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/lens-desktop-kube/k0s-versions.json`;
-    const json = await throwExpected(async () => fetch.get(url), {});
+    const json = await throwExpected(async () => fetch.get(url), {
+      unauthenticated: true,
+    } as any);
 
     return json as unknown as VersionsResponse;
   }

@@ -80,6 +80,47 @@ describe("LensPlatformClient", () => {
       }
     });
 
+    describe("when unauthenticated", () => {
+      it("doesn't add Authorization header", async () => {
+        const expectedHeaders = {};
+        const lensPlatformClient = new LensPlatformClient({
+          ...minimumOptions,
+        });
+
+        const spies = [
+          jest.spyOn(axios, "get"),
+          jest.spyOn(axios, "head"),
+          jest.spyOn(axios, "delete"),
+        ];
+
+        const _fetch = lensPlatformClient.fetch;
+
+        try {
+          await Promise.all([
+            _fetch.get(apiEndpointAddress, {
+              unauthenticated: true,
+            } as any),
+            _fetch.head(apiEndpointAddress, {
+              unauthenticated: true,
+            } as any),
+            _fetch.delete(apiEndpointAddress, {
+              unauthenticated: true,
+            } as any),
+          ]);
+        } catch {
+          // Do not handle exceptions
+        } finally {
+          spies.forEach((spy) => {
+            expect(spy).toBeCalledWith(apiEndpointAddress, {
+              headers: expectedHeaders,
+              unauthenticated: true,
+            });
+            spy.mockRestore();
+          });
+        }
+      });
+    });
+
     it("doesn't add Authorization header if no token", async () => {
       const lensPlatformClient = new LensPlatformClient({
         ...minimumOptions,
