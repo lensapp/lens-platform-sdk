@@ -52,7 +52,7 @@
     "@types/simple-oauth2": "^4.1.0",
     "@typescript-eslint/eslint-plugin": "5.47.0",
     "@typescript-eslint/parser": "5.47.0",
-    "dotenv": "^10.0.0",
+    "dotenv": "^16.3.1",
     "eslint": "8.30.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-prettier": "^8.5.0",
