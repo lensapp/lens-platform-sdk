@@ -16,7 +16,7 @@
   },
   "main": "./dist/cjs/index.js",
   "scripts": {
-    "test": "npm run check:type && npm run test:unit",
+    "test": "npm run check:type && npm run test:unit && npm run test:e2e",
     "test:unit": "jest",
     "test:unit:watch": "jest --watchAll",
     "test:e2e": "jest --runInBand --config ./jest.integration-test.config.js",
