@@ -36,6 +36,7 @@ export interface User {
   fullname?: string;
   firstName?: string;
   lastName?: string;
+  newsletter?: boolean;
   userAttributes?: Array<UserAttribute>;
 }
 

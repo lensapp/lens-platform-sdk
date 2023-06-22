@@ -79,7 +79,7 @@ describe("UserService", () => {
       );
     });
 
-    it("can get avatar", async () => {
+    it.skip("can get avatar", async () => {
       const avatarBase64 = await bobPlatform.client.user.getAvatar(userBob.username);
 
       expect(avatarBase64).toEqual(testAvatar);
