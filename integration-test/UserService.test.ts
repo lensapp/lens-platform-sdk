@@ -286,7 +286,7 @@ describe("UserService", () => {
             currentPeriodStartedAt: expect.any(String),
             id: "6327929c2cfb8762b99eec44ddb3c3c4",
             planCode: "pro-yearly",
-            planName: "Pro",
+            planName: "Lens Desktop Pro",
             seats: 1,
             shortSubscriptionId: "r55uxv78pktg",
             trialEndsAt: null,
@@ -306,7 +306,7 @@ describe("UserService", () => {
             currentPeriodStartedAt: expect.any(String),
             id: "6264c96770f423f8980c7d45569dc21a",
             planCode: "pro-monthly",
-            planName: "Pro",
+            planName: "Lens Desktop Pro",
             seats: 1,
             shortSubscriptionId: "qxnxlkczs7r6",
             trialEndsAt: null,
@@ -333,11 +333,11 @@ describe("UserService", () => {
     describe("Get user subscription", () => {
       it("Should get subscription", async () => {
         const subscription = {
-          currentPeriodEndsAt: "2023-07-01T08:01:22.000Z",
-          currentPeriodStartedAt: "2022-07-01T08:01:22.000Z",
+          currentPeriodEndsAt: "2024-07-01T08:01:22.000Z",
+          currentPeriodStartedAt: "2023-07-01T08:01:22.000Z",
           id: "6327929c2cfb8762b99eec44ddb3c3c4",
           planCode: "pro-yearly",
-          planName: "Pro",
+          planName: "Lens Desktop Pro",
           seats: 1,
           shortSubscriptionId: "r55uxv78pktg",
           trialEndsAt: null,
