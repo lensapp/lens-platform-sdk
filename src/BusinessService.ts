@@ -229,6 +229,11 @@ export type BusinessSubscription = {
     activateAt: string | null;
     quantity: number | null;
   };
+
+  customFields?: {
+    name: string;
+    value: string;
+  }[];
 };
 
 export type BusinessUser = {
