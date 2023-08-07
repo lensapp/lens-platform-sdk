@@ -98,7 +98,7 @@ export type SubscriptionInfo = {
   /**
    * Custom fields stored for the subscription
    */
-  customFields: SubscriptionCustomField[];
+  customFields?: SubscriptionCustomField[];
 
   /**
    * Name of the company of the Recurly account
