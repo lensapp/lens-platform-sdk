@@ -29,6 +29,11 @@ import { SSO } from "./SSOService";
  */
 export const businessHandleValidation = /^[A-Za-z0-9][A-Za-z0-9-]{2,14}[A-Za-z0-9]$/;
 
+export type SubscriptionCustomField = {
+  name: string;
+  value: string;
+};
+
 /**
  * "Lens Business ID"
  */
@@ -230,10 +235,7 @@ export type BusinessSubscription = {
     quantity: number | null;
   };
 
-  customFields?: {
-    name: string;
-    value: string;
-  }[];
+  customFields?: SubscriptionCustomField[];
 };
 
 export type BusinessUser = {
@@ -734,6 +736,33 @@ class BusinessService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${businessId}/subscriptions/${businessSubscriptionId}`;
     const json = await throwExpected(async () => fetch.patch(url, { quantity }), {
+      404: (error) => new NotFoundException(error?.body.message),
+      400: (error) => new BadRequestException(error?.body.message),
+      403: () =>
+        new ForbiddenException(
+          `Modification of subscription for business ${businessId} is forbidden`,
+        ),
+      422: (error) => new UnprocessableEntityException(error?.body.message),
+    });
+
+    return json as unknown as SubscriptionInfo;
+  }
+
+  /**
+   * Change business subscription custom fields
+   */
+  async updateBusinessSubscriptionCustomField({
+    businessId,
+    businessSubscriptionId,
+    customField,
+  }: {
+    businessId: string;
+    businessSubscriptionId: string;
+    customField: SubscriptionCustomField;
+  }): Promise<SubscriptionInfo> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessId}/subscriptions/${businessSubscriptionId}/custom-field`;
+    const json = await throwExpected(async () => fetch.patch(url, customField), {
       404: (error) => new NotFoundException(error?.body.message),
       400: (error) => new BadRequestException(error?.body.message),
       403: () =>
