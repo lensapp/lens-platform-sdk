@@ -749,7 +749,7 @@ class BusinessService extends Base {
   }
 
   /**
-   * Change business subscription seat quantity
+   * Change business subscription custom fields
    */
   async updateBusinessSubscriptionCustomField({
     businessId,
