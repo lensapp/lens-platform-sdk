@@ -1,6 +1,11 @@
 import decode from "jwt-decode";
 import { Base } from "./Base";
-import type { Business, UsedSeat, UserBusinessRole } from "./BusinessService";
+import type {
+  Business,
+  SubscriptionCustomField,
+  UsedSeat,
+  UserBusinessRole,
+} from "./BusinessService";
 import {
   throwExpected,
   NotFoundException,
@@ -89,6 +94,11 @@ export type SubscriptionInfo = {
    * The subscription that have been assigned to a user (`user_subscriptions` relation)
    */
   usedSeats: UsedSeat[];
+
+  /**
+   * Custom fields stored for the subscription
+   */
+  customFields: SubscriptionCustomField[];
 
   /**
    * Name of the company of the Recurly account
