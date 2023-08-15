@@ -27,6 +27,7 @@ describe(".user.*", () => {
     fullname: "test fullname",
     email: "test@example.com",
   });
+  nock(apiEndpointAddress).put(`/users/${username}/reset-password`).reply(204);
 
   const lensPlatformClient = new LensPlatformClient(options);
 
@@ -98,5 +99,11 @@ describe(".user.*", () => {
     };
 
     expect(lensPlatformClient.user.getUserFullName(user)).toEqual("Johntest");
+  });
+
+  it("can call resetPassword", async () => {
+    const response = await lensPlatformClient.user.resetPassword(username, "newPassword!");
+
+    expect(response).toBeUndefined();
   });
 });
