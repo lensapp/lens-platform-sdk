@@ -360,6 +360,24 @@ class UserService extends Base {
     return json as unknown as User;
   }
 
+  /**
+   * Reset user password
+   */
+  async resetPassword(username: string, password: string): Promise<void> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/users/${username}/reset-password`;
+
+    await throwExpected(
+      async () =>
+        fetch.put(url, {
+          password,
+        }),
+      {
+        404: () => new NotFoundException(`User ${username} not found`),
+      },
+    );
+  }
+
   async getSelf(): Promise<UserWithEmail> {
     const decodedAccessToken = await this.lensPlatformClient.getDecodedAccessToken();
 
