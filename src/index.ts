@@ -31,6 +31,7 @@ import type {
   BusinessSSOWithIDPDetails,
   BusinessSsoSamlDto,
   BusinessSsoOidcDto,
+  SubscriptionChangePreview
 } from "./BusinessService";
 
 import { SSOType, businessHandleValidation } from "./BusinessService";
@@ -68,6 +69,7 @@ export type {
   Phase,
   SubscriptionInfo,
   SubscriptionSeat,
+  SubscriptionChangePreview,
   BillingInfo,
   Business,
   BusinessSubscription,
