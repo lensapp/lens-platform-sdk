@@ -30,4 +30,22 @@ describe(".business.*", () => {
 
     expect(subscription.customFields).toBeTruthy();
   });
+
+  it("can call previewBusinessSubscriptionSeatsQuantityChange", async () => {
+    nock(apiEndpointAddress)
+      .post(`/businesses/${businessId}/subscriptions/${subscriptionId}/change/preview`)
+      .once()
+      .reply(200, {
+        balance: 498,
+      });
+
+    const preview =
+      await lensPlatformClient.business.previewBusinessSubscriptionSeatsQuantityChange({
+        businessId: "businessId",
+        businessSubscriptionId: "test-subscription",
+        quantity: 4,
+      });
+
+    expect(preview.balance).toEqual(498);
+  });
 });
