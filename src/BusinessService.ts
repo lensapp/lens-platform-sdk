@@ -34,6 +34,17 @@ export type SubscriptionCustomField = {
   value: string;
 };
 
+export type SubscriptionChangePrevew = {
+  total?: number | null;
+  subtotal?: number | null;
+  tax?: number | null;
+  unitAmount?: number | null;
+  quantity?: number | null;
+  balance?: number | null;
+  credit?: number | null;
+  taxRate?: number | null;
+};
+
 /**
  * "Lens Business ID"
  */
@@ -234,6 +245,8 @@ export type BusinessSubscription = {
     activateAt: string | null;
     quantity: number | null;
   };
+
+  unitAmount: number | null;
 
   customFields?: SubscriptionCustomField[];
 };
@@ -746,6 +759,33 @@ class BusinessService extends Base {
     });
 
     return json as unknown as SubscriptionInfo;
+  }
+
+  /**
+   * Preview business subscription seat quantity change
+   */
+  async previewBusinessSubscriptionSeatsQuantityChange({
+    businessId,
+    businessSubscriptionId,
+    quantity,
+  }: {
+    businessId: string;
+    businessSubscriptionId: string;
+    quantity: number;
+  }): Promise<SubscriptionChangePrevew> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessId}/subscriptions/${businessSubscriptionId}/change/preview`;
+    const json = await throwExpected(async () => fetch.post(url, { quantity }), {
+      404: (error) => new NotFoundException(error?.body.message),
+      400: (error) => new BadRequestException(error?.body.message),
+      403: () =>
+        new ForbiddenException(
+          `Modification of subscription for business ${businessId} is forbidden`,
+        ),
+      422: (error) => new UnprocessableEntityException(error?.body.message),
+    });
+
+    return json as unknown as SubscriptionChangePrevew;
   }
 
   /**
