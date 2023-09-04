@@ -34,7 +34,7 @@ export type SubscriptionCustomField = {
   value: string;
 };
 
-export type SubscriptionChangePrevew = {
+export type SubscriptionChangePreview = {
   total?: number | null;
   subtotal?: number | null;
   tax?: number | null;
@@ -772,7 +772,7 @@ class BusinessService extends Base {
     businessId: string;
     businessSubscriptionId: string;
     quantity: number;
-  }): Promise<SubscriptionChangePrevew> {
+  }): Promise<SubscriptionChangePreview> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${businessId}/subscriptions/${businessSubscriptionId}/change/preview`;
     const json = await throwExpected(async () => fetch.post(url, { quantity }), {
@@ -785,7 +785,7 @@ class BusinessService extends Base {
       422: (error) => new UnprocessableEntityException(error?.body.message),
     });
 
-    return json as unknown as SubscriptionChangePrevew;
+    return json as unknown as SubscriptionChangePreview;
   }
 
   /**
