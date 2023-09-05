@@ -31,7 +31,7 @@ import type {
   BusinessSSOWithIDPDetails,
   BusinessSsoSamlDto,
   BusinessSsoOidcDto,
-  SubscriptionChangePreview
+  SubscriptionChangePreview,
 } from "./BusinessService";
 
 import { SSOType, businessHandleValidation } from "./BusinessService";
