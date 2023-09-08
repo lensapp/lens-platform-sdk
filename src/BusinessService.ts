@@ -1308,7 +1308,7 @@ class BusinessService extends Base {
     businessID: Business["id"],
   ): Promise<Array<BusinessJoinRequestWithCreatedBy>> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/businesses/${businessID}/joinrequests`;
+    const url = `${apiEndpointAddress}/businesses/${businessID}/join-requests`;
     const json = await throwExpected(async () => fetch.get(url), {
       403: (error) => new ForbiddenException(error?.body?.message),
     });
@@ -1327,7 +1327,7 @@ class BusinessService extends Base {
     state: "accepted" | "rejected" | "canceled",
   ): Promise<BusinessJoinRequest> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/businesses/${businessID}/joinrequests/${joinRequestId}`;
+    const url = `${apiEndpointAddress}/businesses/${businessID}/join-requests/${joinRequestId}`;
     const json = await throwExpected(async () => fetch.patch(url, { state }), {
       403: (error) => new ForbiddenException(error?.body?.message),
       404: (error) => new NotFoundException(error?.body?.message),
@@ -1344,7 +1344,7 @@ class BusinessService extends Base {
    */
   async createBusinessJoinRequest(businessID: Business["id"]): Promise<BusinessJoinRequest> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/businesses/${businessID}/joinrequests`;
+    const url = `${apiEndpointAddress}/businesses/${businessID}/join-requests`;
     const json = await throwExpected(async () => fetch.post(url), {
       403: (error) => new ForbiddenException(error?.body?.message),
       409: (error) => new ConflictException(error?.body?.message),
