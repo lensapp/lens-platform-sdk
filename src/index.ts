@@ -31,6 +31,8 @@ import type {
   BusinessSSOWithIDPDetails,
   BusinessSsoSamlDto,
   BusinessSsoOidcDto,
+  BusinessJoinRequest,
+  BusinessJoinRequestState,
   SubscriptionChangePreview,
 } from "./BusinessService";
 
@@ -88,6 +90,8 @@ export type {
   severityLevels,
   notificationKind,
   SSOProviderConnection,
+  BusinessJoinRequest,
+  BusinessJoinRequestState,
 };
 export type { LensPlatformClientType, LensPlatformClientOptions };
 export {
