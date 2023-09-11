@@ -505,6 +505,52 @@ type Child = Business & {
   email: undefined | null | string;
 };
 
+export type BusinessJoinRequestState = "pending" | "accepted" | "rejected" | "canceled";
+export type BusinessJoinRequest = {
+  /**
+   * The business join request ID
+   */
+  id: string;
+  /**
+   * The state of the join request
+   */
+  state: BusinessJoinRequestState;
+  /**
+   * The requesting business's id
+   */
+  businessId: string;
+  /**
+   * The user id of the user who created the join request
+   */
+  createdById: string;
+  /**
+   * The date the join request was created.
+   */
+  createdAt: string;
+  /**
+   * The date the join request was updated.
+   */
+  updatedAt: string;
+  /**
+   * The user id of the user who updated the join request
+   */
+  updatedById: string;
+};
+export type BusinessJoinRequestWithCreatedBy = BusinessJoinRequest & {
+  /**
+   * The user who created the join request
+   *
+   * @remarks Values will be undefined if the user account has been deleted.
+   */
+  createdBy: {
+    username?: string;
+    email?: string;
+    fullname?: string;
+    firstName?: string;
+    lastName?: string;
+  };
+};
+
 class BusinessService extends Base {
   /**
    * Lists business entities ("Lens Business ID") that the authenticated user has explicit permissions to access.
@@ -570,7 +616,7 @@ class BusinessService extends Base {
     const json = await throwExpected(async () => fetch.patch(url, business), {
       400: (error) => new BadRequestException(error?.body.message),
       422: (error) => new UnprocessableEntityException(error?.body.message),
-      401: (error) => new UnprocessableEntityException(error?.body.message),
+      401: (error) => new UnauthorizedException(error?.body.message),
       403: (error) => new ForbiddenException(error?.body.message),
       409: (error) => new ForbiddenException(error?.body.message),
     });
@@ -1256,6 +1302,61 @@ class BusinessService extends Base {
     });
 
     return json as unknown as Array<BusinessFeature>;
+  }
+
+  /**
+   * Get list of Lens Business ID join requests.
+   *
+   * @remarks should be used by LBID admins.
+   */
+  async getBusinessJoinRequests(
+    businessID: Business["id"],
+  ): Promise<Array<BusinessJoinRequestWithCreatedBy>> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessID}/join-requests`;
+    const json = await throwExpected(async () => fetch.get(url), {
+      403: (error) => new ForbiddenException(error?.body?.message),
+    });
+
+    return json as unknown as Array<BusinessJoinRequestWithCreatedBy>;
+  }
+
+  /**
+   * Accept/reject/cancel a Lens Business ID join request.
+   *
+   * @remarks should be used by LBID admins for accept/reject, and by users for cancel.
+   */
+  async updateBusinessJoinRequest(
+    businessID: Business["id"],
+    joinRequestId: BusinessJoinRequest["id"],
+    state: "accepted" | "rejected" | "canceled",
+  ): Promise<BusinessJoinRequest> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessID}/join-requests/${joinRequestId}`;
+    const json = await throwExpected(async () => fetch.patch(url, { state }), {
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+      422: (error) => new UnprocessableEntityException(error?.body?.message),
+    });
+
+    return json as unknown as BusinessJoinRequest;
+  }
+
+  /**
+   * Create a Lens Business ID join request.
+   *
+   * @remarks should be user to create the request to join a Lens Business ID.
+   */
+  async createBusinessJoinRequest(businessID: Business["id"]): Promise<BusinessJoinRequest> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessID}/join-requests`;
+    const json = await throwExpected(async () => fetch.post(url), {
+      403: (error) => new ForbiddenException(error?.body?.message),
+      409: (error) => new ConflictException(error?.body?.message),
+      422: (error) => new UnprocessableEntityException(error?.body?.message),
+    });
+
+    return json as unknown as BusinessJoinRequest;
   }
 }
 
