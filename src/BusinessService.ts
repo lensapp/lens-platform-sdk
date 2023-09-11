@@ -537,12 +537,17 @@ export type BusinessJoinRequest = {
   updatedById: string;
 };
 export type BusinessJoinRequestWithCreatedBy = BusinessJoinRequest & {
+  /**
+   * The user who created the join request
+   *
+   * @remarks Values will be undefined if the user account has been deleted.
+   */
   createdBy: {
-    username: string;
-    email: string;
-    fullname: string;
-    firstName: string;
-    lastName: string;
+    username?: string;
+    email?: string;
+    fullname?: string;
+    firstName?: string;
+    lastName?: string;
   };
 };
 

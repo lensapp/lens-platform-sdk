@@ -33,6 +33,7 @@ import type {
   BusinessSsoOidcDto,
   BusinessJoinRequest,
   BusinessJoinRequestState,
+  BusinessJoinRequestWithCreatedBy,
   SubscriptionChangePreview,
 } from "./BusinessService";
 
@@ -92,6 +93,7 @@ export type {
   SSOProviderConnection,
   BusinessJoinRequest,
   BusinessJoinRequestState,
+  BusinessJoinRequestWithCreatedBy,
 };
 export type { LensPlatformClientType, LensPlatformClientOptions };
 export {
