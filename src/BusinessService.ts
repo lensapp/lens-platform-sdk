@@ -13,6 +13,7 @@ import {
   BillingInfo,
   Invoice,
   SubscriptionInfo,
+  SubscriptionSeat,
   SubscriptionState,
   User,
   UserAttribute,
@@ -310,6 +311,23 @@ export type BusinessUser = {
    * The public user's attributes
    */
   userAttributes?: UserAttribute[];
+};
+
+export type BusinessUserSubscriptionSeat = Pick<
+  SubscriptionSeat,
+  "activatedAt" | "offline" | "deactivatedAt" | "expiredAt" | "active"
+> & {
+  subscription: Pick<SubscriptionInfo, "id" | "state">;
+};
+
+/**
+ * Business user with subscription seats
+ */
+export type BusinessUserWithSeats = BusinessUser & {
+  /**
+   * The user's subscription seats, populated from the user's subscriptions
+   */
+  seats: BusinessUserSubscriptionSeat[];
 };
 
 export type UserBusinessRole = "Administrator" | "Member";
@@ -860,7 +878,7 @@ class BusinessService extends Base {
   /**
    * Lists the users in the business by id
    */
-  async getUsers(id: Business["id"]): Promise<BusinessUser[]> {
+  async getUsers(id: Business["id"]): Promise<BusinessUserWithSeats[]> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}/users`;
     const json = await throwExpected(async () => fetch.get(url), {
@@ -868,7 +886,7 @@ class BusinessService extends Base {
       403: (error) => new ForbiddenException(error?.body.message),
     });
 
-    return json as unknown as BusinessUser[];
+    return json as unknown as BusinessUserWithSeats[];
   }
 
   /**
