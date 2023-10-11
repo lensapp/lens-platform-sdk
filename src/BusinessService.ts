@@ -406,10 +406,6 @@ export interface BusinessSsoSamlDto {
    */
   idpEntityId: string;
   /**
-   * IDP certificate
-   */
-  certificate: string;
-  /**
    * SAML SSO type
    */
   type: SSOType.SAML;

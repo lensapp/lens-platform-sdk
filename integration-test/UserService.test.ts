@@ -167,6 +167,8 @@ describe("UserService", () => {
             customFields: [],
             companyName: "sdgfdgdfg",
             accountCode: "f63ed988-017a-4a0f-8486-cc8cf5ec6f32",
+            autoRenew: true,
+            collectionMethod: "automatic",
             isBusinessAccount: false,
             state: "active",
             pendingChange: {
@@ -189,6 +191,8 @@ describe("UserService", () => {
             customFields: [],
             companyName: "sdgfdgdfg",
             accountCode: "f63ed988-017a-4a0f-8486-cc8cf5ec6f32",
+            autoRenew: true,
+            collectionMethod: "automatic",
             isBusinessAccount: false,
             state: "active",
             pendingChange: {

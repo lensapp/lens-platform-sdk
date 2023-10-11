@@ -110,6 +110,9 @@ export type SubscriptionInfo = {
    */
   accountCode?: string | null;
 
+  autoRenew: boolean;
+  collectionMethod: "manual" | "automatic";
+
   /**
    * Subscription seat used for offline
    */
