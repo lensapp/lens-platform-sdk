@@ -114,11 +114,14 @@ export type Business = {
    * The department name of the business
    */
   department: string;
-
   /**
    * Recurly subscription ID for businesses migrated from Recurly.
    */
   businessIdLiteSubscriptionId: string | null | undefined;
+  /**
+   * If set to true by the admin, users will be automatically added to the business when they log in via SSO.
+   */
+  ssoAutoJoin: boolean;
 };
 
 /**
@@ -604,6 +607,7 @@ class BusinessService extends Base {
       | "updatedAt"
       | "businessUsers"
       | "external"
+      | "ssoAutoJoin"
       | "businessIdLiteSubscriptionId"
     > & {
       id?: string;
