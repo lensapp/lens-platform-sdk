@@ -121,7 +121,7 @@ export type Business = {
   /**
    * If set to true by the admin, users will be automatically added to the business when they log in via SSO.
    */
-  ssoAutoJoin?: boolean;
+  ssoAutoJoin: boolean;
 };
 
 /**
