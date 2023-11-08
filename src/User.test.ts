@@ -29,7 +29,21 @@ describe(".user.*", () => {
   });
   nock(apiEndpointAddress).put(`/users/${username}/reset-password`).reply(204);
 
+  nock(apiEndpointAddress).get(`/users/${username}/communications`).reply(200, {
+    newsletter: false,
+    onboarding: false,
+  });
+
+  nock(apiEndpointAddress).patch(`/users/${username}/communications`).reply(200, {
+    newsletter: true,
+    onboarding: false,
+  });
+
   const lensPlatformClient = new LensPlatformClient(options);
+
+  lensPlatformClient.getDecodedAccessToken = jest.fn().mockResolvedValue({
+    preferred_username: username,
+  });
 
   it("can call getOne", async () => {
     const user = await lensPlatformClient.user.getOne({ username });
@@ -53,6 +67,19 @@ describe(".user.*", () => {
 
   it("can call deleteOne", async () => {
     await lensPlatformClient.user.deleteOne(username);
+  });
+
+  it("can call getUserCommunicationPreferences", async () => {
+    const pref = await lensPlatformClient.user.getUserCommunicationsPreferences();
+
+    expect(pref.newsletter).toBeFalsy();
+  });
+
+  it("can call updateUserCommunicationsPreferences", async () => {
+    await lensPlatformClient.user.updateUserCommunicationsPreferences({
+      newsletter: true,
+      onboarding: false,
+    });
   });
 
   it("should get full name from first and last names", async () => {
