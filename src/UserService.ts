@@ -41,7 +41,6 @@ export interface User {
   fullname?: string;
   firstName?: string;
   lastName?: string;
-  newsletter?: boolean;
   userAttributes?: Array<UserAttribute>;
 }
 
@@ -51,6 +50,11 @@ export interface UserAttributes {
   fullname?: string;
   company?: string;
   tshirt?: string;
+}
+
+export interface UserCommunications {
+  newsletter?: boolean;
+  onboarding?: boolean;
 }
 
 export type SubscriptionState = "active" | "canceled" | "expired" | "failed" | "future" | "paused";
@@ -710,6 +714,38 @@ class UserService extends Base {
     });
 
     return json as unknown as UserBusinessWithSSOInfo[];
+  }
+
+  /**
+   * Get user communication preferences
+   */
+  async getUserCommunicationsPreferences() {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const username = await this.getUsername();
+    const url = `${apiEndpointAddress}/users/${username}/communications`;
+    const json = await throwExpected(async () => fetch.get(url), {
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      403: (error) => new UnauthorizedException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
+
+    return json as unknown as UserCommunications;
+  }
+
+  /**
+   * Update user communication preferences
+   */
+  async updateUserCommunicationsPreferences(communicationPreferences: UserCommunications) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const username = await this.getUsername();
+    const url = `${apiEndpointAddress}/users/${username}/communications`;
+    const json = await throwExpected(async () => fetch.patch(url, communicationPreferences), {
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      403: (error) => new UnauthorizedException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
+
+    return json as unknown as UserCommunications;
   }
 
   /**
