@@ -2,7 +2,6 @@ import { Base } from "./Base";
 import { User } from "./UserService";
 import type { Team, TeamEntity } from "./TeamService";
 import type { K8sCluster } from "./K8sCluster";
-import type { CatalogAPI, CatalogAPIEntity } from "./CatalogAPI";
 import type { Invitation, InvitationEntity } from "./InvitationService";
 import type { BillingPlan } from "./BillingPlan";
 import type { InvitationDomain, InvitationDomainEntity } from "./InvitationDomain";
@@ -48,17 +47,15 @@ export interface Space {
   teams?: Team[];
   invitations?: Invitation[];
   invitationDomains?: InvitationDomain[];
-  catalogApi?: CatalogAPI;
 }
 
 export type SpaceEntity = Except<
   MapToEntity<Space>,
-  "teams" | "invitations" | "invitationDomains" | "catalogApi"
+  "teams" | "invitations" | "invitationDomains"
 > & {
   teams?: TeamEntity[];
   invitations?: InvitationEntity[];
   invitationDomains?: InvitationDomainEntity[];
-  catalogApi?: CatalogAPIEntity;
 };
 
 /**
