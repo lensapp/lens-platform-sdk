@@ -568,6 +568,29 @@ export type BusinessJoinRequestWithCreatedBy = BusinessJoinRequest & {
   };
 };
 
+export type BusinessSCIMToken = {
+  /**
+   * The business SCIM token id
+   */
+  id: string;
+  /**
+   * TThe business entity id that the token for.
+   */
+  businessId: string;
+  /**
+   * The user id that creates the token.
+   */
+  createdById: User["id"];
+  /**
+   * The date the token was created.
+   */
+  createdAt: string;
+  /**
+   * The value of the token.
+   */
+  token: string;
+};
+
 class BusinessService extends Base {
   /**
    * Lists business entities ("Lens Business ID") that the authenticated user has explicit permissions to access.
@@ -1363,7 +1386,7 @@ class BusinessService extends Base {
   /**
    * Create a Lens Business ID join request.
    *
-   * @remarks should be user to create the request to join a Lens Business ID.
+   * @remarks should be used to create the request to join a Lens Business ID.
    */
   async createBusinessJoinRequest(businessID: Business["id"]): Promise<BusinessJoinRequest> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
@@ -1375,6 +1398,52 @@ class BusinessService extends Base {
     });
 
     return json as unknown as BusinessJoinRequest;
+  }
+
+  /**
+   * Get a list of Lens Business ID SCIM tokens.
+   *
+   * @remarks should be used by LBID admins.
+   */
+  async getBusinessSCIMTokens(businessID: Business["id"]): Promise<Array<BusinessSCIMToken>> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessID}/scimtokens`;
+    const json = await throwExpected(async () => fetch.get(url), {
+      403: (error) => new ForbiddenException(error?.body?.message),
+    });
+
+    return json as unknown as Array<BusinessSCIMToken>;
+  }
+
+  /**
+   * Delete a Lens Business ID SCIM token.
+   *
+   * @remarks should be used by LBID admins.
+   */
+  async deleteBusinessSCIMToken(businessID: Business["id"], tokenId: BusinessSCIMToken["id"]) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessID}/scimtokens/${tokenId}`;
+
+    await throwExpected(async () => fetch.delete(url), {
+      400: (error) => new BadRequestException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
+  }
+
+  /**
+   * Create a Lens Business ID SCIM token.
+   *
+   * @remarks should be used by LBID admins.
+   */
+  async createBusinessSCIMToken(businessID: Business["id"]): Promise<BusinessSCIMToken> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessID}/scimtokens`;
+    const json = await throwExpected(async () => fetch.post(url), {
+      403: (error) => new ForbiddenException(error?.body?.message),
+    });
+
+    return json as unknown as BusinessSCIMToken;
   }
 }
 
