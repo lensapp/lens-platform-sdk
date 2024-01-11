@@ -53,7 +53,7 @@ export interface UserAttributes {
 }
 
 export interface UserCommunications {
-  newsletter?: boolean;
+  marketing?: boolean;
   onboarding?: boolean;
 }
 
