@@ -7,9 +7,7 @@ import {
   NotFoundException,
   UnauthorizedException,
   UsernameAlreadyExistsException,
-  ConflictException,
 } from "../src/exceptions";
-import { License } from "../src/types/types";
 import { testAvatar } from "./avatar";
 
 jest.setTimeout(10000);
