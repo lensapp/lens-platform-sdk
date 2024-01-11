@@ -30,12 +30,12 @@ describe(".user.*", () => {
   nock(apiEndpointAddress).put(`/users/${username}/reset-password`).reply(204);
 
   nock(apiEndpointAddress).get(`/users/${username}/communications`).reply(200, {
-    newsletter: false,
+    marketing: false,
     onboarding: false,
   });
 
   nock(apiEndpointAddress).patch(`/users/${username}/communications`).reply(200, {
-    newsletter: true,
+    marketing: true,
     onboarding: false,
   });
 
@@ -72,12 +72,12 @@ describe(".user.*", () => {
   it("can call getUserCommunicationPreferences", async () => {
     const pref = await lensPlatformClient.user.getUserCommunicationsPreferences();
 
-    expect(pref.newsletter).toBeFalsy();
+    expect(pref.marketing).toBeFalsy();
   });
 
   it("can call updateUserCommunicationsPreferences", async () => {
     await lensPlatformClient.user.updateUserCommunicationsPreferences({
-      newsletter: true,
+      marketing: true,
       onboarding: false,
     });
   });
