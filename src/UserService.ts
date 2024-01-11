@@ -559,35 +559,6 @@ class UserService extends Base {
     return json as unknown as OfflineActivationCode;
   }
 
-  async deactivateSubscription({
-    username,
-    license,
-  }: {
-    username: string;
-    license: Pick<License, "subscriptionId">;
-  }): Promise<void> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/users/${username}/subscriptions/${license.subscriptionId}`;
-
-    await throwExpected(async () => fetch.delete(url), {
-      404(error) {
-        const message = error?.body.message;
-
-        if (typeof message === "string") {
-          if (message.includes("User")) {
-            return new UserNameNotFoundException(username);
-          }
-        }
-
-        return new NotFoundException(`Recurly subscription ${license.subscriptionId} not found`);
-      },
-      403: () =>
-        new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
-      400: () => new BadRequestException(),
-      422: (error) => new UnprocessableEntityException(error?.body.message),
-    });
-  }
-
   async deactivateSubscriptionSeat({
     username,
     license,
