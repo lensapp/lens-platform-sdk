@@ -569,7 +569,7 @@ class UserService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/users/${username}/subscription-seats/${license.subscriptionId}`;
 
-    await throwExpected(async () => fetch.delete(url), {
+    await throwExpected(async () => fetch.patch(url), {
       404(error) {
         const message = error?.body.message;
 
