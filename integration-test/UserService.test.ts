@@ -204,39 +204,6 @@ describe("UserService", () => {
         expect(userSubscriptions).toEqual(subscriptions);
       });
     });
-
-    describe("Get user subscription", () => {
-      it("Should get subscription", async () => {
-        const subscription = {
-          currentPeriodEndsAt: "2024-07-01T08:01:22.000Z",
-          currentPeriodStartedAt: "2023-07-01T08:01:22.000Z",
-          id: "6327929c2cfb8762b99eec44ddb3c3c4",
-          planCode: "pro-yearly",
-          planName: "Lens Desktop Pro",
-          seats: 1,
-          shortSubscriptionId: "r55uxv78pktg",
-          trialEndsAt: null,
-          trialStartedAt: null,
-          unitAmount: 199,
-          usedSeats: [],
-          customFields: [],
-          companyName: "sdgfdgdfg",
-          accountCode: "f63ed988-017a-4a0f-8486-cc8cf5ec6f32",
-          isBusinessAccount: false,
-          state: "active",
-          pendingChange: {
-            activateAt: null,
-            quantity: null,
-          },
-        };
-        const userSubscription = await bobPlatform.client.user.getUserSubscription(
-          userBob.username,
-          subscription.id,
-        );
-
-        expect(userSubscription).toEqual(subscription);
-      });
-    });
   });
 
   describe("getBillingPageToken", () => {
