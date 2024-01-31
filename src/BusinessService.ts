@@ -768,12 +768,12 @@ class BusinessService extends Base {
     businessId,
     businessSubscriptionId,
     businessInvitationId,
-    username,
+    userId,
   }: {
     businessId: string;
-    businessSubscriptionId: string;
-    businessInvitationId: string;
-    username: string;
+    businessSubscriptionId?: string;
+    businessInvitationId?: string;
+    userId?: string;
   }): Promise<UsedSeat> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${businessId}/subscription-seats`;
@@ -782,12 +782,12 @@ class BusinessService extends Base {
         fetch.post(url, {
           invitationId: businessInvitationId,
           subscriptionId: businessSubscriptionId,
+          userId,
         }),
       {
         404: (error) => new NotFoundException(error?.body.message),
         400: (error) => new BadRequestException(error?.body.message),
-        403: () =>
-          new ForbiddenException(`Modification of user licenses for ${username} is forbidden`),
+        403: (error) => new ForbiddenException(error?.body.message),
         422: (error) => new UnprocessableEntityException(error?.body.message),
       },
     );
