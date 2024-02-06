@@ -154,10 +154,8 @@ export type VerifiedDomain = {
    */
   updatedAt: string;
   /**
-   * The verified domain.
-   *
-   * @remarks when create/update, should be with protocol e.g. `https://domain.name`, however the GET one/all endpoint only return hostname `domain.name`
-   *
+   * The verified domain without protocol/params/query.
+   * e.g. "example.com.fi"
    */
   doamin: string;
 };
