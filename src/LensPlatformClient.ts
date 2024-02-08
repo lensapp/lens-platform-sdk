@@ -283,6 +283,8 @@ class LensPlatformClient {
               };
 
               logger.debug(`request arguments ${JSON.stringify(requestOptions)}`);
+              logger.debug(`httpAdapter: ${httpAdapter}`);
+              console.log(axiosHttpAdapter);
               const response = await (hasBody
                 ? prop(url, requestBody, requestOptions)
                 : prop(url, requestOptions));
