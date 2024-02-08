@@ -21,7 +21,38 @@ import { SSOService } from "./SSOService";
 // LensPlatformClient supports using the http adapter if httpAdapter
 // option is set to true
 // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
-const axiosHttpAdapter = require("axios/lib/adapters/http");
+let axiosHttpAdapter: Function | undefined;
+
+// lens-platform-sdk works in multiple environments, namely
+// * Node: regular Node.js process and electron's Node.js
+// * Browser: Regular browsers and Electron's Chromium environment
+// For this reason we need to support different kind of requires
+// In particular we might want to load the http adapter to execute
+// requests in Node.
+const multiEnvironmentRequire = (moduleName: string) => {
+  try {
+    return window.require(moduleName);
+  } catch (error) {
+    return require(moduleName);
+  }
+};
+
+/**
+ * Returns axios http adapter (used for Node.js requests).
+ * It requires the adapter if not loaded before.
+ * @returns
+ */
+const getAxiosHttpAdapter = () => {
+  try {
+    if (!axiosHttpAdapter) {
+      axiosHttpAdapter = multiEnvironmentRequire("axios").getAdapter("http");
+    }
+
+    return axiosHttpAdapter;
+  } catch (error) {
+    return undefined;
+  }
+};
 
 export interface LensPlatformClientOptions {
   accessToken?: string;
@@ -274,7 +305,7 @@ class LensPlatformClient {
 
               const requestOptions: RequestOptions = {
                 headers: requestHeaders,
-                ...(httpAdapter ? { adapter: axiosHttpAdapter } : {}),
+                ...(httpAdapter ? { adapter: getAxiosHttpAdapter() } : {}),
                 ...(proxyConfigs ? { proxy: proxyConfigs } : {}),
                 ...(httpAgent ? { httpAgent } : {}),
                 ...(httpsAgent ? { httpsAgent } : {}),
@@ -283,6 +314,7 @@ class LensPlatformClient {
               };
 
               logger.debug(`request arguments ${JSON.stringify(requestOptions)}`);
+
               const response = await (hasBody
                 ? prop(url, requestBody, requestOptions)
                 : prop(url, requestOptions));
