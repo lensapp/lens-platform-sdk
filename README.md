@@ -14,13 +14,14 @@ import { Component } from "@k8slens/extensions";
 import axios from "axios";
 
 // Use NodeJS HTTP adapter to get around CORS issues
-axios.defaults.adapter = require("axios/lib/adapters/http");
+// This is not neded if httpAdapter: true is used.
+axios.defaults.adapter = axios.getAdapter("http");
 
 const lensPlatformClient = new LensPlatformClient({
     accessToken: "", // the access token for apis
     getAccessToken: () => Promise.resolve("<token>"), // the callback to be called before every request, useful if the access token needs to be renew often.
     keyCloakAddress: "", // keycloak address, e.g. "https://keycloak.k8slens.dev"
-    keycloakRealm: "", // the realm name, e.g. "lensCloud" 
+    keycloakRealm: "", // the realm name, e.g. "lensCloud"
     apiEndpointAddress: "", // api endpoint address, e.g. "https://api.k8slens.dev"
     httpAdapter: false // Optional, defaults to false. If true, the axios HTTP adapter is used instead of xhr
     logLevel: "debug" // Optional, defaults to 'silent'. Options are 'silent' | 'debug' | 'error'
