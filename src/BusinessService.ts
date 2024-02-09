@@ -122,6 +122,42 @@ export type Business = {
    * If set to true by the admin, users will be automatically added to the business when they log in via SSO.
    */
   ssoAutoJoin?: boolean;
+  /**
+   * A list of verified domains.
+   */
+  verifiedDomains: VerifiedDomain[];
+};
+
+export type VerifiedDomain = {
+  /**
+   * The id of the verified domain entity.
+   */
+  id: string;
+  /**
+   * The business entity id that the verified domain belongs to.
+   */
+  businessId: string;
+  /**
+   * The id of the user created the verified domain entity.
+   */
+  createdById: string;
+  /**
+   * The id of the user updated the verified domain entity.
+   */
+  updatedById: string;
+  /**
+   * The created date of verified domain entity in ISO format, e.g. 2022-06-28T08:13:06.000Z.
+   */
+  createdAt: string;
+  /**
+   * The updated date of verified domain entity in ISO format, e.g. 2022-06-28T08:13:06.000Z.
+   */
+  updatedAt: string;
+  /**
+   * The verified domain without protocol/params/query.
+   * e.g. "example.com.fi"
+   */
+  doamin: string;
 };
 
 /**

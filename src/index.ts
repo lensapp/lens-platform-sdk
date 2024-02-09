@@ -35,6 +35,7 @@ import type {
   BusinessJoinRequestState,
   BusinessJoinRequestWithCreatedBy,
   SubscriptionChangePreview,
+  VerifiedDomain,
 } from "./BusinessService";
 
 import { SSOType, businessHandleValidation } from "./BusinessService";
@@ -94,6 +95,7 @@ export type {
   BusinessJoinRequest,
   BusinessJoinRequestState,
   BusinessJoinRequestWithCreatedBy,
+  VerifiedDomain,
 };
 export type { LensPlatformClientType, LensPlatformClientOptions };
 export {
