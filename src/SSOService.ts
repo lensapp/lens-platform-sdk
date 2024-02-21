@@ -1,5 +1,6 @@
 import { Base } from "./Base";
 import {
+  BadRequestException,
   ForbiddenException,
   NotFoundException,
   throwExpected,
@@ -34,6 +35,7 @@ class SSOService extends Base {
     const url = `${apiEndpointAddress}/sso?handle=${handle}`;
     const json = await throwExpected(async () => fetch.get(url), {
       404: () => new NotFoundException("SSO not found"),
+      400: () => new BadRequestException("Handle is required"),
     });
 
     return json as unknown as BusinessSSOWithIDPDetails;
@@ -48,6 +50,7 @@ class SSOService extends Base {
     const url = `${apiEndpointAddress}/sso?domain=${domain}`;
     const json = await throwExpected(async () => fetch.get(url), {
       404: () => new NotFoundException("SSO not found"),
+      400: () => new BadRequestException("Domain is required"),
     });
 
     return json as unknown as BusinessSSOWithIDPDetails;
