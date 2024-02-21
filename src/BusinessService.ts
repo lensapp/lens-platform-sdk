@@ -157,7 +157,7 @@ export type VerifiedDomain = {
    * The verified domain without protocol/params/query.
    * e.g. "example.com.fi"
    */
-  doamin: string;
+  domain: string;
 };
 
 /**
