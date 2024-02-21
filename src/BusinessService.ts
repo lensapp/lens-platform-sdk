@@ -373,8 +373,18 @@ export type UserBusinessRole = "Administrator" | "Member";
 export type BusinessInvitationState = "pending" | "active";
 export type BusinessUpdate = Omit<
   Business,
-  "id" | "createdAt" | "updatedAt" | "businessUsers" | "external" | "businessIdLiteSubscriptionId"
->;
+  | "id"
+  | "createdAt"
+  | "updatedAt"
+  | "businessUsers"
+  | "external"
+  | "businessIdLiteSubscriptionId"
+  | "verifiedDomains"
+> & {
+  verifiedDomains: Array<{
+    domain: string;
+  }>;
+};
 
 export type BusinessInvitation = {
   /**
@@ -668,8 +678,12 @@ class BusinessService extends Base {
       | "external"
       | "ssoAutoJoin"
       | "businessIdLiteSubscriptionId"
+      | "verifiedDomains"
     > & {
       id?: string;
+      verifiedDomains: Array<{
+        domain: string;
+      }>;
     },
   ): Promise<Business> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
