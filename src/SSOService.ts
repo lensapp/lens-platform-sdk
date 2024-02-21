@@ -1,5 +1,6 @@
 import { Base } from "./Base";
 import {
+  BadRequestException,
   ForbiddenException,
   NotFoundException,
   throwExpected,
@@ -26,7 +27,7 @@ export interface SSOProviderConnection {
 
 class SSOService extends Base {
   /**
-   * Get SSO details
+   * Get SSO details by business handle
    *
    */
   async getSSOByBusinessHandle(handle: Business["handle"]): Promise<SSO> {
@@ -34,6 +35,22 @@ class SSOService extends Base {
     const url = `${apiEndpointAddress}/sso?handle=${handle}`;
     const json = await throwExpected(async () => fetch.get(url), {
       404: () => new NotFoundException("SSO not found"),
+      400: () => new BadRequestException("Handle is required"),
+    });
+
+    return json as unknown as BusinessSSOWithIDPDetails;
+  }
+
+  /**
+   * Get SSO details by domain
+   *
+   */
+  async getSSOByDomain(domain: string): Promise<SSO> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/sso?domain=${domain}`;
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: () => new NotFoundException("SSO not found"),
+      400: () => new BadRequestException("Domain is required"),
     });
 
     return json as unknown as BusinessSSOWithIDPDetails;
