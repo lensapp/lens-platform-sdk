@@ -4,6 +4,7 @@ import {
   ForbiddenException,
   NotFoundException,
   throwExpected,
+  UnauthorizedException,
   UnprocessableEntityException,
 } from "./exceptions";
 import { Business, BusinessSSOWithIDPDetails } from "./BusinessService";
@@ -28,14 +29,13 @@ export interface SSOProviderConnection {
 class SSOService extends Base {
   /**
    * Get SSO details by business handle
-   *
    */
   async getSSOByBusinessHandle(handle: Business["handle"]): Promise<SSO> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/sso?handle=${handle}`;
     const json = await throwExpected(async () => fetch.get(url), {
-      404: () => new NotFoundException("SSO not found"),
-      400: () => new BadRequestException("Handle is required"),
+      404: (error) => new NotFoundException(error?.body.message ?? "SSO not found"),
+      400: (error) => new BadRequestException(error?.body.message ?? "Handle is required"),
     });
 
     return json as unknown as BusinessSSOWithIDPDetails;
@@ -43,14 +43,13 @@ class SSOService extends Base {
 
   /**
    * Get SSO details by domain
-   *
    */
   async getSSOByDomain(domain: string): Promise<SSO> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/sso?domain=${domain}`;
     const json = await throwExpected(async () => fetch.get(url), {
-      404: () => new NotFoundException("SSO not found"),
-      400: () => new BadRequestException("Domain is required"),
+      404: (error) => new NotFoundException(error?.body.message ?? "SSO not found"),
+      400: (error) => new BadRequestException(error?.body.message ?? "Domain is required"),
     });
 
     return json as unknown as BusinessSSOWithIDPDetails;
@@ -58,13 +57,13 @@ class SSOService extends Base {
 
   /**
    * Get OIDC SSO configuration
-   *
    */
   async getRemoteOIODCConfiguration(remoteOidcConfigUrl: string): Promise<OIDCRemoteConfiguration> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/sso/configuration?url=${remoteOidcConfigUrl}`;
     const json = await throwExpected(async () => fetch.get(url), {
-      404: () => new NotFoundException("SSO not found"),
+      422: (error) => new UnprocessableEntityException(error?.body.message),
+      404: (error) => new NotFoundException(error?.body.message ?? "SSO not found"),
     });
 
     return json as unknown as OIDCRemoteConfiguration;
@@ -72,7 +71,6 @@ class SSOService extends Base {
 
   /**
    * Get SSO provider connection link
-   *
    */
   async getSSOProviderConnectionLink(
     providerAlias: string,
@@ -81,11 +79,13 @@ class SSOService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/sso/account-link?provider=${providerAlias}&clientId=${clientId}`;
     const json = await throwExpected(async () => fetch.get(url), {
-      404: () => new NotFoundException("SSO provider found"),
+      404: (error) => new NotFoundException(error?.body.message ?? "SSO provider found"),
       403: (error) => new ForbiddenException(error?.body.message),
-      401: (error) => new ForbiddenException(error?.body.message),
-      422: () =>
-        new UnprocessableEntityException(`Failed to retrieve link for provider ${providerAlias}`),
+      401: (error) => new UnauthorizedException(error?.body.message),
+      422: (error) =>
+        new UnprocessableEntityException(
+          error?.body.message ?? `Failed to retrieve link for provider ${providerAlias}`,
+        ),
     });
 
     return json as unknown as SSOProviderConnection;
