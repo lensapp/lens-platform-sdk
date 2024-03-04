@@ -371,20 +371,22 @@ export type BusinessUserWithSeats = BusinessUser & {
 
 export type UserBusinessRole = "Administrator" | "Member";
 export type BusinessInvitationState = "pending" | "active";
-export type BusinessUpdate = Omit<
-  Business,
-  | "id"
-  | "createdAt"
-  | "updatedAt"
-  | "businessUsers"
-  | "external"
-  | "businessIdLiteSubscriptionId"
-  | "verifiedDomains"
-> & {
-  verifiedDomains: Array<{
-    domain: string;
-  }>;
-};
+export type BusinessUpdate = Partial<
+  Omit<
+    Business,
+    | "id"
+    | "createdAt"
+    | "updatedAt"
+    | "businessUsers"
+    | "external"
+    | "businessIdLiteSubscriptionId"
+    | "verifiedDomains"
+  > & {
+    verifiedDomains: Array<{
+      domain: string;
+    }>;
+  }
+>;
 
 export type BusinessInvitation = {
   /**
