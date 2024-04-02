@@ -388,6 +388,12 @@ export type BusinessUpdate = Partial<
   }
 >;
 
+export type BusinessReplace = BusinessUpdate & {
+  verifiedDomains: Array<{
+    domain: string;
+  }>;
+};
+
 export type BusinessInvitation = {
   /**
    * The business invitation ID
@@ -709,6 +715,22 @@ class BusinessService extends Base {
     const json = await throwExpected(async () => fetch.patch(url, business), {
       400: (error) => new BadRequestException(error?.body.message),
       422: (error) => new UnprocessableEntityException(error?.body.message),
+      401: (error) => new UnauthorizedException(error?.body.message),
+      403: (error) => new ForbiddenException(error?.body.message),
+      409: (error) => new ForbiddenException(error?.body.message),
+    });
+
+    return json as unknown as Business;
+  }
+
+  /**
+   * Replace an existing business ("Lens Business ID").
+   */
+  async replaceOne(id: string, business: BusinessReplace): Promise<Business> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${id}`;
+    const json = await throwExpected(async () => fetch.put(url, business), {
+      400: (error) => new BadRequestException(error?.body.message),
       401: (error) => new UnauthorizedException(error?.body.message),
       403: (error) => new ForbiddenException(error?.body.message),
       409: (error) => new ForbiddenException(error?.body.message),
