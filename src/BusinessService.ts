@@ -95,6 +95,10 @@ export type Business = {
    */
   createdAt: string;
   /**
+   * The user id that created the business.
+   */
+  createdById: string;
+  /**
    * The date the business was updated.
    */
   updatedAt: string;
