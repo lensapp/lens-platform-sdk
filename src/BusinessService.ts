@@ -385,6 +385,7 @@ export type BusinessUpdate = Partial<
     | "external"
     | "businessIdLiteSubscriptionId"
     | "verifiedDomains"
+    | "createdById"
   > & {
     verifiedDomains: Array<{
       domain: string;
@@ -691,6 +692,7 @@ class BusinessService extends Base {
       | "ssoAutoJoin"
       | "businessIdLiteSubscriptionId"
       | "verifiedDomains"
+      | "createdById"
     > & {
       id?: string;
       verifiedDomains: Array<{
