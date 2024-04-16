@@ -706,7 +706,7 @@ class BusinessService extends Base {
       400: (error) => new BadRequestException(error?.body.message),
       422: (error) => new UnprocessableEntityException(error?.body.message),
       403: (error) => new ForbiddenException(error?.body.message),
-      409: (error) => new ForbiddenException(error?.body.message),
+      404: (error) => new NotFoundException(error?.body.message),
     });
 
     return json as unknown as Business;
@@ -723,7 +723,7 @@ class BusinessService extends Base {
       422: (error) => new UnprocessableEntityException(error?.body.message),
       401: (error) => new UnauthorizedException(error?.body.message),
       403: (error) => new ForbiddenException(error?.body.message),
-      409: (error) => new ForbiddenException(error?.body.message),
+      404: (error) => new NotFoundException(error?.body.message),
     });
 
     return json as unknown as Business;
@@ -739,10 +739,25 @@ class BusinessService extends Base {
       400: (error) => new BadRequestException(error?.body.message),
       401: (error) => new UnauthorizedException(error?.body.message),
       403: (error) => new ForbiddenException(error?.body.message),
-      409: (error) => new ForbiddenException(error?.body.message),
+      404: (error) => new NotFoundException(error?.body.message),
     });
 
     return json as unknown as Business;
+  }
+
+  /**
+   * Delete a business ("Lens Business ID").
+   */
+  async deleteOne(id: string): Promise<void> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${id}`;
+
+    await throwExpected(async () => fetch.delete(url), {
+      400: (error) => new BadRequestException(error?.body.message),
+      401: (error) => new UnauthorizedException(error?.body.message),
+      403: (error) => new ForbiddenException(error?.body.message),
+      404: (error) => new NotFoundException(error?.body.message),
+    });
   }
 
   /**
@@ -756,18 +771,6 @@ class BusinessService extends Base {
       400: (error) => new BadRequestException(error?.body.message),
       422: (error) => new UnprocessableEntityException(error?.body.message),
       401: (error) => new UnprocessableEntityException(error?.body.message),
-      403: (error) => new ForbiddenException(error?.body.message),
-    });
-  }
-
-  /**
-   * Delete business entity ("Lens Business ID") by id.
-   */
-  async deleteOne(id: Business["id"]): Promise<void> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/businesses/${id}`;
-
-    await throwExpected(async () => fetch.delete(url), {
       403: (error) => new ForbiddenException(error?.body.message),
     });
   }
