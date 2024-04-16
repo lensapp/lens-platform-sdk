@@ -748,7 +748,7 @@ class BusinessService extends Base {
   /**
    * Delete a business ("Lens Business ID").
    */
-  async deleteOne(id: string): Promise<void> {
+  async deleteOne(id: Business["id"]): Promise<void> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}`;
 
