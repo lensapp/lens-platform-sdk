@@ -5,6 +5,7 @@ import { config } from "./configuration";
 
 export class TestPlatform {
   public fakeToken?: string;
+
   public readonly client: LensPlatformClient;
 
   constructor(private readonly accessToken: string) {
@@ -26,14 +27,14 @@ export const testPlatformFactory = async (username: string, password: string) =>
       secret: "<client-secret>",
     },
     auth: {
-      tokenHost: config.tokenHost,
+      tokenHost: config.keyCloakAddress,
       tokenPath: "/auth/realms/lensCloud/protocol/openid-connect/token",
     },
   });
 
   const tokenParams = {
-    username: username,
-    password: password,
+    username,
+    password,
     scope: "openid",
   };
 

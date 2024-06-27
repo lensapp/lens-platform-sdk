@@ -15,6 +15,7 @@ import { UserRolesService } from "./UserRolesService";
 import http from "http";
 import https from "https";
 import { LensDesktopKubeService } from "./LensDesktopKubeService";
+import { DemoClusterService } from "./DemoClusterService";
 import { SSOService } from "./SSOService";
 
 // Axios defaults to xhr adapter if XMLHttpRequest is available.
@@ -161,6 +162,8 @@ class LensPlatformClient {
 
   lensDesktopKube: LensDesktopKubeService;
 
+  demoCluster: DemoClusterService;
+
   space: SpaceService;
 
   roles: UserRolesService;
@@ -213,6 +216,7 @@ class LensPlatformClient {
 
     this.user = new UserService(this);
     this.lensDesktopKube = new LensDesktopKubeService(this);
+    this.demoCluster = new DemoClusterService(this);
     this.space = new SpaceService(this);
     this.roles = new UserRolesService(this);
     this.team = new TeamService(this);
