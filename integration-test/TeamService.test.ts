@@ -37,6 +37,7 @@ describe("TeamService", () => {
         name: existingSpace.name,
         queryString: "join=teams",
       });
+
       teams = joinedSpace.teams as any as Team[];
     });
 
@@ -48,6 +49,7 @@ describe("TeamService", () => {
 
     it("throws CantRemoveLastTeamUser if removing last user from Owner team", async () => {
       const ownerTeam = teams.find((team) => team.kind === "Owner");
+
       expect(ownerTeam).toBeTruthy();
 
       return expect(
@@ -60,6 +62,7 @@ describe("TeamService", () => {
 
     it("throws UserNameNotFoundException if removing user not in Team", async () => {
       const ownerTeam = teams.find((team) => team.kind === "Owner");
+
       expect(ownerTeam).toBeTruthy();
 
       return expect(
@@ -72,6 +75,7 @@ describe("TeamService", () => {
 
     it("throws ForbiddenException if removing user from another user", async () => {
       const ownerTeam = teams.find((team) => team.kind === "Owner");
+
       expect(ownerTeam).toBeTruthy();
 
       return expect(
