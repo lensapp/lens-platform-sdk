@@ -1,6 +1,6 @@
 
 #
-#   This CI triggered when a PR is merged in main branch.
+#   This CI triggered when a PR is merged in release/v12 branch.
 #
 #   1. Increase version number (e.g. 0.0.1 => 0.0.2) in package.json and add a git tag
 #   2. Publish to npm registry
@@ -38,7 +38,7 @@ jobs:
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: main
+        branch: release/v12
         tags: true
 
   publish:
