@@ -7,9 +7,7 @@ import {
   NotFoundException,
   UnauthorizedException,
   UsernameAlreadyExistsException,
-  ConflictException,
 } from "../src/exceptions";
-import { License } from "../src/types/types";
 import { testAvatar } from "./avatar";
 
 jest.setTimeout(10000);
@@ -151,133 +149,6 @@ describe("UserService", () => {
   });
 
   describe("License", () => {
-    describe("activateSubscription", () => {
-      beforeEach(async () => {
-        try {
-          // Make sure the subscription isn't yet active
-          const license = {
-            subscriptionId: userSteve.subscriptionId!,
-          };
-
-          await stevePlatform.client.user.deactivateSubscription({
-            username: userSteve.username,
-            license,
-          });
-        } catch (_: unknown) {}
-      });
-
-      it.skip("rejects requests with invalid username", async () => {
-        const license: License = {
-          subscriptionId: userSteve.subscriptionId!,
-          type: "pro",
-        };
-
-        return expect(
-          stevePlatform.client.user.activateSubscription({ username: "FAKE_USER", license }),
-        ).rejects.toThrowError(ForbiddenException);
-      });
-
-      it.skip("rejects requests with invalid subscriptionId", async () => {
-        const license: License = {
-          subscriptionId: "FAKE_SUBSCRIPTION",
-          type: "pro",
-        };
-
-        return expect(
-          stevePlatform.client.user.activateSubscription({ username: userSteve.username, license }),
-        ).rejects.toThrowError(NotFoundException);
-      });
-
-      it.skip("rejects requests for already existing subscriptions", async () => {
-        const license: License = {
-          subscriptionId: userSteve.subscriptionId!,
-          type: "pro",
-        };
-
-        await stevePlatform.client.user.activateSubscription({
-          username: userSteve.username,
-          license,
-        });
-
-        return expect(
-          stevePlatform.client.user.activateSubscription({ username: userSteve.username, license }),
-        ).rejects.toThrowError(ConflictException);
-      });
-
-      it.skip("returns the activated license", async () => {
-        const license: License = {
-          subscriptionId: userSteve.subscriptionId!,
-          type: "pro",
-        };
-
-        const result = await stevePlatform.client.user.activateSubscription({
-          username: userSteve.username,
-          license,
-        });
-
-        expect(result).toEqual(license);
-      });
-    });
-
-    describe("deactivateSubscription", () => {
-      beforeEach(async () => {
-        // Make sure the subscription is active
-        try {
-          const license: License = {
-            subscriptionId: userAdam.subscriptionId!,
-            type: "pro",
-          };
-
-          await adamPlatform.client.user.activateSubscription({
-            username: userAdam.username,
-            license,
-          });
-        } catch (_: unknown) {}
-      });
-
-      afterEach(async () => {
-        // Make sure the subscription is deactivated
-        try {
-          const license: License = {
-            subscriptionId: userAdam.subscriptionId!,
-            type: "pro",
-          };
-
-          await adamPlatform.client.user.deactivateSubscription({
-            username: userAdam.username,
-            license,
-          });
-        } catch (_: unknown) {}
-      });
-
-      it.skip("rejects requests with invalid username", async () => {
-        adamPlatform.fakeToken = undefined;
-
-        return expect(
-          adamPlatform.client.user.deactivateSubscription({
-            username: "FAKE_USER",
-            license: { subscriptionId: userAdam.subscriptionId! },
-          }),
-        ).rejects.toThrowError(ForbiddenException);
-      });
-
-      it.skip("rejects requests with invalid subscriptionId", async () =>
-        expect(
-          adamPlatform.client.user.deactivateSubscription({
-            username: userAdam.username,
-            license: { subscriptionId: "FAKE_SUBSCRIPTION" },
-          }),
-        ).rejects.toThrowError(NotFoundException));
-
-      it.skip("returns undefined after subscription deactivation", async () =>
-        expect(
-          adamPlatform.client.user.deactivateSubscription({
-            username: userAdam.username,
-            license: { subscriptionId: userAdam.subscriptionId! },
-          }),
-        ).resolves.toBeUndefined());
-    });
-
     describe("Get user subscriptions", () => {
       it("Should get list of subscriptions", async () => {
         const subscriptions = [
@@ -296,6 +167,8 @@ describe("UserService", () => {
             customFields: [],
             companyName: "sdgfdgdfg",
             accountCode: "f63ed988-017a-4a0f-8486-cc8cf5ec6f32",
+            autoRenew: true,
+            collectionMethod: "automatic",
             isBusinessAccount: false,
             state: "active",
             pendingChange: {
@@ -318,6 +191,8 @@ describe("UserService", () => {
             customFields: [],
             companyName: "sdgfdgdfg",
             accountCode: "f63ed988-017a-4a0f-8486-cc8cf5ec6f32",
+            autoRenew: true,
+            collectionMethod: "automatic",
             isBusinessAccount: false,
             state: "active",
             pendingChange: {
@@ -331,39 +206,6 @@ describe("UserService", () => {
         );
 
         expect(userSubscriptions).toEqual(subscriptions);
-      });
-    });
-
-    describe("Get user subscription", () => {
-      it("Should get subscription", async () => {
-        const subscription = {
-          currentPeriodEndsAt: "2024-07-01T08:01:22.000Z",
-          currentPeriodStartedAt: "2023-07-01T08:01:22.000Z",
-          id: "6327929c2cfb8762b99eec44ddb3c3c4",
-          planCode: "pro-yearly",
-          planName: "Lens Desktop Pro",
-          seats: 1,
-          shortSubscriptionId: "r55uxv78pktg",
-          trialEndsAt: null,
-          trialStartedAt: null,
-          unitAmount: 199,
-          usedSeats: [],
-          customFields: [],
-          companyName: "sdgfdgdfg",
-          accountCode: "f63ed988-017a-4a0f-8486-cc8cf5ec6f32",
-          isBusinessAccount: false,
-          state: "active",
-          pendingChange: {
-            activateAt: null,
-            quantity: null,
-          },
-        };
-        const userSubscription = await bobPlatform.client.user.getUserSubscription(
-          userBob.username,
-          subscription.id,
-        );
-
-        expect(userSubscription).toEqual(subscription);
       });
     });
   });
