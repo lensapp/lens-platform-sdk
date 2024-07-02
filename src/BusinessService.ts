@@ -130,6 +130,10 @@ export type Business = {
    * A list of verified domains.
    */
   verifiedDomains: VerifiedDomain[];
+  /**
+   * True if the business is a reseller.
+   */
+  reseller: boolean;
 };
 
 export type VerifiedDomain = {
