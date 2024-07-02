@@ -162,7 +162,7 @@ describe("UserService", () => {
             shortSubscriptionId: "r55uxv78pktg",
             trialEndsAt: null,
             trialStartedAt: null,
-            unitAmount: 199,
+            unitAmount: 249,
             usedSeats: [],
             customFields: [],
             companyName: "sdgfdgdfg",
