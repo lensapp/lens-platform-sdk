@@ -127,6 +127,10 @@ export type Business = {
    */
   ssoAutoJoin?: boolean;
   /**
+   * If true, the invited user will be automatically assigned to a subscription.
+   */
+  automaticSeatAssignment: boolean;
+  /**
    * A list of verified domains.
    */
   verifiedDomains: VerifiedDomain[];
