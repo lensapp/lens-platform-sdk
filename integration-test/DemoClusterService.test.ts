@@ -1,3 +1,4 @@
+import { ForbiddenException } from "../src";
 import { config } from "./configuration";
 import { testPlatformFactory } from "./utils";
 import type { TestPlatform } from "./utils";
@@ -13,11 +14,10 @@ describe("DemoClusterService", () => {
   });
 
   describe("getConfig", () => {
-    it("returns kubeconfig file", async () => {
-      const config = await bobPlatform.client.demoCluster.getConfig();
-
-      expect(config.startsWith("apiVersion: v1")).toBeTruthy();
-      expect(typeof config).toBe("string");
+    it("doesn't return democluster config for old users", async () => {
+      return expect(bobPlatform.client.demoCluster.getConfig()).rejects.toThrowError(
+        ForbiddenException,
+      );
     });
   });
 });
