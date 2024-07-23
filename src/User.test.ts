@@ -4,6 +4,7 @@ import { minimumOptions as options, apiEndpointAddress } from "./LensPlatformCli
 
 describe(".user.*", () => {
   const username = "test-username";
+  const email = "test@example.com";
 
   nock(apiEndpointAddress)
     .get("/users")
@@ -37,6 +38,11 @@ describe(".user.*", () => {
   nock(apiEndpointAddress).patch(`/users/${username}/communications`).reply(200, {
     marketing: true,
     onboarding: false,
+  });
+
+  nock(apiEndpointAddress).get(`/users/${email}/auth-method`).reply(200, {
+    method: "sso",
+    identityProviderID: "provider-id",
   });
 
   const lensPlatformClient = new LensPlatformClient(options);
@@ -132,5 +138,14 @@ describe(".user.*", () => {
     const response = await lensPlatformClient.user.resetPassword(username, "newPassword!");
 
     expect(response).toBeUndefined();
+  });
+
+  it("should get sso auth method", async () => {
+    const response = await lensPlatformClient.user.getAuthMethod(email);
+
+    expect(response).toEqual({
+      method: "sso",
+      identityProviderID: "provider-id",
+    });
   });
 });

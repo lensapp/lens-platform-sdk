@@ -307,6 +307,11 @@ export interface LinkedUserAccount {
   username: string | undefined;
 }
 
+export interface UserAuthMethod {
+  method: "sso" | "password" | "google" | "github" | "apple";
+  identityProviderID?: string;
+}
+
 /**
  *
  * The class for consuming all `user` resources.
@@ -877,6 +882,16 @@ class UserService extends Base {
     }
 
     return username ?? "";
+  }
+
+  async getAuthMethod(email: string) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/users/${email}/auth-method`;
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
+
+    return json as unknown as UserAuthMethod;
   }
 }
 
