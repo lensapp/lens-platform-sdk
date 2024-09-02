@@ -19,7 +19,7 @@ export class TestPlatform {
   }
 }
 
-export const testPlatformFactory = async (username: string, password: string) => {
+export const testPlatformFactory = async (username: string, password: string): TestPlatform => {
   const client = new ResourceOwnerPassword({
     client: {
       id: config.keycloakClientId,
@@ -45,6 +45,8 @@ export const testPlatformFactory = async (username: string, password: string) =>
   } catch (error) {
     console.error(error);
   }
+
+  return new TestPlatform("");
 };
 
 export const rng = () => String(Math.ceil(Math.random() * 1000000000));
