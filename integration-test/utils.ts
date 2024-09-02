@@ -19,7 +19,7 @@ export class TestPlatform {
   }
 }
 
-export const testPlatformFactory = async (username: string, password: string): TestPlatform => {
+export const testPlatformFactory = async (username: string, password: string) => {
   const client = new ResourceOwnerPassword({
     client: {
       id: config.keycloakClientId,
