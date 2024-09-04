@@ -38,9 +38,15 @@ export const testPlatformFactory = async (username: string, password: string) =>
     scope: "openid",
   };
 
-  const accessToken = (await client.getToken(tokenParams)).token.access_token as string;
+  try {
+    const accessToken = (await client.getToken(tokenParams)).token.access_token as string;
 
-  return new TestPlatform(accessToken);
+    return new TestPlatform(accessToken);
+  } catch (error) {
+    console.error(error);
+  }
+
+  return new TestPlatform("");
 };
 
 export const rng = () => String(Math.ceil(Math.random() * 1000000000));

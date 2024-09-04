@@ -105,6 +105,7 @@ export const throwExpected = async <T = any>(
       }
     }
 
+    console.log(error);
     // If axios.isAxiosError(error) returns falsy
     throw new LensSDKException(
       (error as any)?.response?.status,
