@@ -446,54 +446,56 @@ export type BusinessInvitation = {
  * BusinessInvitation plus the public business info that is accessable to the invited, pending business user.
  */
 export type BusinessInvitationWithBusinessInfo = BusinessInvitation & {
-  /**
-   * The business id (in uuid format)
-   */
-  id: string;
-  /**
-   * The business name.
-   */
-  name: string;
-  /**
-   * The department name of the business
-   */
-  department: string;
-  /**
-   * The business handle.
-   */
-  handle: string;
-  /**
-   * The website URL of the business
-   */
-  websiteUrl: string;
-  /**
-   * The business phone number.
-   */
-  phoneNumber: string;
-  /**
-   * The business country.
-   */
-  country: string;
-  /**
-   * The business state / province.
-   */
-  state: string | null;
-  /**
-   * The business zip/postal code.
-   */
-  zip: string;
-  /**
-   * The business city.
-   */
-  city: string;
-  /**
-   * The business address.
-   */
-  address: string;
-  /**
-   * The business additional address (a.ka. "address line 2").
-   */
-  additionalAddress: string | null;
+  business: {
+    /**
+     * The business id (in uuid format)
+     */
+    id: string;
+    /**
+     * The business name.
+     */
+    name: string;
+    /**
+     * The department name of the business
+     */
+    department: string;
+    /**
+     * The business handle.
+     */
+    handle: string;
+    /**
+     * The website URL of the business
+     */
+    websiteUrl: string;
+    /**
+     * The business phone number.
+     */
+    phoneNumber: string;
+    /**
+     * The business country.
+     */
+    country: string;
+    /**
+     * The business state / province.
+     */
+    state: string | null;
+    /**
+     * The business zip/postal code.
+     */
+    zip: string;
+    /**
+     * The business city.
+     */
+    city: string;
+    /**
+     * The business address.
+     */
+    address: string;
+    /**
+     * The business additional address (a.ka. "address line 2").
+     */
+    additionalAddress: string | null;
+  };
 };
 
 export type BusinessHierarchyInvitationState = "pending" | "accepted" | "rejected" | "canceled";
