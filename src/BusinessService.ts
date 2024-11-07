@@ -299,7 +299,7 @@ export type BusinessSubscription = {
   };
 
   unitAmount: number | null;
-
+  autoRenew?: boolean | null;
   customFields?: SubscriptionCustomField[];
 };
 
