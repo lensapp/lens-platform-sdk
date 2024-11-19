@@ -309,6 +309,7 @@ export interface LinkedUserAccount {
 
 export interface UserAuthMethod {
   method: "sso" | "password" | "google" | "github" | "apple";
+  emailAddress: string;
   identityProviderID?: string;
 }
 
