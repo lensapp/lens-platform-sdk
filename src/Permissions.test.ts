@@ -67,12 +67,14 @@ const mockK8sCluster1: K8sCluster = {
   createdById: memberUser.id,
   name: "",
   kind: "K8sCluster",
+  kubeconfig: null,
 };
 const mockDevCluster1: K8sCluster = {
   id: "mk1",
   createdById: memberUser.id,
   name: "",
   kind: "K8sCluster",
+  kubeconfig: null,
   metadata: {
     labels: {
       devCluster: "true",
@@ -84,6 +86,7 @@ const mockDevCluster2: K8sCluster = {
   createdById: mockUser5.id,
   name: "",
   kind: "K8sCluster",
+  kubeconfig: null,
   metadata: {
     labels: {
       devCluster: "true",

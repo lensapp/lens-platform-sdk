@@ -37,6 +37,7 @@ export interface K8sCluster {
   id?: string;
   name: string;
   kind: string;
+  kubeconfig: string | null;
   region?: string;
   description?: string;
   createdById?: string;
