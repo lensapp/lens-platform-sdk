@@ -15,6 +15,7 @@ import {
   UserNameNotFoundException,
   NotFoundException,
   ClusterNotFoundException,
+  ForbiddenException,
 } from "./exceptions";
 import type { MapToEntity } from "./types/types";
 import type { Except } from "type-fest";
@@ -219,6 +220,84 @@ class SpaceService extends Base {
     });
 
     return json as unknown as { token: string };
+  }
+
+  /**
+   * Create a kubeconfig by space name and cluster id
+   */
+  async createKubeConfig({
+    name,
+    clusterId,
+    kubeconfig,
+  }: {
+    name: string;
+    clusterId: string;
+    kubeconfig: string;
+  }): Promise<{ value: string; id: string }> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters/${clusterId}/kubeconfig-secret`;
+
+    const json = await throwExpected(
+      async () =>
+        fetch.post(url, {
+          value: kubeconfig,
+        }),
+      {
+        404: (error) => new NotFoundException(error?.body.message),
+        403: (error) => new ForbiddenException(error?.body.message),
+      },
+    );
+
+    return json as unknown as { value: string; id: string };
+  }
+
+  /**
+   * Get kubeconfig by space name and cluster id
+   */
+  async getKubeConfig({
+    name,
+    clusterId,
+  }: {
+    name: string;
+    clusterId: string;
+  }): Promise<{ value: string; id: string }> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters/${clusterId}/kubeconfig-secret`;
+
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: (error) => new NotFoundException(error?.body.message),
+      403: (error) => new ForbiddenException(error?.body.message),
+    });
+
+    return json as unknown as { value: string; id: string };
+  }
+
+  /**
+   * Update existing kubeconfig by space name, cluster id and kubeconfig id
+   */
+  async updateKubeConfig({
+    name,
+    clusterId,
+    kubeconfigId,
+    kubeconfig,
+  }: {
+    name: string;
+    clusterId: string;
+    kubeconfigId: string;
+    kubeconfig: string;
+  }): Promise<{ id: string; value: string }> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/spaces/${name}/k8sclusters/${clusterId}/kubeconfig-secret`;
+
+    const json = await throwExpected(
+      async () => fetch.put(url, { id: kubeconfigId, value: kubeconfig }),
+      {
+        404: (error) => new NotFoundException(error?.body.message),
+        403: (error) => new ForbiddenException(error?.body.message),
+      },
+    );
+
+    return json as unknown as { id: string; value: string };
   }
 
   /**
