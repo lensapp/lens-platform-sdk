@@ -266,6 +266,8 @@ export type BillingInfo = {
   firstName: string | null;
   company: string | null;
   address: Address | null;
+  type: string | null;
+  vatNumber: string | null;
   paymentMethod: {
     cardType: string | null;
     firstSix: string | null;
