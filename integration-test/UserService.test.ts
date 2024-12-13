@@ -252,6 +252,8 @@ describe("UserService", () => {
         lastName: "sdfsdf",
         firstName: "sdfsdf",
         company: null,
+        type: "credit_card",
+        vatNumber: null,
         address: {
           street1: "dfgdfgdfg",
           street2: "8",
