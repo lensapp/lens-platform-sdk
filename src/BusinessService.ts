@@ -131,6 +131,10 @@ export type Business = {
    */
   automaticSeatAssignment: boolean;
   /**
+   * If true, the join requests will be automatically accepted.
+   */
+  autoAcceptJoinRequests: boolean;
+  /**
    * A list of verified domains.
    */
   verifiedDomains: VerifiedDomain[];
