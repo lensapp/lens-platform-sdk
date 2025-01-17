@@ -145,7 +145,7 @@ export type Business = {
   /**
    * The email domain to do domain matching against.
    */
-  emailDomain?: string;
+  emailDomain?: string | null;
   /**
    * If set to true, users can be matched by domain to suggest joining the business.
    */
