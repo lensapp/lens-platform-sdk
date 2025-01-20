@@ -41,6 +41,7 @@ export interface User {
   fullname?: string;
   firstName?: string;
   lastName?: string;
+  companyEmailDomain?: string;
   userAttributes?: Array<UserAttribute>;
 }
 

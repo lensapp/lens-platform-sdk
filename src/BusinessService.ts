@@ -142,6 +142,14 @@ export type Business = {
    * True if the business is a reseller.
    */
   reseller: boolean;
+  /**
+   * The email domain to do domain matching against.
+   */
+  emailDomain?: string | null;
+  /**
+   * If set to true, users can be matched by domain to suggest joining the business.
+   */
+  emailDomainMatchingEnabled?: boolean;
 };
 
 export type VerifiedDomain = {
