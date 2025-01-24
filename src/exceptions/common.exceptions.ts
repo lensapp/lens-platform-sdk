@@ -75,3 +75,10 @@ export class InternalServerException extends LensSDKException {
     Object.setPrototypeOf(this, InternalServerException.prototype);
   }
 }
+
+export class MultiStatusException extends LensSDKException {
+  constructor(message = "Failed to update some of the items", rawException?: unknown) {
+    super(207, message, rawException);
+    Object.setPrototypeOf(this, MultiStatusException.prototype);
+  }
+}

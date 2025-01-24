@@ -8,7 +8,7 @@ import { PlanService } from "./PlanService";
 import { BillingPageTokenService } from "./BillingPageTokenService";
 import { BusinessService } from "./BusinessService";
 import { NotificationService } from "./NotificationService";
-import axios, { type AxiosRequestConfig, type AxiosProxyConfig } from "axios";
+import axios, { type AxiosRequestConfig, type AxiosProxyConfig, AxiosError } from "axios";
 import pino from "pino";
 import decode from "jwt-decode";
 import { UserRolesService } from "./UserRolesService";
@@ -325,6 +325,16 @@ class LensPlatformClient {
 
               // Body as JavaScript plain object
               const body: unknown = response.data;
+
+              // Handle 207 multi-status as an error for later processing
+              if (response.status === 207) {
+                let message: string | undefined;
+
+                if (body && typeof body === "object" && "error" in body) {
+                  message = body?.error as string;
+                }
+                throw new AxiosError(message, "207", undefined, undefined, response);
+              }
 
               // Print HTTP response info in developer console
               logger.debug(
