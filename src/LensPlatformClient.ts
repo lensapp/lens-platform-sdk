@@ -330,8 +330,8 @@ class LensPlatformClient {
               if (response.status === 207) {
                 let message: string | undefined;
 
-                if (body && typeof body === "object" && "message" in body) {
-                  message = body?.message as string;
+                if (body && typeof body === "object" && "error" in body) {
+                  message = body?.error as string;
                 }
                 throw new AxiosError(message, "207", undefined, undefined, response);
               }
