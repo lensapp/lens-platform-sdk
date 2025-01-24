@@ -20,7 +20,6 @@ import {
   UserAttribute,
 } from "./UserService";
 import { SSO } from "./SSOService";
-import { AxiosError } from "axios";
 
 /**
  * ^: This anchor matches the start of the string.
