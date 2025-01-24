@@ -1570,34 +1570,33 @@ class BusinessService extends Base {
   ): Promise<Array<BusinessJoinRequest>> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${businessID}/join-requests`;
-    const json = await throwExpected(
-      async () => {
-        const response = await fetch.patch(url, data);
+    const json = await throwExpected(async () => fetch.patch(url, data), {
+      207: (error) => {
+        if (error?.body && error?.body.error) {
+          const response = error.body as {
+            error: string;
+            "multi-status"?: Array<{ id: string; status: "success" | "failure" }>;
+          };
 
-        if (response.status === 207) {
-          throw new AxiosError("Multi-status", "207", undefined, undefined, response);
-        }
+          let message = response.error;
 
-        return response;
-      },
-      {
-        207: (error) => {
-          let message: string | undefined;
+          // Better error message for multi-status
+          if (response["multi-status"]) {
+            const multiStatus = response["multi-status"];
+            const failed = multiStatus.filter((e) => e.status !== "success");
 
-          if (error?.body && Array.isArray(error?.body)) {
-            const all: Array<{ id: string; status: "success" | "failure" }> = error.body;
-            const failed = all.filter((e) => e.status !== "success");
-
-            message = `Failed to update ${failed.length} out of ${all.length} join requests`;
+            message = `Failed to update ${failed.length} out of ${multiStatus.length} join requests`;
           }
 
           return new MultiStatusException(message, error);
-        },
-        403: (error) => new ForbiddenException(error?.body?.message),
-        404: (error) => new NotFoundException(error?.body?.message),
-        422: (error) => new UnprocessableEntityException(error?.body?.message),
+        }
+
+        return new MultiStatusException(undefined, error);
       },
-    );
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+      422: (error) => new UnprocessableEntityException(error?.body?.message),
+    });
 
     return json as unknown as Array<BusinessJoinRequest>;
   }
