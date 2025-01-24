@@ -7,6 +7,7 @@ import {
   NotFoundException,
   ConflictException,
   UnauthorizedException,
+  MultiStatusException,
 } from "./exceptions";
 import { BillingPageToken } from "./types/types";
 import {
@@ -19,6 +20,7 @@ import {
   UserAttribute,
 } from "./UserService";
 import { SSO } from "./SSOService";
+import { AxiosError } from "axios";
 
 /**
  * ^: This anchor matches the start of the string.
@@ -1555,6 +1557,49 @@ class BusinessService extends Base {
     });
 
     return json as unknown as BusinessJoinRequest;
+  }
+
+  /**
+   * Accept/reject/cancel multiple Lens Business ID join request.
+   *
+   * @remarks should be used by LBID admins for accept/reject, and by users for cancel.
+   */
+  async updateBusinessJoinRequests(
+    businessID: Business["id"],
+    data: Array<Pick<BusinessJoinRequest, "id" | "state">>,
+  ): Promise<Array<BusinessJoinRequest>> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessID}/join-requests`;
+    const json = await throwExpected(
+      async () => {
+        const response = await fetch.patch(url, data);
+
+        if (response.status === 207) {
+          throw new AxiosError("Multi-status", "207", undefined, undefined, response);
+        }
+
+        return response;
+      },
+      {
+        207: (error) => {
+          let message: string | undefined;
+
+          if (error?.body && Array.isArray(error?.body)) {
+            const all: Array<{ id: string; status: "success" | "failure" }> = error.body;
+            const failed = all.filter((e) => e.status !== "success");
+
+            message = `Failed to update ${failed.length} out of ${all.length} join requests`;
+          }
+
+          return new MultiStatusException(message, error);
+        },
+        403: (error) => new ForbiddenException(error?.body?.message),
+        404: (error) => new NotFoundException(error?.body?.message),
+        422: (error) => new UnprocessableEntityException(error?.body?.message),
+      },
+    );
+
+    return json as unknown as Array<BusinessJoinRequest>;
   }
 
   /**
