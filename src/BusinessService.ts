@@ -7,8 +7,9 @@ import {
   NotFoundException,
   ConflictException,
   UnauthorizedException,
+  MultiStatusException,
 } from "./exceptions";
-import { BillingPageToken } from "./types/types";
+import { BillingPageToken, MultiStatusBody } from "./types/types";
 import {
   BillingInfo,
   Invoice,
@@ -702,6 +703,8 @@ export type BusinessJoinRequestWithCreatedBy = BusinessJoinRequest & {
     lastName?: string;
   };
 };
+
+export type BusinessJoinRequestMultiStatusBody = MultiStatusBody<BusinessJoinRequestWithCreatedBy>;
 
 export type BusinessSCIMToken = {
   /**
@@ -1555,6 +1558,45 @@ class BusinessService extends Base {
     });
 
     return json as unknown as BusinessJoinRequest;
+  }
+
+  /**
+   * Accept/reject/cancel multiple Lens Business ID join request.
+   *
+   * @remarks should be used by LBID admins for accept/reject, and by users for cancel.
+   */
+  async updateBusinessJoinRequests(
+    businessID: Business["id"],
+    data: Array<Pick<BusinessJoinRequest, "id" | "state">>,
+  ): Promise<Array<BusinessJoinRequest>> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessID}/join-requests`;
+    const json = await throwExpected(async () => fetch.patch(url, data), {
+      207: (error) => {
+        if (error?.body && error?.body.error) {
+          const response = error.body as BusinessJoinRequestMultiStatusBody;
+
+          let message = response.error;
+
+          // Better error message for multi-status
+          if (response["multi-status"]) {
+            const multiStatus = response["multi-status"];
+            const failed = multiStatus.filter((e) => e.status !== "success");
+
+            message = `Failed to update ${failed.length} out of ${multiStatus.length} join requests`;
+          }
+
+          return new MultiStatusException(message, error);
+        }
+
+        return new MultiStatusException(undefined, error);
+      },
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+      422: (error) => new UnprocessableEntityException(error?.body?.message),
+    });
+
+    return json as unknown as Array<BusinessJoinRequest>;
   }
 
   /**

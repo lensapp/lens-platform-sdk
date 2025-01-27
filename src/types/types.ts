@@ -23,3 +23,23 @@ export type License = {
 export type BillingPageToken = {
   hostedLoginToken: string;
 };
+
+/**
+ * 207 Multi-Status response body
+ */
+export type MultiStatusBody<T> = {
+  error: string;
+  "multi-status": Array<
+    | {
+        id: string;
+        status: "success";
+        data: T;
+      }
+    | {
+        id: string;
+        status: "failure";
+        error: string;
+        statusCode?: number;
+      }
+  >;
+};
