@@ -1574,7 +1574,10 @@ class BusinessService extends Base {
         if (error?.body && error?.body.error) {
           const response = error.body as {
             error: string;
-            "multi-status"?: Array<{ id: string; status: "success" | "failure" }>;
+            "multi-status"?: Array<
+              | { id: string; status: "success"; data: BusinessJoinRequest }
+              | { id: string; status: "failure"; message: string; statusCode?: number }
+            >;
           };
 
           let message = response.error;

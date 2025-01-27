@@ -112,17 +112,21 @@ describe(".business.*", () => {
             id: joinRequests[1].id,
             status: "failure",
             error: `Join request ${joinRequests[1].id} is ${joinRequests[1].state}, can not update`,
+            statusCode: 422,
           },
           {
             id: joinRequests[2].id,
             status: "failure",
             error: `Join request ${joinRequests[2].id} not found`,
+            statusCode: 404,
           },
         ],
       });
 
     try {
       await lensPlatformClient.business.updateBusinessJoinRequests("businessId", joinRequests);
+      // The test should fail if the exception is not thrown
+      expect(true).toBe(false);
     } catch (e: unknown) {
       if (e instanceof MultiStatusException) {
         expect(e).toBeInstanceOf(MultiStatusException);
@@ -142,11 +146,13 @@ describe(".business.*", () => {
               error: "Join request req-02 is rejected, can not update",
               id: "req-02",
               status: "failure",
+              statusCode: 422,
             },
             {
               error: "Join request req-03 not found",
               id: "req-03",
               status: "failure",
+              statusCode: 404,
             },
           ],
         });
