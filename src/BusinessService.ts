@@ -9,7 +9,7 @@ import {
   UnauthorizedException,
   MultiStatusException,
 } from "./exceptions";
-import { BillingPageToken } from "./types/types";
+import { BillingPageToken, MultiStatusBody } from "./types/types";
 import {
   BillingInfo,
   Invoice,
@@ -703,6 +703,8 @@ export type BusinessJoinRequestWithCreatedBy = BusinessJoinRequest & {
     lastName?: string;
   };
 };
+
+export type BusinessJoinRequestMultiStatusBody = MultiStatusBody<BusinessJoinRequestWithCreatedBy>;
 
 export type BusinessSCIMToken = {
   /**
@@ -1572,13 +1574,7 @@ class BusinessService extends Base {
     const json = await throwExpected(async () => fetch.patch(url, data), {
       207: (error) => {
         if (error?.body && error?.body.error) {
-          const response = error.body as {
-            error: string;
-            "multi-status"?: Array<
-              | { id: string; status: "success"; data: BusinessJoinRequest }
-              | { id: string; status: "failure"; message: string; statusCode?: number }
-            >;
-          };
+          const response = error.body as BusinessJoinRequestMultiStatusBody;
 
           let message = response.error;
 
