@@ -1583,7 +1583,7 @@ class BusinessService extends Base {
             const multiStatus = response["multi-status"];
             const failed = multiStatus.filter((e) => e.status !== "success");
 
-            message = `Failed to update ${failed.length} out of ${multiStatus.length} join requests`;
+            message = `Failed to update ${failed.length} out of ${multiStatus.length} join requests. Please try again later.`;
           }
 
           return new MultiStatusException(message, error);

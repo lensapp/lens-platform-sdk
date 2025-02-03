@@ -130,7 +130,9 @@ describe(".business.*", () => {
     } catch (e: unknown) {
       if (e instanceof MultiStatusException) {
         expect(e).toBeInstanceOf(MultiStatusException);
-        expect(e.message).toEqual("Failed to update 2 out of 3 join requests");
+        expect(e.message).toEqual(
+          "Failed to update 2 out of 3 join requests. Please try again later.",
+        );
         expect((e.rawException as any)?.body).toEqual({
           error: "Some join requests could not be processed",
           "multi-status": [
