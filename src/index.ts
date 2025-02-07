@@ -37,7 +37,7 @@ import type {
   BusinessJoinRequestWithCreatedBy,
   SubscriptionChangePreview,
   VerifiedDomain,
-  allowUpdateBusinessKeys,
+  allowedUpdateBusinessKeys,
 } from "./BusinessService";
 
 import { SSOType, businessHandleValidation } from "./BusinessService";
@@ -112,6 +112,6 @@ export {
   cloudNotificationsSchema,
   lensCloudNotificationsSchema,
   businessHandleValidation,
-  allowUpdateBusinessKeys,
+  allowedUpdateBusinessKeys,
 };
 export * as Constants from "./data";

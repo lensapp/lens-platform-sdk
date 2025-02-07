@@ -709,7 +709,7 @@ export type BusinessSCIMToken = {
 /**
  * The keys that are allowed to be updated/replaced.
  */
-export const allowUpdateBusinessKeys: Array<string> = [
+export const allowedUpdateBusinessKeys: Array<string> = [
   "handle",
   "name",
   "address",
@@ -730,10 +730,10 @@ export const allowUpdateBusinessKeys: Array<string> = [
 
 function validateUpdateBusinessKeys(
   businessObject: Business,
-  allowUpdateBusinessKeys: Array<string>,
+  allowedUpdateBusinessKeys: Array<string>,
 ) {
   const validatedObject = Object.entries(businessObject).reduce((acc, [key, value]) => {
-    if (allowUpdateBusinessKeys.includes(key)) {
+    if (allowedUpdateBusinessKeys.includes(key)) {
       acc[key] = value;
     }
 
@@ -813,7 +813,7 @@ class BusinessService extends Base {
 
     const url = `${apiEndpointAddress}/businesses/${id}`;
     const json = await throwExpected(
-      async () => fetch.patch(url, validateUpdateBusinessKeys(business, allowUpdateBusinessKeys)),
+      async () => fetch.patch(url, validateUpdateBusinessKeys(business, allowedUpdateBusinessKeys)),
       {
         400: (error) => new BadRequestException(error?.body.message),
         422: (error) => new UnprocessableEntityException(error?.body.message),
@@ -833,7 +833,7 @@ class BusinessService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}`;
     const json = await throwExpected(
-      async () => fetch.put(url, validateUpdateBusinessKeys(business, allowUpdateBusinessKeys)),
+      async () => fetch.put(url, validateUpdateBusinessKeys(business, allowedUpdateBusinessKeys)),
       {
         400: (error) => new BadRequestException(error?.body.message),
         401: (error) => new UnauthorizedException(error?.body.message),
