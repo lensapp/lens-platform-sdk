@@ -729,7 +729,7 @@ export const allowedUpdateBusinessKeys: Array<string> = [
 ];
 
 function validateUpdateBusinessKeys(
-  businessObject: Business,
+  businessObject: Partial<Business>,
   allowedUpdateBusinessKeys: Array<string>,
 ) {
   const validatedObject = Object.entries(businessObject).reduce((acc, [key, value]) => {
@@ -808,7 +808,7 @@ class BusinessService extends Base {
   /**
    * Update an existing business ("Lens Business ID").
    */
-  async updateOne(id: string, business: Business): Promise<Business> {
+  async updateOne(id: string, business: Partial<Business>): Promise<Business> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
 
     const url = `${apiEndpointAddress}/businesses/${id}`;
