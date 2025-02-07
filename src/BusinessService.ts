@@ -726,7 +726,7 @@ export const allowUpdateBusinessKeys: Array<string> = [
   "automaticSeatAssignment",
   "autoAcceptJoinRequests",
   "emailDomainMatchingEnabled",
-] as const;
+];
 
 function validateUpdateBusinessKeys(
   businessObject: Business,
