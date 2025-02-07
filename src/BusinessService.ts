@@ -396,29 +396,6 @@ export type BusinessUserWithSeats = BusinessUser & {
 
 export type UserBusinessRole = "Administrator" | "Member";
 export type BusinessInvitationState = "pending" | "active";
-export type BusinessUpdate = Partial<
-  Omit<
-    Business,
-    | "id"
-    | "createdAt"
-    | "updatedAt"
-    | "businessUsers"
-    | "external"
-    | "businessIdLiteSubscriptionId"
-    | "verifiedDomains"
-    | "createdById"
-  > & {
-    verifiedDomains: Array<{
-      domain: string;
-    }>;
-  }
->;
-
-export type BusinessReplace = BusinessUpdate & {
-  verifiedDomains: Array<{
-    domain: string;
-  }>;
-};
 
 export type BusinessInvitation = {
   /**
@@ -729,6 +706,43 @@ export type BusinessSCIMToken = {
   token: string;
 };
 
+/**
+ * The keys that are allowed to be updated/replaced.
+ */
+export const allowedUpdateBusinessKeys: Array<string> = [
+  "handle",
+  "name",
+  "address",
+  "additionalAddress",
+  "country",
+  "city",
+  "state",
+  "zip",
+  "phoneNumber",
+  "verifiedDomains",
+  "websiteUrl",
+  "department",
+  "ssoAutoJoin",
+  "automaticSeatAssignment",
+  "autoAcceptJoinRequests",
+  "emailDomainMatchingEnabled",
+];
+
+function validateUpdateBusinessKeys(
+  businessObject: Business,
+  allowedUpdateBusinessKeys: Array<string>,
+) {
+  const validatedObject = Object.entries(businessObject).reduce((acc, [key, value]) => {
+    if (allowedUpdateBusinessKeys.includes(key)) {
+      acc[key] = value;
+    }
+
+    return acc;
+  }, {} as { [key: string]: Business[keyof Business] });
+
+  return validatedObject;
+}
+
 class BusinessService extends Base {
   /**
    * Lists business entities ("Lens Business ID") that the authenticated user has explicit permissions to access.
@@ -794,16 +808,20 @@ class BusinessService extends Base {
   /**
    * Update an existing business ("Lens Business ID").
    */
-  async updateOne(id: string, business: BusinessUpdate): Promise<Business> {
+  async updateOne(id: string, business: Business): Promise<Business> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+
     const url = `${apiEndpointAddress}/businesses/${id}`;
-    const json = await throwExpected(async () => fetch.patch(url, business), {
-      400: (error) => new BadRequestException(error?.body.message),
-      422: (error) => new UnprocessableEntityException(error?.body.message),
-      401: (error) => new UnauthorizedException(error?.body.message),
-      403: (error) => new ForbiddenException(error?.body.message),
-      409: (error) => new ForbiddenException(error?.body.message),
-    });
+    const json = await throwExpected(
+      async () => fetch.patch(url, validateUpdateBusinessKeys(business, allowedUpdateBusinessKeys)),
+      {
+        400: (error) => new BadRequestException(error?.body.message),
+        422: (error) => new UnprocessableEntityException(error?.body.message),
+        401: (error) => new UnauthorizedException(error?.body.message),
+        403: (error) => new ForbiddenException(error?.body.message),
+        409: (error) => new ForbiddenException(error?.body.message),
+      },
+    );
 
     return json as unknown as Business;
   }
@@ -811,15 +829,18 @@ class BusinessService extends Base {
   /**
    * Replace an existing business ("Lens Business ID").
    */
-  async replaceOne(id: string, business: BusinessReplace): Promise<Business> {
+  async replaceOne(id: string, business: Business): Promise<Business> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}`;
-    const json = await throwExpected(async () => fetch.put(url, business), {
-      400: (error) => new BadRequestException(error?.body.message),
-      401: (error) => new UnauthorizedException(error?.body.message),
-      403: (error) => new ForbiddenException(error?.body.message),
-      409: (error) => new ForbiddenException(error?.body.message),
-    });
+    const json = await throwExpected(
+      async () => fetch.put(url, validateUpdateBusinessKeys(business, allowedUpdateBusinessKeys)),
+      {
+        400: (error) => new BadRequestException(error?.body.message),
+        401: (error) => new UnauthorizedException(error?.body.message),
+        403: (error) => new ForbiddenException(error?.body.message),
+        409: (error) => new ForbiddenException(error?.body.message),
+      },
+    );
 
     return json as unknown as Business;
   }

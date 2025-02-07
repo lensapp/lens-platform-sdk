@@ -25,8 +25,6 @@ import type {
   BusinessInvitationWithBusinessInfo,
   UserBusinessRole,
   BusinessInvitationState,
-  BusinessUpdate,
-  BusinessReplace,
   BusinessUser,
   BusinessHierarchyInvitation,
   BusinessHierarchyInvitationState,
@@ -39,6 +37,7 @@ import type {
   BusinessJoinRequestWithCreatedBy,
   SubscriptionChangePreview,
   VerifiedDomain,
+  allowedUpdateBusinessKeys,
 } from "./BusinessService";
 
 import { SSOType, businessHandleValidation } from "./BusinessService";
@@ -84,8 +83,6 @@ export type {
   BusinessInvitationWithBusinessInfo,
   UserBusinessRole,
   BusinessInvitationState,
-  BusinessUpdate,
-  BusinessReplace,
   BusinessUser,
   BusinessHierarchyInvitation,
   BusinessHierarchyInvitationState,
@@ -115,5 +112,6 @@ export {
   cloudNotificationsSchema,
   lensCloudNotificationsSchema,
   businessHandleValidation,
+  allowedUpdateBusinessKeys,
 };
 export * as Constants from "./data";
