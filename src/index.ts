@@ -37,8 +37,8 @@ import type {
   BusinessJoinRequestWithCreatedBy,
   SubscriptionChangePreview,
   VerifiedDomain,
-  allowedUpdateBusinessKeys,
 } from "./BusinessService";
+import { allowedUpdateBusinessKeys } from "./BusinessService";
 
 import { SSOType, businessHandleValidation } from "./BusinessService";
 import {
