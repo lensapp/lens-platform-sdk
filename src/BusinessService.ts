@@ -737,6 +737,14 @@ function validateUpdateBusinessKeys(
       acc[key] = value;
     }
 
+    if (key === "verifiedDomains" && Array.isArray(value)) {
+      const domains = value as Array<VerifiedDomain>;
+
+      acc[key] = domains.map(({ domain }) => ({
+        domain,
+      })) as VerifiedDomain[];
+    }
+
     return acc;
   }, {} as { [key: string]: Business[keyof Business] });
 
@@ -808,7 +816,10 @@ class BusinessService extends Base {
   /**
    * Update an existing business ("Lens Business ID").
    */
-  async updateOne(id: string, business: Partial<Business>): Promise<Business> {
+  async updateOne(
+    id: string,
+    business: Partial<Business & { verifiedDomains: Partial<VerifiedDomain>[] }>,
+  ): Promise<Business> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
 
     const url = `${apiEndpointAddress}/businesses/${id}`;
@@ -829,7 +840,10 @@ class BusinessService extends Base {
   /**
    * Replace an existing business ("Lens Business ID").
    */
-  async replaceOne(id: string, business: Business): Promise<Business> {
+  async replaceOne(
+    id: string,
+    business: Business & { verifiedDomains: Partial<VerifiedDomain>[] },
+  ): Promise<Business> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}`;
     const json = await throwExpected(
