@@ -318,7 +318,7 @@ export interface UserAuthMethod {
   emailAddress: string;
   identityProviderID?: string;
   /**
-   * Generated unique username for regirstation
+   * Generated unique username for registration
    */
   username: null | string;
 }
