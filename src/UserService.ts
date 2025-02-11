@@ -311,9 +311,16 @@ export interface LinkedUserAccount {
 }
 
 export interface UserAuthMethod {
-  method: "sso" | "password" | "google" | "github" | "apple";
+  /**
+   * The method of authentication the user is using, `null` if the user doesn't have an account
+   */
+  method: "sso" | "password" | "google" | "github" | null;
   emailAddress: string;
   identityProviderID?: string;
+  /**
+   * Generated unique username for regirstation
+   */
+  username: null | string;
 }
 
 /**
