@@ -132,6 +132,11 @@ export type SubscriptionInfo = {
    * State of the subscription
    */
   state: SubscriptionState;
+
+  /**
+   * Price of subscription
+   */
+  unitAmount?: number | null;
 };
 
 export type SubscriptionSeat = {
