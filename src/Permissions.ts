@@ -1,6 +1,6 @@
 import type { Space, SpaceEntity } from "./SpaceService";
 import type { Team, TeamEntity } from "./TeamService";
-import { isDevCluster, K8sCluster, K8sClusterEntity } from "./K8sCluster";
+import { K8sCluster, K8sClusterEntity } from "./K8sCluster";
 
 export enum Roles {
   Admin = "Admin",
@@ -211,16 +211,12 @@ export class Permissions {
 
     switch (action) {
       // Check if user can access the K8sCluster assuming the Space is accessible
-      // DevCluster K8sClusters can only be accessed by the creator or Admin/Owner
       case K8sClusterActions.AccessK8sCluster:
-        canI =
-          !isDevCluster(forK8sCluster) || isOwnerAdmin || forK8sCluster.createdById === forUserId;
+        canI = true;
         break;
       // Check if user can patch the K8sCluster assuming the Space is accessible
-      // DevCluster K8sClusters can only be patched by the creator or Admin/Owner
       case K8sClusterActions.PatchK8sCluster:
-        canI =
-          !isDevCluster(forK8sCluster) || isOwnerAdmin || forK8sCluster.createdById === forUserId;
+        canI = true;
         break;
 
       // Admin, Owner or K8sCluster creator can delete it
