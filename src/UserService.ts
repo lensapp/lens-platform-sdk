@@ -18,6 +18,7 @@ import {
   SubscriptionAlreadyExistsException,
   BadRequestException,
   UnauthorizedException,
+  TooManyRequestException,
 } from "./exceptions";
 import { BillingPageToken, License } from "./types/types";
 
@@ -833,6 +834,7 @@ class UserService extends Base {
     await throwExpected(async () => fetch.put(url, { email }), {
       400: (error) => new BadRequestException(error?.body?.message),
       401: (error) => new UnauthorizedException(error?.body?.message),
+      429: (error) => new TooManyRequestException(error?.body?.message),
     });
   }
 
