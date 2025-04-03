@@ -69,6 +69,13 @@ export class UnprocessableEntityException extends LensSDKException {
   }
 }
 
+export class TooManyRequestException extends LensSDKException {
+  constructor(message = "Too many request", rawException?: unknown) {
+    super(429, message, rawException);
+    Object.setPrototypeOf(this, TooManyRequestException.prototype);
+  }
+}
+
 export class InternalServerException extends LensSDKException {
   constructor(message = "Internal server error", rawException?: unknown) {
     super(500, message, rawException);
