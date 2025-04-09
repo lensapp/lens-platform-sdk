@@ -316,6 +316,10 @@ export interface LinkedUserAccount {
   username: string | undefined;
 }
 
+export interface UserOTPPreferences {
+  enabled: boolean;
+}
+
 export interface UserAuthMethod {
   /**
    * The method of authentication the user is using, `null` if the user doesn't have an account
@@ -680,6 +684,38 @@ class UserService extends Base {
     });
 
     return json as unknown as LinkedUserAccount[];
+  }
+
+  /**
+   * Get user one time password preferences
+   */
+  async getUserOTPPreferences() {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const username = await this.getUsername();
+    const url = `${apiEndpointAddress}/users/${username}/otp`;
+    const json = await throwExpected(async () => fetch.get(url), {
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      403: (error) => new UnauthorizedException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
+
+    return json as unknown as UserOTPPreferences[];
+  }
+
+  /**
+   * Update user one time password preferences
+   */
+  async updateUserOTPPreferences(preferences: UserOTPPreferences) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const username = await this.getUsername();
+    const url = `${apiEndpointAddress}/users/${username}/otp`;
+    const json = await throwExpected(async () => fetch.patch(url, preferences), {
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      403: (error) => new UnauthorizedException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
+
+    return json as unknown as UserOTPPreferences;
   }
 
   /**
