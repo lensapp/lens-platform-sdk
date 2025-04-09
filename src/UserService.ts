@@ -699,7 +699,7 @@ class UserService extends Base {
       404: (error) => new NotFoundException(error?.body?.message),
     });
 
-    return json as unknown as UserOTPPreferences[];
+    return json as unknown as UserOTPPreferences;
   }
 
   /**
