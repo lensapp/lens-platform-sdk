@@ -59,10 +59,6 @@ export interface UserCommunications {
   onboarding?: boolean;
 }
 
-export interface UserOTPPreferences {
-  enabled: boolean;
-}
-
 export type SubscriptionState = "active" | "canceled" | "expired" | "failed" | "future" | "paused";
 
 export type UserBusinessWithSSOInfo = { role: UserBusinessRole } & Pick<
@@ -318,6 +314,10 @@ export interface LinkedUserAccount {
   identityProviderAlias: string | undefined;
   identityProviderDisplayName: string | undefined;
   username: string | undefined;
+}
+
+export interface UserOTPPreferences {
+  enabled: boolean;
 }
 
 export interface UserAuthMethod {
