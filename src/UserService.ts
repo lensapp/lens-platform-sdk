@@ -938,9 +938,11 @@ class UserService extends Base {
     return username ?? "";
   }
 
-  async getAuthMethod(email: string) {
+  async getAuthMethod(email: string, invitationId?: string) {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/users/${email}/auth-method`;
+    const url = invitationId
+      ? `${apiEndpointAddress}/users/${email}/auth-method?invitationId=${invitationId}`
+      : `${apiEndpointAddress}/users/${email}/auth-method`;
     const json = await throwExpected(async () => fetch.get(url), {
       404: (error) => new NotFoundException(error?.body?.message),
     });
