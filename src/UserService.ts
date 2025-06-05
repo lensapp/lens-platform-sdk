@@ -285,6 +285,16 @@ export type BillingInfo = {
   };
 };
 
+type BillingInfoUpdateWithoutToken = BillingInfo & {
+  token?: null;
+};
+type BillingInfoUpdateWithToken = BillingInfo & {
+  type: "credit_card";
+  token: string;
+  paymentMethod: NonNullable<BillingInfo["paymentMethod"]>;
+};
+export type BillingInfoUpdate = BillingInfoUpdateWithoutToken | BillingInfoUpdateWithToken;
+
 export interface ActivationCodeData {
   accessToken: string;
   idToken: string;
