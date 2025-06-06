@@ -12,6 +12,7 @@ import {
 import { BillingPageToken, MultiStatusBody } from "./types/types";
 import {
   BillingInfo,
+  BillingInfoUpdate,
   Invoice,
   SubscriptionInfo,
   SubscriptionSeat,
@@ -1252,13 +1253,32 @@ class BusinessService extends Base {
    * Get business billing information
    *
    */
-  async geBusinessBillingInformation(id: Business["id"]): Promise<BillingInfo> {
+  async getBusinessBillingInformation(id: Business["id"]): Promise<BillingInfo> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}/billing`;
     const json = await throwExpected(async () => fetch.get(url), {
       404: () => new NotFoundException(`Business ${id} not found`),
       403: () =>
         new ForbiddenException(`Getting the billing information for business ${id} is forbidden`),
+    });
+
+    return json as unknown as BillingInfo;
+  }
+
+  /**
+   * Update business billing information
+   *
+   */
+  async updateBusinessBillingInformation(
+    id: Business["id"],
+    billingInfo: BillingInfoUpdate,
+  ): Promise<BillingInfo> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${id}/billing`;
+    const json = await throwExpected(async () => fetch.put(url, billingInfo), {
+      404: () => new NotFoundException(`Business ${id} not found`),
+      403: () =>
+        new ForbiddenException(`Updating the billing information for business ${id} is forbidden`),
     });
 
     return json as unknown as BillingInfo;

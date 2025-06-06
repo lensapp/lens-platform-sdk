@@ -275,6 +275,7 @@ export type BillingInfo = {
   address: Address | null;
   type: string | null;
   vatNumber: string | null;
+  email: string | null;
   paymentMethod?: {
     cardType: string | null;
     firstSix: string | null;
@@ -284,6 +285,16 @@ export type BillingInfo = {
     expYear: Number | null;
   };
 };
+
+type BillingInfoUpdateWithoutToken = BillingInfo & {
+  token?: null;
+};
+type BillingInfoUpdateWithToken = BillingInfo & {
+  type: "credit_card";
+  token: string;
+  paymentMethod: NonNullable<BillingInfo["paymentMethod"]>;
+};
+export type BillingInfoUpdate = BillingInfoUpdateWithoutToken | BillingInfoUpdateWithToken;
 
 export interface ActivationCodeData {
   accessToken: string;
