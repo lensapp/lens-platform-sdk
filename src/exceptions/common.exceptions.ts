@@ -48,6 +48,13 @@ export class ForbiddenException extends LensSDKException {
   }
 }
 
+export class PaymentRequiredException extends LensSDKException {
+  constructor(message = "Payment Required", rawException?: unknown) {
+    super(402, message, rawException);
+    Object.setPrototypeOf(this, PaymentRequiredException.prototype);
+  }
+}
+
 export class TokenNotFoundException extends LensSDKException {
   constructor(message = "Token not found", rawException?: unknown) {
     super(500, message, rawException);

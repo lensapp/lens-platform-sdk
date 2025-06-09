@@ -8,6 +8,7 @@ import {
   ConflictException,
   UnauthorizedException,
   MultiStatusException,
+  PaymentRequiredException,
 } from "./exceptions";
 import { BillingPageToken, MultiStatusBody } from "./types/types";
 import {
@@ -1276,6 +1277,7 @@ class BusinessService extends Base {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}/billing`;
     const json = await throwExpected(async () => fetch.put(url, billingInfo), {
+      402: (error) => new PaymentRequiredException(error?.body?.message, error),
       404: () => new NotFoundException(`Business ${id} not found`),
       403: () =>
         new ForbiddenException(`Updating the billing information for business ${id} is forbidden`),
