@@ -245,11 +245,11 @@ export type Address = {
   /**
    * Street address 1
    */
-  street1: string | null;
+  address: string | null;
   /**
    * Street address 2
    */
-  street2: string | null;
+  address2: string | null;
   /**
    * City
    */
