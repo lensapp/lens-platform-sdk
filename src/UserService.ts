@@ -243,11 +243,11 @@ export type Address = {
    */
   phone: string | null;
   /**
-   * Street 1
+   * Street address 1
    */
   street1: string | null;
   /**
-   * Street 2
+   * Street address 2
    */
   street2: string | null;
   /**
@@ -288,10 +288,12 @@ export type BillingInfo = {
 
 type BillingInfoUpdateWithoutToken = BillingInfo & {
   token?: null;
+  threeDSecureActionResultTokenId?: null;
 };
 type BillingInfoUpdateWithToken = BillingInfo & {
   type: "credit_card";
   token: string;
+  threeDSecureActionResultTokenId?: string | null;
   paymentMethod: NonNullable<BillingInfo["paymentMethod"]>;
 };
 export type BillingInfoUpdate = BillingInfoUpdateWithoutToken | BillingInfoUpdateWithToken;
