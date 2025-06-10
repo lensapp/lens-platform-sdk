@@ -243,13 +243,13 @@ export type Address = {
    */
   phone: string | null;
   /**
-   * Street 1
+   * Street address 1
    */
-  street1: string | null;
+  address: string | null;
   /**
-   * Street 2
+   * Street address 2
    */
-  street2: string | null;
+  address2: string | null;
   /**
    * City
    */
