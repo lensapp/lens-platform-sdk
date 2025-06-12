@@ -286,27 +286,16 @@ export type BillingInfo = {
   };
 };
 
-type BillingInfoUpdateWithoutToken = BillingInfo & {
+export type BillingInfoUpdateWithoutToken = BillingInfo & {
   token?: null;
   threeDSecureActionResultTokenId?: null;
 };
-type BillingInfoUpdateWithToken = BillingInfo & {
+export type BillingInfoUpdateWithToken = BillingInfo & {
   type: "credit_card";
   token: string;
   threeDSecureActionResultTokenId?: string | null;
   paymentMethod: NonNullable<BillingInfo["paymentMethod"]>;
 };
-
-/**
- * Billing information for a business user
- */
-export type BusinessBillingInfo = BillingInfo & {
-  /**
-   * Invoice method available for the business
-   */
-  invoiceMethodAvailable: boolean;
-};
-export type BusinessBillingInfoUpdate = BillingInfoUpdateWithoutToken | BillingInfoUpdateWithToken;
 
 export interface ActivationCodeData {
   accessToken: string;

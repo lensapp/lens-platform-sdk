@@ -14,8 +14,6 @@ import type {
   UserAttributes,
   SubscriptionInfo,
   BillingInfo,
-  BusinessBillingInfo,
-  BusinessBillingInfoUpdate,
   SubscriptionSeat,
   LinkedUserAccount,
   UserOTPPreferences,
@@ -40,6 +38,8 @@ import type {
   BusinessJoinRequestWithCreatedBy,
   SubscriptionChangePreview,
   VerifiedDomain,
+  BusinessBillingInfo,
+  BusinessBillingInfoUpdate,
 } from "./BusinessService";
 import { allowedUpdateBusinessKeys } from "./BusinessService";
 

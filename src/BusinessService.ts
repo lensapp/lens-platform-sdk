@@ -12,8 +12,9 @@ import {
 } from "./exceptions";
 import { BillingPageToken, MultiStatusBody } from "./types/types";
 import {
-  BusinessBillingInfo,
-  BusinessBillingInfoUpdate,
+  BillingInfo,
+  BillingInfoUpdateWithoutToken,
+  BillingInfoUpdateWithToken,
   Invoice,
   SubscriptionInfo,
   SubscriptionSeat,
@@ -707,6 +708,17 @@ export type BusinessSCIMToken = {
    */
   token: string;
 };
+
+/**
+ * Billing information for a business user
+ */
+export type BusinessBillingInfo = BillingInfo & {
+  /**
+   * Invoice method available for the business
+   */
+  invoiceMethodAvailable: boolean;
+};
+export type BusinessBillingInfoUpdate = BillingInfoUpdateWithoutToken | BillingInfoUpdateWithToken;
 
 /**
  * The keys that are allowed to be updated/replaced.
