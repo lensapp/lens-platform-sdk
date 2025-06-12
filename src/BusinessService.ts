@@ -12,8 +12,8 @@ import {
 } from "./exceptions";
 import { BillingPageToken, MultiStatusBody } from "./types/types";
 import {
-  BillingInfo,
-  BillingInfoUpdate,
+  BusinessBillingInfo,
+  BusinessBillingInfoUpdate,
   Invoice,
   SubscriptionInfo,
   SubscriptionSeat,
@@ -1254,7 +1254,7 @@ class BusinessService extends Base {
    * Get business billing information
    *
    */
-  async getBusinessBillingInformation(id: Business["id"]): Promise<BillingInfo> {
+  async getBusinessBillingInformation(id: Business["id"]): Promise<BusinessBillingInfo> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}/billing`;
     const json = await throwExpected(async () => fetch.get(url), {
@@ -1263,7 +1263,7 @@ class BusinessService extends Base {
         new ForbiddenException(`Getting the billing information for business ${id} is forbidden`),
     });
 
-    return json as unknown as BillingInfo;
+    return json as unknown as BusinessBillingInfo;
   }
 
   /**
@@ -1272,8 +1272,8 @@ class BusinessService extends Base {
    */
   async updateBusinessBillingInformation(
     id: Business["id"],
-    billingInfo: BillingInfoUpdate,
-  ): Promise<BillingInfo> {
+    billingInfo: BusinessBillingInfoUpdate,
+  ): Promise<BusinessBillingInfo> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}/billing`;
     const json = await throwExpected(async () => fetch.put(url, billingInfo), {
@@ -1283,7 +1283,7 @@ class BusinessService extends Base {
         new ForbiddenException(`Updating the billing information for business ${id} is forbidden`),
     });
 
-    return json as unknown as BillingInfo;
+    return json as unknown as BusinessBillingInfo;
   }
 
   /**

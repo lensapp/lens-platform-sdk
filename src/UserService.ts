@@ -296,7 +296,17 @@ type BillingInfoUpdateWithToken = BillingInfo & {
   threeDSecureActionResultTokenId?: string | null;
   paymentMethod: NonNullable<BillingInfo["paymentMethod"]>;
 };
-export type BillingInfoUpdate = BillingInfoUpdateWithoutToken | BillingInfoUpdateWithToken;
+
+/**
+ * Billing information for a business user
+ */
+export type BusinessBillingInfo = BillingInfo & {
+  /**
+   * Invoice method available for the business
+   */
+  invoiceMethodAvailable: boolean;
+};
+export type BusinessBillingInfoUpdate = BillingInfoUpdateWithoutToken | BillingInfoUpdateWithToken;
 
 export interface ActivationCodeData {
   accessToken: string;
