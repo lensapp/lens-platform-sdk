@@ -286,17 +286,16 @@ export type BillingInfo = {
   };
 };
 
-type BillingInfoUpdateWithoutToken = BillingInfo & {
+export type BillingInfoUpdateWithoutToken = BillingInfo & {
   token?: null;
   threeDSecureActionResultTokenId?: null;
 };
-type BillingInfoUpdateWithToken = BillingInfo & {
+export type BillingInfoUpdateWithToken = BillingInfo & {
   type: "credit_card";
   token: string;
   threeDSecureActionResultTokenId?: string | null;
   paymentMethod: NonNullable<BillingInfo["paymentMethod"]>;
 };
-export type BillingInfoUpdate = BillingInfoUpdateWithoutToken | BillingInfoUpdateWithToken;
 
 export interface ActivationCodeData {
   accessToken: string;

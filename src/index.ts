@@ -38,6 +38,8 @@ import type {
   BusinessJoinRequestWithCreatedBy,
   SubscriptionChangePreview,
   VerifiedDomain,
+  BusinessBillingInfo,
+  BusinessBillingInfoUpdate,
 } from "./BusinessService";
 import { allowedUpdateBusinessKeys } from "./BusinessService";
 
@@ -78,6 +80,8 @@ export type {
   SubscriptionSeat,
   SubscriptionChangePreview,
   BillingInfo,
+  BusinessBillingInfo,
+  BusinessBillingInfoUpdate,
   Business,
   BusinessSubscription,
   BusinessInvitation,
