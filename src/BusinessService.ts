@@ -154,6 +154,10 @@ export type Business = {
    * If set to true, users can be matched by domain to suggest joining the business.
    */
   emailDomainMatchingEnabled?: boolean;
+  /**
+   * The welcome message to be shown to users when joining the business via email domain matching.
+   */
+  emailDomainWelcomeMessage: string;
 };
 
 export type VerifiedDomain = {
@@ -740,6 +744,7 @@ export const allowedUpdateBusinessKeys: Array<string> = [
   "automaticSeatAssignment",
   "autoAcceptJoinRequests",
   "emailDomainMatchingEnabled",
+  "emailDomainWelcomeMessage",
 ];
 
 function validateUpdateBusinessKeys(
