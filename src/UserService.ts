@@ -350,7 +350,7 @@ export type UserInvitationBusiness = {
   name: string;
   department?: string;
   license?: string;
-}
+};
 
 export interface UserInvitation {
   id: string;
@@ -364,7 +364,7 @@ export type UserJoinRequestBusiness = {
   name: string;
   department?: string;
   license?: string;
-}
+};
 
 export interface UserJoinRequest {
   id: string;
@@ -372,7 +372,6 @@ export interface UserJoinRequest {
   role: string;
   business: UserJoinRequestBusiness;
 }
-
 
 export interface UserOrganization {
   id: string;
