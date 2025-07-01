@@ -345,6 +345,43 @@ export interface UserAuthMethod {
   username: null | string;
 }
 
+export type UserInvitationBusiness = {
+  id: string;
+  name: string;
+  department?: string;
+  license?: string;
+}
+
+export interface UserInvitation {
+  id: string;
+  state: string;
+  role: string;
+  business: UserInvitationBusiness;
+}
+
+export type UserJoinRequestBusiness = {
+  id: string;
+  name: string;
+  department?: string;
+  license?: string;
+}
+
+export interface UserJoinRequest {
+  id: string;
+  state: string;
+  role: string;
+  business: UserJoinRequestBusiness;
+}
+
+
+export interface UserOrganization {
+  id: string;
+  name: string;
+  department?: string;
+  license?: string;
+  role: string;
+}
+
 /**
  *
  * The class for consuming all `user` resources.
@@ -960,6 +997,42 @@ class UserService extends Base {
     });
 
     return json as unknown as UserAuthMethod;
+  }
+
+  async getOrganizations() {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const username = await this.getUsername();
+    const url = `${apiEndpointAddress}/users/${username}/organizations`;
+    const json = await throwExpected(async () => fetch.get(url), {
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+    });
+
+    return json as unknown as UserOrganization[];
+  }
+
+  async getInvitations() {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const username = await this.getUsername();
+    const url = `${apiEndpointAddress}/users/${username}/invitations`;
+    const json = await throwExpected(async () => fetch.get(url), {
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+    });
+
+    return json as unknown as UserInvitation[];
+  }
+
+  async getJoinRequests() {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const username = await this.getUsername();
+    const url = `${apiEndpointAddress}/users/${username}/join-requests`;
+    const json = await throwExpected(async () => fetch.get(url), {
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+    });
+
+    return json as unknown as UserJoinRequest[];
   }
 }
 
