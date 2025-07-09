@@ -5,8 +5,5 @@
     "outDir": "./dist/cjs",
     "declaration": true,
     "rootDir": "./src",
-  },
-  "exclude": [
-    "integration-test",
-  ]
+  }
 }
