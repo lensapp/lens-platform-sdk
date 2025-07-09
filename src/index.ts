@@ -40,6 +40,8 @@ import type {
   VerifiedDomain,
   BusinessBillingInfo,
   BusinessBillingInfoUpdate,
+  BusinessUserWithSeats,
+  UsedSeat,
 } from "./BusinessService";
 import { allowedUpdateBusinessKeys } from "./BusinessService";
 
@@ -89,6 +91,8 @@ export type {
   UserBusinessRole,
   BusinessInvitationState,
   BusinessUser,
+  BusinessUserWithSeats,
+  UsedSeat,
   BusinessHierarchyInvitation,
   BusinessHierarchyInvitationState,
   BusinessSsoDto,
