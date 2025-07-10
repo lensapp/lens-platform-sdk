@@ -1278,6 +1278,7 @@ class BusinessService extends Base {
       404: () => new NotFoundException(`Business ${id} not found`),
       403: () =>
         new ForbiddenException(`Getting the billing information for business ${id} is forbidden`),
+      422: (error) => new UnprocessableEntityException(error?.body.message),
     });
 
     return json as unknown as BusinessBillingInfo;
