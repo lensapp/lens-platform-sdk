@@ -381,6 +381,22 @@ export interface UserOrganization {
   role: string;
 }
 
+export interface PatchUserJoinRequestRequest {
+  state: string;
+}
+
+export interface PatchUserJoinRequestResponse {
+  state: string;
+}
+
+export interface PatchUserInvitationRequest {
+  state: string;
+}
+
+export interface PatchUserInvitationResponse {
+  state: string;
+}
+
 /**
  *
  * The class for consuming all `user` resources.
@@ -1032,6 +1048,72 @@ class UserService extends Base {
     });
 
     return json as unknown as UserJoinRequest[];
+  }
+
+  async leaveOrganization(businessId: string) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const username = await this.getUsername();
+    const url = `${apiEndpointAddress}/users/${username}/organizations/${businessId}`;
+
+    await throwExpected(async () => fetch.delete(url), {
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+      422: (error) => new UnprocessableEntityException(error?.body.message),
+    });
+  }
+
+  async patchJoinRequest({
+    joinRequestId,
+    joinRequest,
+  }: {
+    joinRequestId: string;
+    joinRequest: PatchUserJoinRequestRequest;
+  }) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const username = await this.getUsername();
+    const url = `${apiEndpointAddress}/users/${username}/join-requests/${joinRequestId}`;
+    const json = await throwExpected(async () => fetch.patch(url, joinRequest), {
+      400: (error) => new BadRequestException(error?.body.message),
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
+
+    return json as unknown as PatchUserJoinRequestResponse;
+  }
+
+  async patchInvitation({
+    invitationId,
+    invitation,
+  }: {
+    invitationId: string;
+    invitation: PatchUserInvitationRequest;
+  }) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const username = await this.getUsername();
+    const url = `${apiEndpointAddress}/users/${username}/invitations/${invitationId}`;
+    const json = await throwExpected(async () => fetch.patch(url, invitation), {
+      400: (error) => new BadRequestException(error?.body.message),
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+      422: (error) => new UnprocessableEntityException(error?.body.message),
+    });
+
+    return json as unknown as PatchUserInvitationResponse;
+  }
+
+  async deleteInvitation(invitationId: string) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const username = await this.getUsername();
+    const url = `${apiEndpointAddress}/users/${username}/invitations/${invitationId}`;
+
+    await throwExpected(async () => fetch.delete(url), {
+      401: (error) => new UnauthorizedException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
   }
 }
 
