@@ -18,6 +18,10 @@ import type {
   LinkedUserAccount,
   UserOTPPreferences,
   UserBusinessWithSSOInfo,
+  PatchUserJoinRequestRequest,
+  PatchUserInvitationRequest,
+  PatchUserJoinRequestResponse,
+  PatchUserInvitationResponse,
 } from "./UserService";
 import type {
   Business,
@@ -108,6 +112,10 @@ export type {
   BusinessJoinRequestState,
   BusinessJoinRequestWithCreatedBy,
   VerifiedDomain,
+  PatchUserJoinRequestRequest,
+  PatchUserInvitationRequest,
+  PatchUserJoinRequestResponse,
+  PatchUserInvitationResponse,
 };
 export type { LensPlatformClientType, LensPlatformClientOptions };
 export {
