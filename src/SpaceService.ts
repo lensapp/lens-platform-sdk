@@ -23,7 +23,7 @@ import type { Except } from "type-fest";
 export const spaceKinds = ["Personal", "Team"] as const;
 export type SpaceKind = typeof spaceKinds[number];
 
-export const spaceFeatures = [] as const;
+export const spaceFeatures: readonly string[] = [] as const;
 export type SpaceFeature = typeof spaceFeatures[number];
 
 /**
