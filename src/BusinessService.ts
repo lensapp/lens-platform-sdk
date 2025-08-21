@@ -547,6 +547,10 @@ export interface BusinessSsoSamlDto {
    */
   idpEntityId: string;
   /**
+   * The public certificates to validate the signatures of SAML requests and responses
+   */
+  validatingX509Certificates?: string[];
+  /**
    * SAML SSO type
    */
   type: SSOType.SAML;
