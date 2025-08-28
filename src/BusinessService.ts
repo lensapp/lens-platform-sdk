@@ -751,6 +751,49 @@ export const allowedUpdateBusinessKeys: Array<string> = [
   "emailDomainWelcomeMessage",
 ];
 
+export type BusinessGroup = {
+  /**
+   * The business group id
+   */
+  id: string;
+  /**
+   * The group name.
+   */
+  name: string;
+  /**
+   * The business id that the group belongs to.
+   */
+  businessId: string;
+  /**
+   * The user id that creates the group.
+   */
+  createdById: string;
+  /**
+   * The user id that updated the group.
+   */
+  updatedById: string;
+  /**
+   * The subscription id which all users in the groups should be assigned to.
+   */
+  subscriptionId: string | null;
+  /**
+   * The external id of the group (from external identity provider).
+   */
+  externalId: string | null;
+  /**
+   * The date the group was created.
+   */
+  createdAt: string;
+  /**
+   * The date the group was updated.
+   */
+  updatedAt: string;
+  /**
+   * The date the group was (soft) deleted.
+   */
+  deletedAt: string | null;
+};
+
 function validateUpdateBusinessKeys(
   businessObject: Partial<Business>,
   allowedUpdateBusinessKeys: Array<string>,
@@ -1739,6 +1782,76 @@ class BusinessService extends Base {
     });
 
     return json as unknown as BusinessSCIMToken;
+  }
+
+  async getGroups(businessId: Business["id"]): Promise<BusinessGroup[]> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessId}/groups`;
+    const json = await throwExpected(async () => fetch.get(url), {
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+      422: (error) => new UnprocessableEntityException(error?.body?.message),
+    });
+
+    return json as unknown as BusinessGroup[];
+  }
+
+  async createGroup(
+    businessId: Business["id"],
+    {
+      name,
+      subscriptionId,
+    }: {
+      name: BusinessGroup["name"];
+      subscriptionId: BusinessGroup["subscriptionId"];
+    },
+  ) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessId}/groups`;
+    const json = await throwExpected(async () => fetch.post(url, { name, subscriptionId }), {
+      400: (error) => new BadRequestException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+      422: (error) => new UnprocessableEntityException(error?.body?.message),
+    });
+
+    return json as unknown as BusinessGroup;
+  }
+
+  async updateGroup(
+    businessId: Business["id"],
+    groupID: BusinessGroup["id"],
+    {
+      name,
+      subscriptionId,
+    }: {
+      name: BusinessGroup["name"];
+      subscriptionId: BusinessGroup["subscriptionId"];
+    },
+  ) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessId}/groups/${groupID}`;
+    const json = await throwExpected(async () => fetch.patch(url, { name, subscriptionId }), {
+      400: (error) => new BadRequestException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+      422: (error) => new UnprocessableEntityException(error?.body?.message),
+    });
+
+    return json as unknown as BusinessGroup;
+  }
+
+  async deleteGroup(businessId: Business["id"], groupID: BusinessGroup["id"]) {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessId}/groups/${groupID}`;
+    const json = await throwExpected(async () => fetch.delete(url), {
+      400: (error) => new BadRequestException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+      422: (error) => new UnprocessableEntityException(error?.body?.message),
+    });
+
+    return json as unknown as BusinessGroup;
   }
 }
 

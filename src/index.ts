@@ -46,6 +46,7 @@ import type {
   BusinessBillingInfoUpdate,
   BusinessUserWithSeats,
   UsedSeat,
+  BusinessGroup,
 } from "./BusinessService";
 import { allowedUpdateBusinessKeys } from "./BusinessService";
 
@@ -116,6 +117,7 @@ export type {
   PatchUserInvitationRequest,
   PatchUserJoinRequestResponse,
   PatchUserInvitationResponse,
+  BusinessGroup,
 };
 export type { LensPlatformClientType, LensPlatformClientOptions };
 export {
