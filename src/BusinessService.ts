@@ -1844,14 +1844,13 @@ class BusinessService extends Base {
   async deleteGroup(businessId: Business["id"], groupID: BusinessGroup["id"]) {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${businessId}/groups/${groupID}`;
-    const json = await throwExpected(async () => fetch.delete(url), {
+
+    await throwExpected(async () => fetch.delete(url), {
       400: (error) => new BadRequestException(error?.body?.message),
       403: (error) => new ForbiddenException(error?.body?.message),
       404: (error) => new NotFoundException(error?.body?.message),
       422: (error) => new UnprocessableEntityException(error?.body?.message),
     });
-
-    return json as unknown as BusinessGroup;
   }
 }
 
