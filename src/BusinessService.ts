@@ -777,6 +777,10 @@ export type BusinessGroup = {
    */
   subscriptionId: string | null;
   /**
+   * The role of the group members in the business.
+   */
+  role: UserBusinessRole | null;
+  /**
    * The external id of the group (from external identity provider).
    */
   externalId: string | null;
@@ -1800,15 +1804,17 @@ class BusinessService extends Base {
     businessId: Business["id"],
     {
       name,
+      role,
       subscriptionId,
     }: {
       name: BusinessGroup["name"];
-      subscriptionId: BusinessGroup["subscriptionId"];
+      subscriptionId?: BusinessGroup["subscriptionId"];
+      role?: BusinessGroup["role"];
     },
   ) {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${businessId}/groups`;
-    const json = await throwExpected(async () => fetch.post(url, { name, subscriptionId }), {
+    const json = await throwExpected(async () => fetch.post(url, { name, subscriptionId, role }), {
       400: (error) => new BadRequestException(error?.body?.message),
       403: (error) => new ForbiddenException(error?.body?.message),
       404: (error) => new NotFoundException(error?.body?.message),
@@ -1824,14 +1830,16 @@ class BusinessService extends Base {
     {
       name,
       subscriptionId,
+      role,
     }: {
-      name: BusinessGroup["name"];
-      subscriptionId: BusinessGroup["subscriptionId"];
+      name?: BusinessGroup["name"];
+      subscriptionId?: BusinessGroup["subscriptionId"];
+      role?: BusinessGroup["role"];
     },
   ) {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${businessId}/groups/${groupID}`;
-    const json = await throwExpected(async () => fetch.patch(url, { name, subscriptionId }), {
+    const json = await throwExpected(async () => fetch.patch(url, { name, subscriptionId, role }), {
       400: (error) => new BadRequestException(error?.body?.message),
       403: (error) => new ForbiddenException(error?.body?.message),
       404: (error) => new NotFoundException(error?.body?.message),
