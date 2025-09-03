@@ -190,6 +190,14 @@ export type VerifiedDomain = {
    * e.g. "example.com.fi"
    */
   domain: string;
+  /**
+   * Is the SSO enabled for the domain
+   */
+  ssoEnabled: boolean;
+  /**
+   * Is the domain capture enabled for the domain
+   */
+  domainCaptureEnabled: boolean;
 };
 
 /**
