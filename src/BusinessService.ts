@@ -859,40 +859,6 @@ class BusinessService extends Base {
   }
 
   /**
-   * Create a new business ("Lens Business ID").
-   */
-  async createOne(
-    business: Omit<
-      Business,
-      | "id"
-      | "createdAt"
-      | "updatedAt"
-      | "businessUsers"
-      | "external"
-      | "ssoAutoJoin"
-      | "businessIdLiteSubscriptionId"
-      | "verifiedDomains"
-      | "createdById"
-    > & {
-      id?: string;
-      verifiedDomains: Array<{
-        domain: string;
-      }>;
-    },
-  ): Promise<Business> {
-    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/businesses`;
-    const json = await throwExpected(async () => fetch.post(url, business), {
-      400: (error) => new BadRequestException(error?.body.message),
-      422: (error) => new UnprocessableEntityException(error?.body.message),
-      403: (error) => new ForbiddenException(error?.body.message),
-      409: (error) => new ForbiddenException(error?.body.message),
-    });
-
-    return json as unknown as Business;
-  }
-
-  /**
    * Update an existing business ("Lens Business ID").
    */
   async updateOne(
