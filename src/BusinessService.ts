@@ -818,9 +818,10 @@ function validateUpdateBusinessKeys(
     if (key === "verifiedDomains" && Array.isArray(value)) {
       const domains = value as Array<VerifiedDomain>;
 
-      acc[key] = domains.map(({ domain, ssoEnabled }) => ({
+      acc[key] = domains.map(({ domain, ssoEnabled, domainCaptureEnabled }) => ({
         domain,
         ssoEnabled,
+        domainCaptureEnabled,
       })) as VerifiedDomain[];
     }
 
