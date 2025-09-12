@@ -1,6 +1,6 @@
 {
   "name": "lens-platform-sdk",
-  "version": "17.0.0",
+  "version": "17.0.1",
   "description": "Lens Platform Client SDK",
   "engines": {
     "node": ">=14 <=22"
