@@ -831,6 +831,79 @@ function validateUpdateBusinessKeys(
   return validatedObject;
 }
 
+export type BusinessManagedDomainStatus = "verified" | "unverified";
+
+export type BusinessManagedDomain = {
+  /**
+   * Id of this managed domain.
+   */
+  id: string;
+
+  /**
+   * ID of the business that this domain belongs to.
+   */
+  businessId: string;
+
+  /**
+   * Domain name that this managed domain represents.
+   */
+  domainName: string;
+
+  /**
+   * The date the managed domain was created.
+   */
+  createdAt: string;
+
+  /**
+   * The date the managed domain was last updated.
+   */
+  updatedAt: string;
+
+  /**
+   * Is SSO enabled on this domain.
+   */
+  ssoEnabled: boolean;
+
+  /**
+   * Is domain capture enabled on this domain.
+   */
+  domainCaptureEnabled: boolean;
+
+  /**
+   * Verification status of the managed domain.
+   */
+  status: BusinessManagedDomainStatus;
+
+  /**
+   * Method by which the managed domain was verified, null if managed domain is not verified.
+   */
+  verificationMethod: string | null;
+
+  /**
+   * The date the managed domain was verified, null if managed domain is not verified.
+   */
+  verifiedAt: string | null;
+
+  /**
+   * Number of users that registered with an email address that belongs to this domain,
+   * but are not yet part of the Lens Business ID that owns the managed domain.
+   * Will be null if managed domain is unverified or if domain capture is disabled.
+   */
+  uncapturedUsers: number | null;
+};
+
+export type BusinessManagedDomainsListOptions = {
+  status?: BusinessManagedDomainStatus;
+};
+
+export type CreateBusinessManagedDomainDto = {
+  domainName: string;
+};
+
+export type UpdateBusinessManagedDomainDto = {
+  domainCaptureEnabled: boolean;
+};
+
 class BusinessService extends Base {
   /**
    * Lists business entities ("Lens Business ID") that the authenticated user has explicit permissions to access.
@@ -1834,6 +1907,86 @@ class BusinessService extends Base {
       403: (error) => new ForbiddenException(error?.body?.message),
       404: (error) => new NotFoundException(error?.body?.message),
       422: (error) => new UnprocessableEntityException(error?.body?.message),
+    });
+  }
+
+  async getAllManagedDomains(
+    businessId: Business["id"],
+    options: BusinessManagedDomainsListOptions = {},
+  ): Promise<BusinessManagedDomain[]> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = new URL(`${apiEndpointAddress}/businesses/${businessId}/managed-domains`);
+
+    if (options.status) {
+      url.searchParams.set("status", options.status);
+    }
+
+    const json = await throwExpected(async () => fetch.get(url.toString()), {
+      400: (error) => new BadRequestException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+    });
+
+    return json as unknown as BusinessManagedDomain[];
+  }
+
+  async getManagedDomain(businessId: string, domainId: string): Promise<BusinessManagedDomain> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessId}/managed-domains/${domainId}`;
+
+    const json = await throwExpected(async () => fetch.get(url), {
+      400: (error) => new BadRequestException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
+
+    return json as unknown as BusinessManagedDomain;
+  }
+
+  async createManagedDomain(
+    businessId: string,
+    dto: CreateBusinessManagedDomainDto,
+  ): Promise<BusinessManagedDomain> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessId}/managed-domains`;
+
+    const json = await throwExpected(async () => fetch.post(url, dto), {
+      400: (error) => new BadRequestException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+      409: (error) => new ConflictException(error?.body?.message),
+    });
+
+    return json as unknown as BusinessManagedDomain;
+  }
+
+  async updateManagedDomain(
+    businessId: string,
+    domainId: string,
+    dto: UpdateBusinessManagedDomainDto,
+  ): Promise<BusinessManagedDomain> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessId}/managed-domains/${domainId}`;
+
+    const json = await throwExpected(async () => fetch.patch(url, dto), {
+      400: (error) => new BadRequestException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+      409: (error) => new ConflictException(error?.body?.message),
+    });
+
+    return json as unknown as BusinessManagedDomain;
+  }
+
+  async deleteManagedDomain(businessId: string, domainId: string): Promise<void> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessId}/managed-domains/${domainId}`;
+
+    await throwExpected(async () => fetch.delete(url), {
+      400: (error) => new BadRequestException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+      409: (error) => new ConflictException(error?.body?.message),
     });
   }
 }

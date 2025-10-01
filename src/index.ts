@@ -47,6 +47,11 @@ import type {
   BusinessUserWithSeats,
   UsedSeat,
   BusinessGroup,
+  BusinessManagedDomain,
+  BusinessManagedDomainStatus,
+  BusinessManagedDomainsListOptions,
+  CreateBusinessManagedDomainDto,
+  UpdateBusinessManagedDomainDto,
 } from "./BusinessService";
 import { allowedUpdateBusinessKeys } from "./BusinessService";
 
@@ -118,6 +123,11 @@ export type {
   PatchUserJoinRequestResponse,
   PatchUserInvitationResponse,
   BusinessGroup,
+  BusinessManagedDomain,
+  BusinessManagedDomainStatus,
+  BusinessManagedDomainsListOptions,
+  CreateBusinessManagedDomainDto,
+  UpdateBusinessManagedDomainDto,
 };
 export type { LensPlatformClientType, LensPlatformClientOptions };
 export {
