@@ -901,8 +901,8 @@ export type CreateBusinessManagedDomainDto = {
 };
 
 export type UpdateBusinessManagedDomainDto = {
-  domainCaptureEnabled: boolean;
-  ssoEnabled: boolean;
+  domainCaptureEnabled?: boolean;
+  ssoEnabled?: boolean;
 };
 
 class BusinessService extends Base {
