@@ -379,6 +379,7 @@ export interface UserOrganization {
   department?: string;
   license?: string;
   role: string;
+  managedMembership?: boolean;
 }
 
 export interface PatchUserJoinRequestRequest {
