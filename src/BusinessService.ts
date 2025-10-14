@@ -139,10 +139,6 @@ export type Business = {
    */
   autoAcceptJoinRequests: boolean;
   /**
-   * A list of verified domains.
-   */
-  verifiedDomains: VerifiedDomain[];
-  /**
    * True if the business is a reseller.
    */
   reseller: boolean;
@@ -158,46 +154,6 @@ export type Business = {
    * The welcome message to be shown to users when joining the business via email domain matching.
    */
   emailDomainWelcomeMessage: string;
-};
-
-export type VerifiedDomain = {
-  /**
-   * The id of the verified domain entity.
-   */
-  id: string;
-  /**
-   * The business entity id that the verified domain belongs to.
-   */
-  businessId: string;
-  /**
-   * The id of the user created the verified domain entity.
-   */
-  createdById: string;
-  /**
-   * The id of the user updated the verified domain entity.
-   */
-  updatedById: string;
-  /**
-   * The created date of verified domain entity in ISO format, e.g. 2022-06-28T08:13:06.000Z.
-   */
-  createdAt: string;
-  /**
-   * The updated date of verified domain entity in ISO format, e.g. 2022-06-28T08:13:06.000Z.
-   */
-  updatedAt: string;
-  /**
-   * The verified domain without protocol/params/query.
-   * e.g. "example.com.fi"
-   */
-  domain: string;
-  /**
-   * Is the SSO enabled for the domain
-   */
-  ssoEnabled: boolean;
-  /**
-   * Is the domain capture enabled for the domain
-   */
-  domainCaptureEnabled: boolean;
 };
 
 /**
@@ -815,16 +771,6 @@ function validateUpdateBusinessKeys(
       acc[key] = value;
     }
 
-    if (key === "verifiedDomains" && Array.isArray(value)) {
-      const domains = value as Array<VerifiedDomain>;
-
-      acc[key] = domains.map(({ domain, ssoEnabled, domainCaptureEnabled }) => ({
-        domain,
-        ssoEnabled,
-        domainCaptureEnabled,
-      })) as VerifiedDomain[];
-    }
-
     return acc;
   }, {} as { [key: string]: Business[keyof Business] });
 
@@ -936,10 +882,7 @@ class BusinessService extends Base {
   /**
    * Update an existing business ("Lens Business ID").
    */
-  async updateOne(
-    id: string,
-    business: Partial<Business & { verifiedDomains: Partial<VerifiedDomain>[] }>,
-  ): Promise<Business> {
+  async updateOne(id: string, business: Partial<Business>): Promise<Business> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
 
     const url = `${apiEndpointAddress}/businesses/${id}`;
@@ -960,10 +903,7 @@ class BusinessService extends Base {
   /**
    * Replace an existing business ("Lens Business ID").
    */
-  async replaceOne(
-    id: string,
-    business: Business & { verifiedDomains: Partial<VerifiedDomain>[] },
-  ): Promise<Business> {
+  async replaceOne(id: string, business: Business): Promise<Business> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
     const url = `${apiEndpointAddress}/businesses/${id}`;
     const json = await throwExpected(
