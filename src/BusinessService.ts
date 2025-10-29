@@ -705,7 +705,6 @@ export const allowedUpdateBusinessKeys: Array<string> = [
   "state",
   "zip",
   "phoneNumber",
-  "verifiedDomains",
   "websiteUrl",
   "department",
   "ssoAutoJoin",
@@ -816,6 +815,11 @@ export type BusinessManagedDomain = {
   domainCaptureEnabled: boolean;
 
   /**
+   * Is blocking unlicensed users from accessing Lens products enabled
+   */
+  blockUnlicensedEnabled: boolean;
+
+  /**
    * Verification status of the managed domain.
    */
   status: BusinessManagedDomainStatus;
@@ -849,6 +853,7 @@ export type CreateBusinessManagedDomainDto = {
 export type UpdateBusinessManagedDomainDto = {
   domainCaptureEnabled?: boolean;
   ssoEnabled?: boolean;
+  blockUnlicensedEnabled?: boolean;
 };
 
 class BusinessService extends Base {
