@@ -140,12 +140,12 @@ export type SubscriptionInfo = {
   unitAmount?: number | null;
 
   /**
-   * Expires at field
+   * Date on which the subscription expires.
    */
   expiresAt?: string | null;
 
   /**
-   * Cancelled at field
+   * Date on which the subscription was cancelled.
    */
   cancelledAt?: string | null;
 };

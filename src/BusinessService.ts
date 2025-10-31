@@ -287,12 +287,12 @@ export type BusinessSubscription = {
   customFields?: SubscriptionCustomField[];
 
   /**
-   * Expires at field
+   * Date on which subscription expires.
    */
   expiresAt?: string | null;
 
   /**
-   * Cancelled at field
+   * Date on which subscription was cancelled.
    */
   cancelledAt?: string | null;
 };
