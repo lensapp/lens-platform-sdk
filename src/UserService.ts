@@ -138,6 +138,16 @@ export type SubscriptionInfo = {
    * Price of subscription
    */
   unitAmount?: number | null;
+
+  /**
+   * Date on which the subscription expires.
+   */
+  expiresAt?: string | null;
+
+  /**
+   * Date on which the subscription was cancelled.
+   */
+  cancelledAt?: string | null;
 };
 
 export type SubscriptionSeat = {

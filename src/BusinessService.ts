@@ -285,6 +285,16 @@ export type BusinessSubscription = {
   unitAmount: number | null;
   autoRenew?: boolean | null;
   customFields?: SubscriptionCustomField[];
+
+  /**
+   * Date on which subscription expires.
+   */
+  expiresAt?: string | null;
+
+  /**
+   * Date on which subscription was cancelled.
+   */
+  cancelledAt?: string | null;
 };
 
 export type BusinessUser = {
