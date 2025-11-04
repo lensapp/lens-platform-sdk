@@ -51,6 +51,9 @@ import type {
   BusinessManagedDomainsListOptions,
   CreateBusinessManagedDomainDto,
   UpdateBusinessManagedDomainDto,
+  UpdateBusinessSsoDto,
+  UpdateBusinessSsoOidcDto,
+  UpdateBusinessSsoSamlDto,
 } from "./BusinessService";
 import { allowedUpdateBusinessKeys } from "./BusinessService";
 
@@ -126,6 +129,9 @@ export type {
   BusinessManagedDomainsListOptions,
   CreateBusinessManagedDomainDto,
   UpdateBusinessManagedDomainDto,
+  UpdateBusinessSsoDto,
+  UpdateBusinessSsoOidcDto,
+  UpdateBusinessSsoSamlDto,
 };
 export type { LensPlatformClientType, LensPlatformClientOptions };
 export {

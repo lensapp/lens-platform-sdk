@@ -653,6 +653,10 @@ export interface BusinessSsoDto {
    * SSO config object.
    */
   config: BusinessSsoSamlDto | BusinessSsoOidcDto;
+  /**
+   * Is SSO enabled for the LBID
+   */
+  enabled: boolean;
 }
 
 export interface UpdateBusinessSsoDto {
