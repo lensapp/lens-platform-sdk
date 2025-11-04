@@ -576,6 +576,72 @@ export interface BusinessSsoOidcDto {
   type: SSOType.OIDC;
 }
 
+export interface UpdateBusinessSsoSamlDto {
+  /**
+   * SSO Identity Provider SinOn URL
+   */
+  singleSignOnServiceUrl?: string;
+  /**
+   * idpEntityId - The Entity ID, provided by SSO provider, that is used to uniquely identify.
+   * this SAML Service Provider (from Keycloak docs)
+   */
+  idpEntityId?: string;
+  /**
+   * The public certificates to validate the signatures of SAML requests and responses
+   */
+  validatingX509Certificates?: string[];
+  /**
+   * SAML SSO type
+   */
+  type: SSOType.SAML;
+}
+
+export interface UpdateBusinessSsoOidcDto {
+  /**
+   * OIDC client ID
+   */
+  clientId?: string;
+
+  /**
+   * OIDC client secret
+   */
+  clientSecret?: string;
+
+  /**
+   * Identity Provider Token URL
+   */
+  tokenUrl?: string;
+
+  /**
+   * JWKS URL
+   */
+  jwksUrl?: string;
+
+  /**
+   * User Info URL
+   */
+  userInfoUrl?: string;
+
+  /**
+   * Logout Url
+   */
+  logoutUrl?: string;
+
+  /**
+   * Issuer
+   */
+  issuer?: string;
+
+  /**
+   * Authorization URL
+   */
+  authorizationUrl?: string;
+  /**
+   * OIDC SSO type
+   */
+  type: SSOType.OIDC;
+}
+
 export interface BusinessSSOWithIDPDetails extends SSO {
   business?: Business;
   config: BusinessSsoSamlDto | BusinessSsoOidcDto;
@@ -586,6 +652,17 @@ export interface BusinessSsoDto {
    * SSO config object.
    */
   config: BusinessSsoSamlDto | BusinessSsoOidcDto;
+}
+
+export interface UpdateBusinessSsoDto {
+  /**
+   * SSO config object.
+   */
+  config?: BusinessSsoSamlDto | BusinessSsoOidcDto;
+  /**
+   * Is SSO enabled for the LBID
+   */
+  enabled?: boolean;
 }
 
 /**
@@ -1584,6 +1661,25 @@ class BusinessService extends Base {
       400: (error) => new BadRequestException(error?.body?.message),
       404: (error) => new NotFoundException(error?.body?.message),
       409: (error) => new ConflictException(error?.body?.message),
+    });
+
+    return json as unknown as BusinessSSOWithIDPDetails;
+  }
+
+  /**
+   * Update business SSO
+   *
+   */
+  async updateBusinessSSO(
+    businessID: Business["id"],
+    ssoSettings: UpdateBusinessSsoDto,
+  ): Promise<BusinessSSOWithIDPDetails> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessID}/sso`;
+    const json = await throwExpected(async () => fetch.put(url, ssoSettings), {
+      403: (error) => new ForbiddenException(error?.body?.message),
+      400: (error) => new BadRequestException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
     });
 
     return json as unknown as BusinessSSOWithIDPDetails;
