@@ -646,6 +646,7 @@ export interface BusinessSSOWithIDPDetails extends SSO {
   business?: Business;
   config: BusinessSsoSamlDto | BusinessSsoOidcDto;
   enabled: boolean;
+  enabledDomains: string[];
 }
 
 export interface BusinessSsoDto {
@@ -657,6 +658,10 @@ export interface BusinessSsoDto {
    * Is SSO enabled for the LBID
    */
   enabled: boolean;
+  /**
+   * List of domains to enable SSO for
+   */
+  enabledDomains: string[];
 }
 
 export interface UpdateBusinessSsoDto {
@@ -668,6 +673,10 @@ export interface UpdateBusinessSsoDto {
    * Is SSO enabled for the LBID
    */
   enabled?: boolean;
+  /**
+   * List of domains to enable SSO for
+   */
+  enabledDomains?: string[];
 }
 
 /**
