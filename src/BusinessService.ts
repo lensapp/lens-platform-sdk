@@ -645,6 +645,7 @@ export interface UpdateBusinessSsoOidcDto {
 export interface BusinessSSOWithIDPDetails extends SSO {
   business?: Business;
   config: BusinessSsoSamlDto | BusinessSsoOidcDto;
+  enabled: boolean;
 }
 
 export interface BusinessSsoDto {
