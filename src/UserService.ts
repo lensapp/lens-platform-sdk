@@ -383,6 +383,11 @@ export interface UserJoinRequest {
   business: UserJoinRequestBusiness;
 }
 
+export interface UserOrganizationManagedMembershipInfo {
+  managed: boolean;
+  unlicensedAccessBlocked: boolean;
+}
+
 export interface UserOrganization {
   id: string;
   name: string;
@@ -390,6 +395,7 @@ export interface UserOrganization {
   license?: string;
   role: string;
   managedMembership?: boolean;
+  managedMembershipInfo: UserOrganizationManagedMembershipInfo;
 }
 
 export interface PatchUserJoinRequestRequest {

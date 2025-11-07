@@ -17,6 +17,8 @@ import type {
   SubscriptionSeat,
   LinkedUserAccount,
   UserOTPPreferences,
+  UserOrganization,
+  UserOrganizationManagedMembershipInfo,
   UserBusinessWithSSOInfo,
   PatchUserJoinRequestRequest,
   PatchUserInvitationRequest,
@@ -128,6 +130,8 @@ export type {
   CreateBusinessManagedDomainDto,
   UpdateBusinessManagedDomainDto,
   UpdateBusinessSsoDto,
+  UserOrganization,
+  UserOrganizationManagedMembershipInfo,
 };
 export type { LensPlatformClientType, LensPlatformClientOptions };
 export {
