@@ -197,6 +197,11 @@ export type SubscriptionSeat = {
   isBusinessAccount: boolean;
 
   /**
+   * Id of the business owning the subscription; null if subscription is individual
+   */
+  businessId: string | null;
+
+  /**
    * State of the Recurly subscription
    */
   recurlySubscriptionState: SubscriptionState;
