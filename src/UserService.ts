@@ -202,6 +202,11 @@ export type SubscriptionSeat = {
   businessId: string | null;
 
   /**
+   * Id of the user that received the subscription
+   */
+  userId: string;
+
+  /**
    * State of the Recurly subscription
    */
   recurlySubscriptionState: SubscriptionState;
