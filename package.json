@@ -3,7 +3,7 @@
   "version": "18.5.0",
   "description": "Lens Platform Client SDK",
   "engines": {
-    "node": ">=14 <=22"
+    "node": ">=14 <=24"
   },
   "files": [
     "dist/**/*"
