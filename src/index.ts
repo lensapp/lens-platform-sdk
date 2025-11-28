@@ -134,6 +134,7 @@ export type {
   UserOrganizationManagedMembershipInfo,
 };
 export type { LensPlatformClientType, LensPlatformClientOptions };
+export type { BillingError } from "./types/billing";
 export {
   LensPlatformClient,
   Roles,
