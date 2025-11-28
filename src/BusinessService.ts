@@ -1367,7 +1367,7 @@ class BusinessService extends Base {
 
   async getBusinessBillingErrors(id: Business["id"]): Promise<BillingError[]> {
     const { apiEndpointAddress, fetch } = this.lensPlatformClient;
-    const url = `${apiEndpointAddress}/business/${id}/billing-errors`;
+    const url = `${apiEndpointAddress}/businesses/${id}/billing-errors`;
     const json = await throwExpected(async () => fetch.get(url), {
       404: () => new NotFoundException(`Business ${id} not found`),
       403: () =>
