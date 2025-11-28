@@ -21,6 +21,7 @@ import {
   TooManyRequestException,
 } from "./exceptions";
 import { BillingPageToken, License } from "./types/types";
+import { BillingError } from "./types/billing";
 
 export type UserAttribute = {
   id: string;
@@ -733,6 +734,17 @@ class UserService extends Base {
     });
 
     return json as unknown as BillingInfo;
+  }
+
+  async getUserBillingErrors(username: string): Promise<BillingError[]> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/users/${username}/billing-errors`;
+    const json = await throwExpected(async () => fetch.get(url), {
+      404: () => new NotFoundException(`User ${username} not found`),
+      403: () => new ForbiddenException(`Getting the billing errors for ${username} is forbidden`),
+    });
+
+    return json as unknown as BillingError[];
   }
 
   async getUserInvoices(username: string): Promise<Invoice[]> {
