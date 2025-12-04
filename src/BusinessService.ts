@@ -1622,6 +1622,7 @@ class BusinessService extends Base {
       400: (error) => new BadRequestException(error?.body?.message),
       404: (error) => new NotFoundException(error?.body?.message),
       409: (error) => new ConflictException(error?.body?.message),
+      422: (error) => new UnprocessableEntityException(error?.body?.message),
     });
 
     return json as unknown as BusinessSSOWithIDPDetails;
@@ -1641,6 +1642,7 @@ class BusinessService extends Base {
       403: (error) => new ForbiddenException(error?.body?.message),
       400: (error) => new BadRequestException(error?.body?.message),
       404: (error) => new NotFoundException(error?.body?.message),
+      422: (error) => new UnprocessableEntityException(error?.body?.message),
     });
 
     return json as unknown as BusinessSSOWithIDPDetails;
