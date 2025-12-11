@@ -892,6 +892,34 @@ export type UpdateBusinessManagedDomainDto = {
   blockUnlicensedEnabled?: boolean;
 };
 
+export type AuditEvent = {
+  id: string;
+  action: string;
+  actorId: string;
+  actorType: string;
+  resourceType: string;
+  resourceId?: string;
+  businessId: string;
+  ipAddress?: string;
+  stateBefore?: Record<string, unknown>;
+  stateAfter?: Record<string, unknown>;
+  createdAt: string;
+};
+
+export type GetAuditLogsQuery = {
+  startDate?: string;
+  endDate?: string;
+  actorId?: string;
+  action?: string | string[];
+  limit?: number;
+  offset?: number;
+};
+
+export type AuditLogResponse = {
+  data: AuditEvent[];
+  totalCount: number;
+};
+
 class BusinessService extends Base {
   /**
    * Lists business entities ("Lens Business ID") that the authenticated user has explicit permissions to access.
@@ -2003,6 +2031,25 @@ class BusinessService extends Base {
       404: (error) => new NotFoundException(error?.body?.message),
       409: (error) => new ConflictException(error?.body?.message),
     });
+  }
+
+  /**
+   * Retrieve audit logs for a business.
+   */
+  async getBusinessAuditLogs(
+    businessId: string,
+    query?: GetAuditLogsQuery,
+  ): Promise<AuditLogResponse> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/businesses/${businessId}/audit-logs`;
+
+    const json = await throwExpected(async () => fetch.get(url, { params: query }), {
+      400: (error) => new BadRequestException(error?.body?.message),
+      403: (error) => new ForbiddenException(error?.body?.message),
+      404: (error) => new NotFoundException(error?.body?.message),
+    });
+
+    return json as unknown as AuditLogResponse;
   }
 }
 
