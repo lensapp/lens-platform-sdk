@@ -13,8 +13,6 @@ import {
 import { BillingPageToken, MultiStatusBody } from "./types/types";
 import {
   BillingInfo,
-  BillingInfoUpdateWithoutToken,
-  BillingInfoUpdateWithToken,
   Invoice,
   SubscriptionInfo,
   SubscriptionSeat,
@@ -717,6 +715,18 @@ export type BusinessSCIMToken = {
   token: string;
 };
 
+export type BusinessBillingInfoUpdateWithoutToken = BillingInfo & {
+  token?: null;
+  threeDSecureActionResultTokenId?: null;
+};
+
+export type BusinessBillingInfoUpdateWithToken = BillingInfo & {
+  type: "credit_card";
+  token: string;
+  threeDSecureActionResultTokenId?: string | null;
+  paymentMethod: NonNullable<BillingInfo["paymentMethod"]>;
+};
+
 /**
  * Billing information for a business user
  */
@@ -726,7 +736,9 @@ export type BusinessBillingInfo = BillingInfo & {
    */
   invoiceMethodAvailable: boolean;
 };
-export type BusinessBillingInfoUpdate = BillingInfoUpdateWithoutToken | BillingInfoUpdateWithToken;
+export type BusinessBillingInfoUpdate =
+  | BusinessBillingInfoUpdateWithoutToken
+  | BusinessBillingInfoUpdateWithToken;
 
 /**
  * The keys that are allowed to be updated/replaced.
