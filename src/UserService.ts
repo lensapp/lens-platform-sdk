@@ -329,6 +329,7 @@ export type UserBillingInfoUpdate = {
   lastName: string;
   company?: string;
   vatNumber?: string;
+  billingType: "credit_card" | "paypal" | "invoice";
   address: UserBillingInfoAdddressUpdate;
   paymentMethod?: UserBillingInfoPaymentMethodUpdate;
 };
