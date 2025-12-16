@@ -1,7 +1,10 @@
 {
-  "name": "lens-platform-sdk",
+  "name": "@lensapp/lens-platform-sdk",
   "version": "18.7.0",
   "description": "Lens Platform Client SDK",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "engines": {
     "node": ">=14 <=22"
   },
