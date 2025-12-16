@@ -6,7 +6,7 @@
     "registry": "https://npm.pkg.github.com"
   },
   "engines": {
-    "node": ">=14 <=22"
+    "node": ">=14 <=24"
   },
   "files": [
     "dist/**/*"
