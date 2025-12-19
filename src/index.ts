@@ -54,6 +54,9 @@ import type {
   CreateBusinessManagedDomainDto,
   UpdateBusinessManagedDomainDto,
   UpdateBusinessSsoDto,
+  AuditEvent,
+  GetAuditLogsQuery,
+  AuditLogResponse
 } from "./BusinessService";
 import { allowedUpdateBusinessKeys } from "./BusinessService";
 
@@ -132,6 +135,9 @@ export type {
   UpdateBusinessSsoDto,
   UserOrganization,
   UserOrganizationManagedMembershipInfo,
+  AuditEvent,
+  GetAuditLogsQuery,
+  AuditLogResponse
 };
 export type { LensPlatformClientType, LensPlatformClientOptions };
 export type { BillingError } from "./types/billing";
