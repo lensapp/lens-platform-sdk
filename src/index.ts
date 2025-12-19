@@ -56,7 +56,7 @@ import type {
   UpdateBusinessSsoDto,
   AuditEvent,
   GetAuditLogsQuery,
-  AuditLogResponse
+  AuditLogResponse,
 } from "./BusinessService";
 import { allowedUpdateBusinessKeys } from "./BusinessService";
 
@@ -137,7 +137,7 @@ export type {
   UserOrganizationManagedMembershipInfo,
   AuditEvent,
   GetAuditLogsQuery,
-  AuditLogResponse
+  AuditLogResponse,
 };
 export type { LensPlatformClientType, LensPlatformClientOptions };
 export type { BillingError } from "./types/billing";
