@@ -897,6 +897,7 @@ export type AuditEvent = {
   action: string;
   actorId: string;
   actorType: string;
+  actorEmail?: string;
   resourceType: string;
   resourceId?: string;
   businessId: string;
