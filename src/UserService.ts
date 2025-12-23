@@ -312,8 +312,8 @@ export type UserBillingInfoAdddressUpdate = {
   phone?: string;
   street1: string;
   street2?: string;
-  city: string | null;
-  region: string;
+  city: string;
+  region?: string;
   postalCode: string;
   country: string;
 };
@@ -325,11 +325,9 @@ export type UserBillingInfoPaymentMethodUpdate = {
 
 export type UserBillingInfoUpdate = {
   email: string;
-  firstName: string;
-  lastName: string;
   company?: string;
   vatNumber?: string;
-  billingType: "credit_card" | "paypal" | "invoice";
+  billingType: "credit_card" | "paypal";
   address: UserBillingInfoAdddressUpdate;
   paymentMethod?: UserBillingInfoPaymentMethodUpdate;
 };
