@@ -318,18 +318,14 @@ export type UserBillingInfoAdddressUpdate = {
   country: string;
 };
 
-export type UserBillingInfoPaymentMethodUpdate = {
-  token?: string;
-  threeDSecureActionResultTokenId?: string;
-};
-
 export type UserBillingInfoUpdate = {
   email: string;
   company?: string;
   vatNumber?: string;
   billingType: "credit_card" | "paypal";
-  address: UserBillingInfoAdddressUpdate;
-  paymentMethod?: UserBillingInfoPaymentMethodUpdate;
+  address?: UserBillingInfoAdddressUpdate;
+  paymentMethodToken?: string;
+  threeDSecureConfirmationToken?: string;
 };
 
 export interface ActivationCodeData {
