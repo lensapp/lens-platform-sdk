@@ -19,6 +19,7 @@ import {
   BadRequestException,
   UnauthorizedException,
   TooManyRequestException,
+  PaymentRequiredException,
 } from "./exceptions";
 import { BillingPageToken, License } from "./types/types";
 import { BillingError } from "./types/billing";
@@ -307,15 +308,24 @@ export type BillingInfo = {
   };
 };
 
-export type BillingInfoUpdateWithoutToken = BillingInfo & {
-  token?: null;
-  threeDSecureActionResultTokenId?: null;
+export type UserBillingInfoAdddressUpdate = {
+  phone?: string;
+  street1: string;
+  street2?: string;
+  city: string;
+  region?: string;
+  postalCode: string;
+  country: string;
 };
-export type BillingInfoUpdateWithToken = BillingInfo & {
-  type: "credit_card";
-  token: string;
-  threeDSecureActionResultTokenId?: string | null;
-  paymentMethod: NonNullable<BillingInfo["paymentMethod"]>;
+
+export type UserBillingInfoUpdate = {
+  email: string;
+  company?: string;
+  vatNumber?: string;
+  billingType: "credit_card" | "paypal";
+  address?: UserBillingInfoAdddressUpdate;
+  paymentMethodToken?: string;
+  threeDSecureConfirmationToken?: string;
 };
 
 export interface ActivationCodeData {
@@ -731,6 +741,21 @@ class UserService extends Base {
       404: () => new NotFoundException(`User ${username} not found`),
       403: () =>
         new ForbiddenException(`Getting the billing information for ${username} is forbidden`),
+    });
+
+    return json as unknown as BillingInfo;
+  }
+
+  async updateUserBillingInformation(
+    username: string,
+    update: UserBillingInfoUpdate,
+  ): Promise<BillingInfo> {
+    const { apiEndpointAddress, fetch } = this.lensPlatformClient;
+    const url = `${apiEndpointAddress}/users/${username}/billing`;
+    const json = await throwExpected(async () => fetch.put(url, update), {
+      402: (error) => new PaymentRequiredException(error?.body?.message, error),
+      404: () => new NotFoundException(`User with username "${username}" not found`),
+      403: () => new ForbiddenException(),
     });
 
     return json as unknown as BillingInfo;
