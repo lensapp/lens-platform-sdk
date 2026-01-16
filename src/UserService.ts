@@ -417,7 +417,6 @@ export interface UserOrganization {
   role: string;
   managedMembership?: boolean;
   managedMembershipInfo: UserOrganizationManagedMembershipInfo;
-  enterpriseBusiness: boolean;
 }
 
 export interface PatchUserJoinRequestRequest {
