@@ -1,6 +1,6 @@
 {
   "name": "@lensapp/lens-platform-sdk",
-  "version": "19.1.2",
+  "version": "20.0.0",
   "description": "Lens Platform Client SDK",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
