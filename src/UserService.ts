@@ -249,11 +249,6 @@ export type SubscriptionSeat = {
   shortSubscriptionId: string;
 
   /**
-   * Is the seat active
-   */
-  active: boolean;
-
-  /**
    * Subscription used offline
    */
   offline: boolean;

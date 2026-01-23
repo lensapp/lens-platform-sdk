@@ -359,7 +359,7 @@ export type BusinessUser = {
 
 export type BusinessUserSubscriptionSeat = Pick<
   SubscriptionSeat,
-  "activatedAt" | "offline" | "deactivatedAt" | "expiredAt" | "active" | "id"
+  "activatedAt" | "offline" | "deactivatedAt" | "expiredAt" | "id"
 > & {
   subscription: Pick<SubscriptionInfo, "id" | "state">;
 };
