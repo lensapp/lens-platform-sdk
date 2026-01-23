@@ -33,7 +33,7 @@ let axiosHttpAdapter: Function | undefined;
 const multiEnvironmentRequire = (moduleName: string) => {
   try {
     return window.require(moduleName);
-  } catch (error) {
+  } catch {
     return require(moduleName);
   }
 };
@@ -50,7 +50,7 @@ const getAxiosHttpAdapter = () => {
     }
 
     return axiosHttpAdapter;
-  } catch (error) {
+  } catch {
     return undefined;
   }
 };

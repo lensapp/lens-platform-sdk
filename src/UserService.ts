@@ -303,8 +303,8 @@ export type BillingInfo = {
     firstSix: string | null;
     lastTwo: string | null;
     lastFour: string | null;
-    expMonth: Number | null;
-    expYear: Number | null;
+    expMonth: number | null;
+    expYear: number | null;
   };
 };
 

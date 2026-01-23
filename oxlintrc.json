@@ -1,0 +1,16 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "typescript", "node", "promise", "jest"],
+  "env": {
+    "node": true,
+    "jest": true
+  },
+  "rules": {
+    "jest/no-export": "off",
+    "jest/expect-expect": "off"
+  },
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/dist/**"
+  ]
+}
