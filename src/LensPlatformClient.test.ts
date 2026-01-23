@@ -15,13 +15,6 @@ export const minimumOptions = {
 describe("LensPlatformClient", () => {
   jest.mock("axios");
 
-  // @swc/jest would throw error when compiling this test case.
-  it.skip("is a class", () => {
-    // @ts-expect-error
-    // eslint-disable-next-line new-cap, @typescript-eslint/no-unsafe-return
-    expect(() => LensPlatformClient()).toThrow("Cannot call a class as a function");
-  });
-
   it("checks options in constructor", () => {
     // @ts-expect-error
     expect(() => new LensPlatformClient()).toThrow("Options can not be undefined");
@@ -249,9 +242,7 @@ describe("LensPlatformClient", () => {
       };
       const lensPlatformClient = new LensPlatformClient({
         ...minimumOptions,
-        ...{
-          defaultHeaders: { "X-Consumer-Id": "xx-yy-zz" },
-        },
+        defaultHeaders: { "X-Consumer-Id": "xx-yy-zz" },
       });
 
       const spies = [
@@ -288,9 +279,7 @@ describe("LensPlatformClient", () => {
       };
       const lensPlatformClient = new LensPlatformClient({
         ...minimumOptions,
-        ...{
-          defaultHeaders: { "X-Consumer-Id": "xx-yy-zz" },
-        },
+        defaultHeaders: { "X-Consumer-Id": "xx-yy-zz" },
       });
 
       const spies = [
@@ -345,7 +334,7 @@ describe("LensPlatformClient", () => {
           expect(spy).toBeCalledWith(apiEndpointAddress, {
             headers: {
               ...extraHeader,
-              ...{ Authorization: `Bearer ${accessToken}` },
+              Authorization: `Bearer ${accessToken}`,
             },
             ...extraOption,
           });
@@ -385,7 +374,7 @@ describe("LensPlatformClient", () => {
             {
               headers: {
                 ...extraHeader,
-                ...{ Authorization: `Bearer ${accessToken}` },
+                Authorization: `Bearer ${accessToken}`,
               },
               ...extraOption,
             },
