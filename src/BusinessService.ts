@@ -153,6 +153,10 @@ export type Business = {
    * The welcome message to be shown to users when joining the business via email domain matching.
    */
   emailDomainWelcomeMessage: string;
+  /**
+   * Message displayed to unlicensed users that were blocked by domain setting.
+   */
+  unlicensedAccessBlockedMessage: string | null;
 };
 
 /**
@@ -760,6 +764,7 @@ export const allowedUpdateBusinessKeys: Array<string> = [
   "autoAcceptJoinRequests",
   "emailDomainMatchingEnabled",
   "emailDomainWelcomeMessage",
+  "unlicensedAccessBlockedMessage",
 ];
 
 export type BusinessGroup = {
