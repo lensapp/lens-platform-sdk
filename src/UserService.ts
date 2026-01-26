@@ -402,6 +402,7 @@ export interface UserJoinRequest {
 export interface UserOrganizationManagedMembershipInfo {
   managed: boolean;
   unlicensedAccessBlocked: boolean;
+  unlicensedAccessBlockedMessage: boolean | null;
 }
 
 export interface UserOrganization {
